@@ -8,17 +8,18 @@ import { LineContext } from "./SmartSyncParser.ts";
 import { ValueContext } from "./SmartSyncParser.ts";
 import { DeclarationContext } from "./SmartSyncParser.ts";
 import { StatementsContext } from "./SmartSyncParser.ts";
-import { ConditionContext } from "./SmartSyncParser.ts";
-import { ConditionBaseContext } from "./SmartSyncParser.ts";
 import { IfStmContext } from "./SmartSyncParser.ts";
 import { ElsesContext } from "./SmartSyncParser.ts";
 import { ArithmeticValueContext } from "./SmartSyncParser.ts";
 import { ExpressionContext } from "./SmartSyncParser.ts";
+import { StringArithmeticContext } from "./SmartSyncParser.ts";
+import { AtomStringContext } from "./SmartSyncParser.ts";
 import { ArithmeticContext } from "./SmartSyncParser.ts";
 import { MultExprContext } from "./SmartSyncParser.ts";
 import { AtomContext } from "./SmartSyncParser.ts";
-import { StringArithmeticContext } from "./SmartSyncParser.ts";
-import { AtomStringContext } from "./SmartSyncParser.ts";
+import { ConditionContext } from "./SmartSyncParser.ts";
+import { MultConExprContext } from "./SmartSyncParser.ts";
+import { AtomConContext } from "./SmartSyncParser.ts";
 import { AssignmentsContext } from "./SmartSyncParser.ts";
 import { FuncReturnContext } from "./SmartSyncParser.ts";
 import { FunctionsContext } from "./SmartSyncParser.ts";
@@ -66,18 +67,6 @@ export default class SmartSyncVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitStatements?: (ctx: StatementsContext) => Result;
-	/**
-	 * Visit a parse tree produced by `SmartSyncParser.condition`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitCondition?: (ctx: ConditionContext) => Result;
-	/**
-	 * Visit a parse tree produced by `SmartSyncParser.conditionBase`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitConditionBase?: (ctx: ConditionBaseContext) => Result;
 	/**
 	 * Visit a parse tree produced by `SmartSyncParser.ifStm`.
 	 * @param ctx the parse tree
@@ -132,6 +121,24 @@ export default class SmartSyncVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitAtom?: (ctx: AtomContext) => Result;
+	/**
+	 * Visit a parse tree produced by `SmartSyncParser.condition`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitCondition?: (ctx: ConditionContext) => Result;
+	/**
+	 * Visit a parse tree produced by `SmartSyncParser.multConExpr`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitMultConExpr?: (ctx: MultConExprContext) => Result;
+	/**
+	 * Visit a parse tree produced by `SmartSyncParser.atomCon`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitAtomCon?: (ctx: AtomConContext) => Result;
 	/**
 	 * Visit a parse tree produced by `SmartSyncParser.assignments`.
 	 * @param ctx the parse tree

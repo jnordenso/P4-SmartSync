@@ -15,13 +15,13 @@ value : BOOL | STRING | NUMBER | ID | ID'[]' 'SIZE' | ID '[' DIGIT+ ']' | ID'(' 
 
 declaration : TYPE ID '=' expression ';' | TYPE ID'[]' '=' '[' (arrayValue ','?)* ']' ';';
 
-statements : ifStm ';' | 'WHILE' condition '{' line* '};' | arrayStm;
+statements : ifStm | 'WHILE' condition '{' line* '};' | arrayStm;
 /* Condition : (Id | Number) LogicOp (Id | Number) | Condition ('AND' | 'OR') Condition | 
             (String | Bool | Id) ('EQUAL' | 'NOT EQUAL') (String | Bool | Id) | '(' Condition ')'; big no no, cuz left recursion, instead tilføje the conditionbase for and and or, for the condition condition recursion... <3*/
 
-condition : conditionBase (('AND' | 'OR') conditionBase)*;
+/* condition : conditionBase (('AND' | 'OR') conditionBase)*; */
 
-conditionBase : (ID | NUMBER) LOGIC_OP (ID | NUMBER) | (STRING | BOOL | ID) ('EQUAL' | 'NOT EQUAL') (STRING | BOOL | ID) | '(' condition ')';
+//conditionBase : (ID | NUMBER) LOGIC_OP (ID | NUMBER) | (STRING | BOOL | ID) ('EQUAL' | 'NOT EQUAL') (STRING | BOOL | ID) | '(' condition ')';
 
 /* arithmetic : arithmeticBase (ARITHMETIC_OP arithmeticBase)*;
 
@@ -43,6 +43,9 @@ arithmetic : multExpr (('+' | '-') multExpr)*;
 multExpr : atom (('*' | '/') atom)*;
 atom : NUMBER | ID | '(' arithmetic ')';
 
+condition : multConExpr (('AND' | 'OR') multConExpr)*;
+multConExpr : atomCon (('EQUAL' | 'NOT EQUAL' | 'GREATER' | 'LESS') atomCon)*;
+atomCon : NUMBER | ID | '(' condition ')';
 
 /* Arithmetic : ArithmeticValue ArithmeticOp ArithmeticValue | (String | ArithmeticValue) '+' (String | ArithmeticValue) | ('(' Arithmetic ')'); big nono fix from above */
 
