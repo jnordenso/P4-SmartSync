@@ -7,9 +7,10 @@ IF grade GREATER 90 OR grade EQUAL 90 {
   letterGrade = "B";
 } ELSE IF grade GREATER 70 OR grade EQUAL 70 {
   letterGrade = "C";
-} ELSE IF grade GREATER 60 OR grade EQUAL 60 {
-  letterGrade = "D";
 } ELSE {
   letterGrade = "F";
 }
+
 # Output the grade and letter grade #
+Text outputString = "Letter Grade: " + letterGrade;
+OUTPUT outputString;
