@@ -1,30 +1,56 @@
-// Define a grammar called Hello
 grammar SmartSync;
-Program : Line*;
-Line : Declaration | Statements | Assignments | Functions;
+program : line+;
+line : declaration | statements | assignments | functions;
 
-Bool : 'TRUE' | 'FALSE';
-Type : 'Number' | 'Text' | 'Boolean';
-Id   : [a-zA-Z][a-zA-Z0-9]*;
-String : '"' .*? '"';
-Numbers : [0-9]+ ('.' [0-9]+)?;
-ArithmeticOperators : '+' | '-' | '*' | '/';
-LogicalOperators : 'EQUAL' | 'NOT EQUAL' | 'AND' | 'OR' | 'GREATER' | 'LESS';
-DelayTime : 'ms';
+BOOL : 'TRUE' | 'FALSE';
+TYPE : 'Number' | 'Text' | 'Boolean';
+ID   : [a-zA-Z][a-zA-Z0-9]*;
+STRING : '"' .*? '"';
+NUMBER : '-'? [0-9]+ ('.' [0-9]+)?;
+DIGIT : [0-9];
+ARITHMETIC_OP : '+' | '-' | '*' | '/';
+LOGIC_OP : 'EQUAL' | 'NOT EQUAL' | 'AND' | 'OR' | 'GREATER' | 'LESS';
 
-Value : Bool | String | Numbers | Id | ArraySize | ArrayIndex | Id(FunctionCallStm);
+value : BOOL | STRING | NUMBER | ID | ID'[]' 'SIZE' | ID '[' DIGIT+ ']' | ID'(' (funcReturn ',')* ')';
 
-Declaration : Type Id '=' Value;
+declaration : TYPE ID '=' arithmetic ';' | TYPE ID'[]' '=' '[' (arrayValue ','?)* ']' ';';
 
-Statements : IFS | 'WHILE' Condition '{' Line* '}' | ArrayStm;
-IFS : 'IF' Condition '{' Line* '}' (ELSES | 'ELSE' '{' Line* '}')?;
-ELSES : 'ELSE' 'IF' Condition '{' Line* '}' (ELSES | 'ELSE' '{' Line* '}')?;
+statements : ifStm ';' | 'WHILE' condition '{' line* '};' | arrayStm;
+/* Condition : (Id | Number) LogicOp (Id | Number) | Condition ('AND' | 'OR') Condition | 
+            (String | Bool | Id) ('EQUAL' | 'NOT EQUAL') (String | Bool | Id) | '(' Condition ')'; big no no, cuz left recursion, instead tilføje the conditionbase for and and or, for the condition condition recursion... <3*/
 
-Condition : Id LogicalOperators Id | Id LogicalOperators Value | Condition 'OR' Condition | Condition 'AND' Condition |
+condition : conditionBase (('AND' | 'OR') conditionBase)*;
+
+conditionBase : (ID | NUMBER) LOGIC_OP (ID | NUMBER) | (STRING | BOOL | ID) ('EQUAL' | 'NOT EQUAL') (STRING | BOOL | ID) | '(' condition ')';
+
+/* arithmetic : arithmeticBase (ARITHMETIC_OP arithmeticBase)*;
+
+arithmeticBase : value | STRING '+' STRING | ('(' arithmetic ')'); */
             
+ifStm : 'IF' condition '{' line* '}' (elses | 'ELSE' '{' line* '}')?;
+elses : 'ELSE' 'IF' condition '{' line* '}' (elses | 'ELSE' '{' line* '}')?;
+
+arithmeticValue : arithmetic;
+
+/* arithmetic : arithmetic ARITHMETIC_OP arithmetic | (ID | NUMBER) | (STRING | ID | NUMBER) '+' (STRING | ID | NUMBER) | '(' arithmetic ')';
+ */
+arithmetic : multExpr (('+' | '-') multExpr)* ;
+multExpr : atom (('*' | '/') atom)* ;
+atom : NUMBER | ID | '(' arithmetic ')' ;
 
 
+/* Arithmetic : ArithmeticValue ArithmeticOp ArithmeticValue | (String | ArithmeticValue) '+' (String | ArithmeticValue) | ('(' Arithmetic ')'); big nono fix from above */
 
-r  : 'hello' ID ;         // match keyword hello followed by an identifier
-ID : [a-z]+ ;             // match lower-case identifiers
+assignments : ID '=' arithmetic ';' | ID'[' DIGIT+ ']' '=' (value | arithmetic | ID) ';' | ID'[]' '=' '[' (arrayValue ','?)* ']' ';';
+
+funcReturn : value | ID '[]'? | arithmetic | '[' (arrayValue ','?)* ']';
+functions : TYPE 'FUNCTION' ID '(' (TYPE ID'[]'? ','?)* ')' '{' line* ';' 'RETURN' funcReturn ';};';
+
+output : 'OUTPUT' (value | ID'[]'?) ';';
+delay : 'DELAY' DIGIT+ ';';
+
+arrayValue : '[' value ']' | value;
+arrayStm : ID'[' DIGIT+ ']' | ID'[]' ('PUSH' value ';'| 'PULL;' | 'SIZE;');
+
 WS : [ \t\r\n]+ -> skip ; // skip spaces, tabs, newlines
+COMMENT : '#'.*?'#' -> skip ; // skip comments
