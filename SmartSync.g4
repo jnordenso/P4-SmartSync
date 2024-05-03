@@ -13,7 +13,7 @@ LOGIC_OP : 'EQUAL' | 'NOT EQUAL' | 'AND' | 'OR' | 'GREATER' | 'LESS';
 
 value : BOOL | STRING | NUMBER | ID | ID'[]' 'SIZE' | ID '[' DIGIT+ ']' | ID'(' (funcReturn ',')* ')';
 
-declaration : TYPE ID '=' arithmetic ';' | TYPE ID'[]' '=' '[' (arrayValue ','?)* ']' ';';
+declaration : TYPE ID '=' expression ';' | TYPE ID'[]' '=' '[' (arrayValue ','?)* ']' ';';
 
 statements : ifStm ';' | 'WHILE' condition '{' line* '};' | arrayStm;
 /* Condition : (Id | Number) LogicOp (Id | Number) | Condition ('AND' | 'OR') Condition | 
@@ -34,14 +34,19 @@ arithmeticValue : arithmetic;
 
 /* arithmetic : arithmetic ARITHMETIC_OP arithmetic | (ID | NUMBER) | (STRING | ID | NUMBER) '+' (STRING | ID | NUMBER) | '(' arithmetic ')';
  */
-arithmetic : multExpr (('+' | '-') multExpr)* ;
-multExpr : atom (('*' | '/') atom)* ;
-atom : NUMBER | ID | '(' arithmetic ')' ;
+expression : stringArithmetic | arithmetic;
+
+stringArithmetic : (STRING | ID) ('+' (STRING | ID))*;
+atomString : STRING | ID;
+
+arithmetic : multExpr (('+' | '-') multExpr)*;
+multExpr : atom (('*' | '/') atom)*;
+atom : NUMBER | ID | '(' arithmetic ')';
 
 
 /* Arithmetic : ArithmeticValue ArithmeticOp ArithmeticValue | (String | ArithmeticValue) '+' (String | ArithmeticValue) | ('(' Arithmetic ')'); big nono fix from above */
 
-assignments : ID '=' arithmetic ';' | ID'[' DIGIT+ ']' '=' (value | arithmetic | ID) ';' | ID'[]' '=' '[' (arrayValue ','?)* ']' ';';
+assignments : ID '=' expression ';' | ID'[' DIGIT+ ']' '=' expression ';' | ID'[]' '=' '[' (arrayValue ','?)* ']' ';';
 
 funcReturn : value | ID '[]'? | arithmetic | '[' (arrayValue ','?)* ']';
 functions : TYPE 'FUNCTION' ID '(' (TYPE ID'[]'? ','?)* ')' '{' line* ';' 'RETURN' funcReturn ';};';
