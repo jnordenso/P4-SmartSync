@@ -13,7 +13,6 @@ import { ElsesContext } from "./SmartSyncParser.ts";
 import { ArithmeticValueContext } from "./SmartSyncParser.ts";
 import { ExpressionContext } from "./SmartSyncParser.ts";
 import { StringArithmeticContext } from "./SmartSyncParser.ts";
-import { AtomStringContext } from "./SmartSyncParser.ts";
 import { ArithmeticContext } from "./SmartSyncParser.ts";
 import { MultExprContext } from "./SmartSyncParser.ts";
 import { AtomContext } from "./SmartSyncParser.ts";
@@ -97,12 +96,6 @@ export default class SmartSyncVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitStringArithmetic?: (ctx: StringArithmeticContext) => Result;
-	/**
-	 * Visit a parse tree produced by `SmartSyncParser.atomString`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitAtomString?: (ctx: AtomStringContext) => Result;
 	/**
 	 * Visit a parse tree produced by `SmartSyncParser.arithmetic`.
 	 * @param ctx the parse tree
