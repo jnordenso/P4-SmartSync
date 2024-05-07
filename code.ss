@@ -54,5 +54,5 @@ grades[] PULL;
 grades[] PUSH 6;
 Number length = grades[] SIZE;
 
-DELAY grades[1];
+DELAY grades[1];  
 
