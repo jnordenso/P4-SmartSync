@@ -18,11 +18,14 @@ export type NodeType =
     | "Size"
     // Expressions
     | "BinaryOperation"
+    | "StringConcatenation"
+    | "Value"
     | "Type";
 
 
 export interface Line {
     kind: NodeType;
+    line: number;
 }
 
 export interface Program extends Line {
@@ -32,7 +35,7 @@ export interface Program extends Line {
 
 export interface Declaration extends Line {
     kind: "Declaration";
-    Type: string;
+    Type: types;
     identifier: Identifier;
     value: Expression;
 }
@@ -87,7 +90,7 @@ export interface Assignment extends Line {
 
 export interface Function extends Line {
     kind: "Function";
-    Type: string;
+    Type: types;
     identifier: Identifier;
     parameters: Identifier[];
     body: Line[];
@@ -103,11 +106,23 @@ export interface Delay extends Line {
     value: Expression;
 }
 
-export interface Expression extends Line {}
+export interface Expression extends Line {
+}
+
+export interface Value extends Expression {
+    kind: "Value";
+    Type: types;
+    value: string;
+}
+
+export interface StringConcatenation extends Expression {
+    kind: "StringConcatenation";
+    values: string[];
+}
 
 export interface Identifier extends Expression {
     kind: "Identifier";
-    Type: string;
+    Type: types;
     name: string;
 }
 
@@ -115,7 +130,6 @@ export interface BinaryOperation extends Expression {
     kind: "BinaryOperation";
     left: Expression;
     right: Expression;
-    operator: string;
 }
 
 export interface Addition extends BinaryOperation {
@@ -160,17 +174,7 @@ export interface Less extends BinaryOperation {
 
 export interface Type extends Expression {
     kind: "Type";
-    Type: Number | Text | Boolean;
+    Type: types;
 }
 
-export type Number = {
-    value: number;
-}
-
-export type Text = {
-    value: string;
-}
-
-export type Boolean = {
-    value: boolean;
-}
+export type types = "Number" | 'Text' | "Boolean";
