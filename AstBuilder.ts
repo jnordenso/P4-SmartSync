@@ -65,13 +65,14 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
     }
     
     visitExpression: (ctx: ExpressionContext) => Result = (ctx: ExpressionContext): Result => {
-
         // Check if the expression is a stringArithmetic, arithmetic, value or expression
         // used !! to convert the value to a boolean and then check if it is true
         switch (true) {
             // case for ( expression )
-            case ctx.getText().startsWith("(") && ctx.getText().endsWith(")"):
-                throw new Error("Not implemented");
+            /* case ctx.getText().startsWith("(") && ctx.getText().endsWith(")"): {
+                console.log("Expression: ", ctx);
+                return this.visitExpression(ctx.);
+            } */
             case !!ctx.stringArithmetic():
                 return this.visitStringArithmetic(ctx.stringArithmetic());
             case !!ctx.arithmetic():
@@ -194,26 +195,61 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
     }
 
     visitAtom: (ctx: AtomContext ) => Result = (ctx: AtomContext): Result => {
-        if (ctx.NUMBER()) {
-            const value: Value = {
-                kind: "Value",
-                Type: "Number",
-                line: ctx.start.line,
-                value: ctx.NUMBER().getText()
-            }
 
-            return value;
-        } else if (ctx.ID()) {
-            const identifier: Identifier = {
-                kind: "Identifier",
-                line: ctx.start.line,
-                Type: "Number",
-                name: ctx.ID().getText()
-            }
+        switch (true) {
+            // case for ( atom ) probably not the best way to check for this 
+            case ctx.getChildCount() === 3 && ctx.getChild(0).getText() === "(" && ctx.getChild(2).getText() === ")": {
+                const atom = ctx.getChild(1).getText();
+                console.log("Atom: ", atom);
+                console.log("is number: ", !isNaN(Number(atom)));
 
-            return identifier;
-        } else {
-            throw new Error("Unknown atom");
+                switch (true) {
+                    // atom is a number
+                    case !isNaN(Number(atom)): {
+                        const value: Value = {
+                            kind: "Value",
+                            Type: "Number",
+                            line: ctx.start.line,
+                            value: atom
+                        }
+                        return value;
+                    }
+                    // atom is a string
+                    case atom.startsWith("\"") && atom.endsWith("\""): {
+                        const value: Value = {
+                            kind: "Value",
+                            Type: "Text",
+                            line: ctx.start.line,
+                            value: atom
+                        }
+                        return value;
+                    }
+                    default:
+                        throw new Error("Unknown atom");
+                }
+            }
+            case !!ctx.NUMBER(): {
+                const value: Value = {
+                    kind: "Value",
+                    Type: "Number",
+                    line: ctx.start.line,
+                    value: ctx.NUMBER().getText()
+                }
+    
+                return value;
+            }
+            case !!ctx.ID(): {
+                const identifier: Identifier = {
+                    kind: "Identifier",
+                    line: ctx.start.line,
+                    Type: "Number",
+                    name: ctx.ID().getText()
+                }
+    
+                return identifier;
+            }
+            default:
+                throw new Error("Unknown atom");
         }
     }
 
