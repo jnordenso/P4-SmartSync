@@ -11,7 +11,6 @@ type Result = Line | Declaration | Expression;
 export default class AstVisitor extends SmartSyncVisitor<Result> {
 
     visitProgram: (ctx: ProgramContext) => Result = (ctx: ProgramContext): Result => {
-        console.log("Visiting program");
         const lines: Line[] = [];
         const startLine = ctx.start.line;
 
@@ -37,7 +36,6 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
     }
 
     visitDeclaration: (ctx: DeclarationContext) => Result = (ctx: DeclarationContext): Result => {
-        console.log("Visiting declaration");
         const type: types = ctx.TYPE().getText() as types;
         const identifierName = ctx.ID().getText();
         const startLine = ctx.start.line;
@@ -67,28 +65,25 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
     }
     
     visitExpression: (ctx: ExpressionContext) => Result = (ctx: ExpressionContext): Result => {
-        console.log("Visiting expression");
 
         // Check if the expression is a stringArithmetic, arithmetic, value or expression
         // used !! to convert the value to a boolean and then check if it is true
         switch (true) {
+            // case for ( expression )
+            case ctx.getText().startsWith("(") && ctx.getText().endsWith(")"):
+                throw new Error("Not implemented");
             case !!ctx.stringArithmetic():
-            return this.visitStringArithmetic(ctx.stringArithmetic());
+                return this.visitStringArithmetic(ctx.stringArithmetic());
             case !!ctx.arithmetic():
-            return this.visitArithmetic(ctx.arithmetic());
+                return this.visitArithmetic(ctx.arithmetic());
             case !!ctx.value():
-            console.log("Visiting value");
-            return this.visitValue(ctx.value());
-            case !!ctx.expression():
-            console.log("Visiting ( expression )");
-            throw new Error("Not implemented");
+                return this.visitValue(ctx.value());
             default:
-            throw new Error("Unknown expression");
+                throw new Error("Unknown expression");
         }
     }
 
     visitStringArithmetic: (ctx: StringArithmeticContext) => Result = (ctx: StringArithmeticContext): Result => {
-        console.log("Visiting stringArithmetic");
         const values: string[] = [];
 
         if (!ctx.children) {
@@ -122,20 +117,16 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
     }
 
     visitArithmetic: (ctx: ArithmeticContext) => Result = (ctx: ArithmeticContext): Result => {
-        console.log("Visiting arithmetic");
         let left = this.visitMultExpr(ctx.multExpr(0));
 
         let y = 1;
         for (let i = 1; i < ctx.getChildCount() - 1; i += 2) { // Skip multExpr children
             const operator = ctx.getChild(i).getText(); // Get operator
-            console.log("Operator:", operator);
             const right = this.visitMultExpr(ctx.multExpr(y)); // Get right operand
             y++;
         
             switch (operator) {
                 case "+": {
-                    console.log("Addition");
-
                     const addition: Addition = {
                         kind: "BinaryOperation",
                         line: ctx.start.line,
@@ -147,8 +138,6 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
                     break;
                 }
                 case "-": {
-                    console.log("Subtraction");
-
                     const subtraction: Subtraction = {
                         kind: "BinaryOperation",
                         line: ctx.start.line,
@@ -167,21 +156,15 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
     }
 
     visitMultExpr: (ctx: MultExprContext) => Result = (ctx: MultExprContext): Result => {
-        console.log("Visiting multExpr");
-        console.log(ctx.getText());
-
         let left = this.visitAtom(ctx.atom(0));
         let y = 1;
         for (let i = 1; i < ctx.getChildCount() - 1; i += 2) { // Skip multExpr children
             const operator = ctx.getChild(i).getText(); // Get operator
-            console.log("Operator:", operator);
             const right = this.visitAtom(ctx.atom(y)); // Get right operand
             y++;
         
             switch (operator) {
                 case "*": {
-                    console.log("Multiplication");
-
                     const multiplication: Multiplication = {
                         kind: "BinaryOperation",
                         line: ctx.start.line,
@@ -193,8 +176,6 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
                     break;
                 }
                 case "/": {
-                    console.log("Division");
-
                     const division: Division = {
                         kind: "BinaryOperation",
                         line: ctx.start.line,
@@ -213,9 +194,6 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
     }
 
     visitAtom: (ctx: AtomContext ) => Result = (ctx: AtomContext): Result => {
-        console.log("Visiting atom");
-        console.log(ctx.getText());
-
         if (ctx.NUMBER()) {
             const value: Value = {
                 kind: "Value",
@@ -240,10 +218,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
     }
 
     visitValue: (ctx: ValueContext) => Result = (ctx: ValueContext): Result => {
-        console.log("Visiting value");
         let result: Value | Identifier;
-
-        console.log(ctx.getChildCount());
         
         switch (true) {
             case !!ctx.BOOL(): {
