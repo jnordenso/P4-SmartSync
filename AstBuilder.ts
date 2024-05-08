@@ -3,6 +3,7 @@ import { DeclarationContext, ExpressionContext, MultExprContext, ProgramContext,
 import { Line, Program, Identifier, Declaration, Expression, StringConcatenation, Addition, Value, Multiplication, Subtraction, Division, types } from './AST.ts';
 import { StringArithmeticContext } from './SmartSyncParser.ts';
 import { ArithmeticContext } from './SmartSyncParser.ts';
+import { ValueContext } from './SmartSyncParser.ts';
 
 // the result of visiting a node in the AST
 type Result = Line | Declaration | Expression;
@@ -77,7 +78,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
             return this.visitArithmetic(ctx.arithmetic());
             case !!ctx.value():
             console.log("Visiting value");
-            throw new Error("Not implemented");
+            return this.visitValue(ctx.value());
             case !!ctx.expression():
             console.log("Visiting ( expression )");
             throw new Error("Not implemented");
@@ -236,6 +237,70 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
         } else {
             throw new Error("Unknown atom");
         }
+    }
+
+    visitValue: (ctx: ValueContext) => Result = (ctx: ValueContext): Result => {
+        console.log("Visiting value");
+        let result: Value | Identifier;
+
+        console.log(ctx.getChildCount());
+        
+        switch (true) {
+            case !!ctx.BOOL(): {
+                result = {
+                    kind: "Value",
+                    Type: "Boolean",
+                    line: ctx.start.line,
+                    value: ctx.BOOL().getText()
+                }
+                break;
+            }
+            case !!ctx.STRING(): {
+                result = {
+                    kind: "Value",
+                    Type: "Text",
+                    line: ctx.start.line,
+                    value: ctx.STRING().getText()
+                }
+                break;
+            }
+            case !!ctx.NUMBER(): {
+                result = {
+                    kind: "Value",
+                    Type: "Number",
+                    line: ctx.start.line,
+                    value: ctx.NUMBER().getText()
+                }
+                break;
+            }
+            case !!ctx.ID() && ctx.getChildCount() === 1: {
+                result = {
+                    kind: "Identifier",
+                    line: ctx.start.line,
+                    Type: undefined,
+                    name: ctx.ID().getText()
+                }
+                break;
+            }
+            // case for ID[] SIZE
+            case !!ctx.ID() && ctx.getChildCount() === 3 && ctx.getChild(1).getText() === "[]" && ctx.getChild(2).getText() === "SIZE": {
+                throw new Error("Not implemented");
+            }
+            // case for ID[value]
+            case !!ctx.ID() && ctx.getChildCount() === 4 && ctx.getChild(1).getText() === "[" && ctx.getChild(3).getText() === "]": {
+                throw new Error("Not implemented");
+            }
+            // case for ID(funcReturn)
+            case !!ctx.ID() && ctx.getChildCount() >= 3 && ctx.getChild(1).getText() === "(" && ctx.getChild(ctx.getChildCount() - 1).getText() === ")": {
+                throw new Error("Not implemented");
+            }
+            default:
+                throw new Error("Unknown value");
+
+
+        }
+        return result;
+
     }
 }
 

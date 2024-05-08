@@ -122,7 +122,7 @@ export interface StringConcatenation extends Expression {
 
 export interface Identifier extends Expression {
     kind: "Identifier";
-    Type: types;
+    Type: types | undefined;
     name: string;
 }
 
