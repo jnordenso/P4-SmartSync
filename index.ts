@@ -20,4 +20,7 @@ console.log(tree.toStringTree(parser.ruleNames, parser));
 
 
 console.log("\nAST:");
+
+console.log(astVisitor.visitProgram(tree));
+
 console.log(util.inspect(astVisitor.visitProgram(tree), false, null, true /* enable colors */));

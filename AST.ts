@@ -46,6 +46,7 @@ export interface IfStm extends Statement {
     kind: "ifStm";
     condition: Expression;
     body: Line[];
+    else?: ElseStm | IfStm;
 }
 
 export interface ElseStm extends Statement {

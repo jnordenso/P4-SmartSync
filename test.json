@@ -1,0 +1,422 @@
+{
+    "kind": "Program",
+    "line": 1,
+    "body": [
+      {
+        "kind": "Declaration",
+        "line": 1,
+        "Type": "Number",
+        "identifier": { "kind": "Identifier", "line": 1, "Type": "Number", "name": "grade" },
+        "value": {
+          "kind": "BinaryOperation",
+          "line": 1,
+          "left": { "kind": "Value", "Type": "Number", "line": 1, "value": "855" },
+          "right": {
+            "kind": "BinaryOperation",
+            "line": 1,
+            "left": {
+              "kind": "BinaryOperation",
+              "line": 1,
+              "left": { "kind": "Value", "Type": "Number", "line": 1, "value": "10" },
+              "right": { "kind": "Value", "Type": "Number", "line": 1, "value": "20" },
+              "operator": "+"
+            },
+            "right": { "kind": "Value", "Type": "Number", "line": 1, "value": "2" },
+            "operator": "+"
+          },
+          "operator": "*"
+        }
+      },
+      {
+        "kind": "Declaration",
+        "line": 2,
+        "Type": "Text",
+        "identifier": {
+          "kind": "Identifier",
+          "line": 2,
+          "Type": "Text",
+          "name": "letterGrade"
+        },
+        "value": {
+          "kind": "StringConcatenation",
+          "line": 2,
+          "values": [ "hey", "med", "dig" ]
+        }
+      },
+      {
+        "kind": "Declaration",
+        "line": 3,
+        "Type": "Boolean",
+        "identifier": {
+          "kind": "Identifier",
+          "line": 3,
+          "Type": "Boolean",
+          "name": "isPassing"
+        },
+        "value": { "kind": "Value", "Type": "Boolean", "line": 3, "value": "FALSE" }
+      },
+      {
+        "kind": "ifStm",
+        "line": 5,
+        "condition": {
+          "kind": "BinaryOperation",
+          "line": 5,
+          "left": {
+            "kind": "BinaryOperation",
+            "line": 5,
+            "left": {
+              "kind": "Identifier",
+              "line": 5,
+              "Type": "Number",
+              "name": "grade"
+            },
+            "right": { "kind": "Value", "Type": "Number", "line": 5, "value": "900" },
+            "operator": "GREATER"
+          },
+          "right": {
+            "kind": "BinaryOperation",
+            "line": 5,
+            "left": {
+              "kind": "Identifier",
+              "line": 5,
+              "Type": "Number",
+              "name": "grade"
+            },
+            "right": { "kind": "Value", "Type": "Number", "line": 5, "value": "900" },
+            "operator": "EQUAL"
+          },
+          "operator": "OR"
+        },
+        "body": [
+          {
+            "kind": "Assignment",
+            "line": 6,
+            "identifier": {
+              "kind": "Identifier",
+              "line": 6,
+              "Type": null,
+              "name": "letterGrade"
+            },
+            "value": { "kind": "Value", "Type": "Text", "line": 6, "value": "A" }
+          },
+          {
+            "kind": "Assignment",
+            "line": 7,
+            "identifier": {
+              "kind": "Identifier",
+              "line": 7,
+              "Type": null,
+              "name": "isPassing"
+            },
+            "value": { "kind": "Value", "Type": "Boolean", "line": 7, "value": "TRUE" }
+          }
+        ],
+        "else": {
+          "kind": "ifStm",
+          "line": 8,
+          "condition": {
+            "kind": "BinaryOperation",
+            "line": 8,
+            "left": {
+              "kind": "BinaryOperation",
+              "line": 8,
+              "left": {
+                "kind": "Identifier",
+                "line": 8,
+                "Type": "Number",
+                "name": "grade"
+              },
+              "right": { "kind": "Value", "Type": "Number", "line": 8, "value": "800" },
+              "operator": "GREATER"
+            },
+            "right": {
+              "kind": "BinaryOperation",
+              "line": 8,
+              "left": {
+                "kind": "Identifier",
+                "line": 8,
+                "Type": "Number",
+                "name": "grade"
+              },
+              "right": { "kind": "Value", "Type": "Number", "line": 8, "value": "800" },
+              "operator": "EQUAL"
+            },
+            "operator": "AND"
+          },
+          "body": [
+            {
+              "kind": "Assignment",
+              "line": 9,
+              "identifier": {
+                "kind": "Identifier",
+                "line": 9,
+                "Type": null,
+                "name": "letterGrade"
+              },
+              "value": { "kind": "Value", "Type": "Text", "line": 9, "value": "F" }
+            },
+            {
+              "kind": "Assignment",
+              "line": 10,
+              "identifier": {
+                "kind": "Identifier",
+                "line": 10,
+                "Type": null,
+                "name": "isPassing"
+              },
+              "value": {
+                "kind": "Value",
+                "Type": "Boolean",
+                "line": 10,
+                "value": "FALSE"
+              }
+            }
+          ],
+          "else": {
+            "kind": "ifStm",
+            "line": 11,
+            "condition": {
+              "kind": "BinaryOperation",
+              "line": 11,
+              "left": {
+                "kind": "BinaryOperation",
+                "line": 11,
+                "left": {
+                  "kind": "Identifier",
+                  "line": 11,
+                  "Type": "Number",
+                  "name": "grade"
+                },
+                "right": { "kind": "Value", "Type": "Number", "line": 11, "value": "700" },
+                "operator": "GREATER"
+              },
+              "right": {
+                "kind": "BinaryOperation",
+                "line": 11,
+                "left": {
+                  "kind": "Identifier",
+                  "line": 11,
+                  "Type": "Number",
+                  "name": "grade"
+                },
+                "right": { "kind": "Value", "Type": "Number", "line": 11, "value": "700" },
+                "operator": "EQUAL"
+              },
+              "operator": "AND"
+            },
+            "body": [
+              {
+                "kind": "Assignment",
+                "line": 12,
+                "identifier": {
+                  "kind": "Identifier",
+                  "line": 12,
+                  "Type": null,
+                  "name": "letterGrade"
+                },
+                "value": { "kind": "Value", "Type": "Text", "line": 12, "value": "B" }
+              },
+              {
+                "kind": "Assignment",
+                "line": 13,
+                "identifier": {
+                  "kind": "Identifier",
+                  "line": 13,
+                  "Type": null,
+                  "name": "isPassing"
+                },
+                "value": {
+                  "kind": "Value",
+                  "Type": "Boolean",
+                  "line": 13,
+                  "value": "TRUE"
+                }
+              }
+            ],
+            "else": {
+              "kind": "ifStm",
+              "line": 14,
+              "condition": {
+                "kind": "BinaryOperation",
+                "line": 14,
+                "left": {
+                  "kind": "BinaryOperation",
+                  "line": 14,
+                  "left": {
+                    "kind": "Identifier",
+                    "line": 14,
+                    "Type": "Number",
+                    "name": "grade"
+                  },
+                  "right": {
+                    "kind": "Value",
+                    "Type": "Number",
+                    "line": 14,
+                    "value": "600"
+                  },
+                  "operator": "GREATER"
+                },
+                "right": {
+                  "kind": "BinaryOperation",
+                  "line": 14,
+                  "left": {
+                    "kind": "Identifier",
+                    "line": 14,
+                    "Type": "Number",
+                    "name": "grade"
+                  },
+                  "right": {
+                    "kind": "Value",
+                    "Type": "Number",
+                    "line": 14,
+                    "value": "600"
+                  },
+                  "operator": "EQUAL"
+                },
+                "operator": "AND"
+              },
+              "body": [
+                {
+                  "kind": "Assignment",
+                  "line": 15,
+                  "identifier": {
+                    "kind": "Identifier",
+                    "line": 15,
+                    "Type": null,
+                    "name": "letterGrade"
+                  },
+                  "value": { "kind": "Value", "Type": "Text", "line": 15, "value": "C" }
+                },
+                {
+                  "kind": "Assignment",
+                  "line": 16,
+                  "identifier": {
+                    "kind": "Identifier",
+                    "line": 16,
+                    "Type": null,
+                    "name": "isPassing"
+                  },
+                  "value": {
+                    "kind": "Value",
+                    "Type": "Boolean",
+                    "line": 16,
+                    "value": "TRUE"
+                  }
+                }
+              ],
+              "else": {
+                "kind": "ifStm",
+                "line": 17,
+                "condition": {
+                  "kind": "BinaryOperation",
+                  "line": 17,
+                  "left": {
+                    "kind": "BinaryOperation",
+                    "line": 17,
+                    "left": {
+                      "kind": "Identifier",
+                      "line": 17,
+                      "Type": "Number",
+                      "name": "grade"
+                    },
+                    "right": {
+                      "kind": "Value",
+                      "Type": "Number",
+                      "line": 17,
+                      "value": "500"
+                    },
+                    "operator": "GREATER"
+                  },
+                  "right": {
+                    "kind": "BinaryOperation",
+                    "line": 17,
+                    "left": {
+                      "kind": "Identifier",
+                      "line": 17,
+                      "Type": "Number",
+                      "name": "grade"
+                    },
+                    "right": {
+                      "kind": "Value",
+                      "Type": "Number",
+                      "line": 17,
+                      "value": "500"
+                    },
+                    "operator": "EQUAL"
+                  },
+                  "operator": "AND"
+                },
+                "body": [
+                  {
+                    "kind": "Assignment",
+                    "line": 18,
+                    "identifier": {
+                      "kind": "Identifier",
+                      "line": 18,
+                      "Type": null,
+                      "name": "letterGrade"
+                    },
+                    "value": { "kind": "Value", "Type": "Text", "line": 18, "value": "D" }
+                  },
+                  {
+                    "kind": "Assignment",
+                    "line": 19,
+                    "identifier": {
+                      "kind": "Identifier",
+                      "line": 19,
+                      "Type": null,
+                      "name": "isPassing"
+                    },
+                    "value": {
+                      "kind": "Value",
+                      "Type": "Boolean",
+                      "line": 19,
+                      "value": "FALSE"
+                    }
+                  }
+                ],
+                "else": {
+                  "kind": "elseStm",
+                  "line": 20,
+                  "body": [
+                    {
+                      "kind": "Assignment",
+                      "line": 21,
+                      "identifier": {
+                        "kind": "Identifier",
+                        "line": 21,
+                        "Type": null,
+                        "name": "letterGrade"
+                      },
+                      "value": {
+                        "kind": "Value",
+                        "Type": "Text",
+                        "line": 21,
+                        "value": "F"
+                      }
+                    },
+                    {
+                      "kind": "Assignment",
+                      "line": 22,
+                      "identifier": {
+                        "kind": "Identifier",
+                        "line": 22,
+                        "Type": null,
+                        "name": "isPassing"
+                      },
+                      "value": {
+                        "kind": "Value",
+                        "Type": "Boolean",
+                        "line": 22,
+                        "value": "FALSE"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }

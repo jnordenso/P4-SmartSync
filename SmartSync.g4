@@ -17,10 +17,9 @@ declaration : TYPE ID '=' expression ';' | TYPE ID'[]' '=' '[' (arrayValue ','?)
 
 statements : ifStm | 'WHILE' condition '{' line* '}' | arrayStm;
             
-ifStm : 'IF' condition '{' line* '}' (elses | 'ELSE' '{' line* '}')?;
-elses : 'ELSE' 'IF' condition '{' line* '}' (elses | 'ELSE' '{' line* '}')?;
-
-arithmeticValue : arithmetic;
+ifStm : 'IF' condition '{' line* '}' (elses | else)?;
+elses : 'ELSE' 'IF' condition '{' line* '}' (elses | else)?;
+else : 'ELSE' '{' line* '}';
 
 expression : stringArithmetic | arithmetic | value | '(' expression ')';
 
