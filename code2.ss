@@ -29,3 +29,8 @@ WHILE grade LESS 1000 {
 Number FUNCTION addTwoNumbers(Number a, Number b) {
     RETURN [a,b];
 }
+
+DELAY 1000;
+
+OUTPUT 5;
+OUTPUT grade;

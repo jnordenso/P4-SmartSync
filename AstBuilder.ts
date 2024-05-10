@@ -33,6 +33,8 @@ import {
   NotEqual,
   Greater,
   Less,
+  Delay,
+  Output,
   Function,
   Array,
 } from "./AST.ts";
@@ -798,12 +800,48 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 
     visitOutput: (ctx: OutputContext) => Result = (ctx: OutputContext): Result => {
         console.log("Visiting output")
-        throw new Error("Not implemented");
-    }
+        
+        let value: Value | Identifier;
+        if (ctx.ID()) {
+          const identifierName = ctx.ID().getText();
+          const identifier: Identifier = {
+            kind: "Identifier",
+            line: ctx.start.line,
+            Type: undefined,
+            name: identifierName,
+          };
+
+            value = identifier;
+
+        } else {
+        value = this.visitValue(ctx.value()) as Value;
+        }
+
+        const output: Output = {
+          kind: "Output",
+          line: ctx.start.line,
+          value: value,
+    }; 
+
+    return output;
+}
 
     visitDelay: (ctx: DelayContext) => Result = (ctx: DelayContext): Result => {
+      
         console.log("Visiting delay")
-        throw new Error("Not implemented");
+
+        const value = this.visitValue(ctx.value());
+
+        const delay: Delay = {
+            kind: "Delay",
+            line: ctx.start.line,
+            value: value,
+            
+        };
+        return delay;
+
+        
+
     }
 
     visitArrayValue: (ctx: ArrayValueContext) => Result = (ctx: ArrayValueContext): Result => {
