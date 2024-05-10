@@ -2,6 +2,7 @@ export type NodeType =
     | "Program"
     | "Line"
     | "Identifier" 
+    | "ArrayIdentifier"
     | "Declaration"
     | "Assignment"
     | "Function"
@@ -20,7 +21,8 @@ export type NodeType =
     | "BinaryOperation"
     | "StringConcatenation"
     | "Value"
-    | "Type";
+    | "Type"
+    | "Array";
 
 
 export interface Line {
@@ -95,6 +97,7 @@ export interface Function extends Line {
     identifier: Identifier;
     parameters: Identifier[];
     body: Line[];
+    return: Expression;
 }
 
 export interface Output extends Line {
@@ -116,13 +119,19 @@ export interface Value extends Expression {
     value: string;
 }
 
+export interface Array extends Expression {
+    kind: "Array";
+    Type?: types;
+    value: Expression[];
+}
+
 export interface StringConcatenation extends Expression {
     kind: "StringConcatenation";
     values: string[];
 }
 
 export interface Identifier extends Expression {
-    kind: "Identifier";
+    kind: "Identifier" | "ArrayIdentifier";
     Type: types | undefined;
     name: string;
 }

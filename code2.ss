@@ -25,3 +25,7 @@ IF grade GREATER 900 OR grade EQUAL 900 {
 WHILE grade LESS 1000 {
     grade = grade + 1;
 }
+
+Number FUNCTION addTwoNumbers(Number a, Number b) {
+    RETURN [a,b];
+}

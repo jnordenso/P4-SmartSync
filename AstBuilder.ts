@@ -33,6 +33,8 @@ import {
   NotEqual,
   Greater,
   Less,
+  Function,
+  Array,
 } from "./AST.ts";
 import { StringArithmeticContext } from "./SmartSyncParser.ts";
 import { ArithmeticContext } from "./SmartSyncParser.ts";
@@ -696,13 +698,102 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 	};
 
 	visitFuncReturn: (ctx: FuncReturnContext) => Result = (ctx: FuncReturnContext): Result => {
-        console.log("Visiting funcReturn")
-		throw new Error("Not implemented");
+        console.log("Visiting funcReturn");
+
+        console.log("FuncReturn: ", ctx.getText(), ctx.getChildCount());
+
+        switch (true) {
+            case !!ctx.value(): {
+                return this.visitValue(ctx.value());
+            }
+            case !!ctx.ID() && ctx.getChild(1).getText() === "[]": {
+                throw new Error("Not implemented");
+            }
+            case !!ctx.arithmetic(): {
+                return this.visitArithmetic(ctx.arithmetic());
+            }
+            case ctx.getChild(0).getText() === "[]" || !!ctx.arrayValue : {
+                if (ctx.getChild(0).getText() === "[]") {
+                    const array: Array = {
+                        kind: "Array",
+                        line: ctx.start.line,
+                        Type: undefined,
+                        value: [],
+                    };
+                    return array;
+                } else {
+                    const arrayValues: Expression[] = [];
+                    ctx.arrayValue_list().forEach((arrayValue) => {
+                        const value = this.visitArrayValue(arrayValue);
+                        if (value) {
+                            arrayValues.push(value as Expression);
+                        }
+                    });
+
+                    const array: Array = {
+                        kind: "Array",
+                        line: ctx.start.line,
+                        Type: undefined,
+                        value: arrayValues,
+                    }
+                    return array;
+                }
+            }
+            default:
+                throw new Error("Unknown return value");
+        }
 	};
 
     visitFunctions: (ctx: FunctionsContext) => Result = (ctx: FunctionsContext): Result => {
         console.log("Visiting functions")
-        throw new Error("Not implemented");
+
+        console.log("Functions: ", ctx.getText(), ctx.getChildCount(), ctx.TYPE_list().length, ctx.ID_list().length);
+
+        const identifier: Identifier = {
+            kind: "Identifier",
+            line: ctx.start.line,
+            Type: ctx.TYPE(0).getText() as types,
+            name: ctx.ID(0).getText(),
+        };
+
+        const parameters: Identifier[] = [];
+
+        for (let i = 1; i < ctx.TYPE_list().length; i++) {
+            const parameter: Identifier = {
+                kind: "Identifier",
+                line: ctx.start.line,
+                Type: ctx.TYPE(i).getText() as types,
+                name: ctx.ID(i).getText(),
+            };
+            parameters.push(parameter);
+        }
+
+        const body: Line[] = [];
+
+        ctx.line_list().forEach((line) => {
+            const astLine = this.visit(line);
+            console.log("AST Line: ", astLine)
+            if (astLine) {
+                body.push(astLine);
+            }
+        });
+
+        const returnVal = this.visitFuncReturn(ctx.funcReturn());
+        
+
+        console.log("Function: ", identifier, parameters, body);
+
+        const func: Function = {
+            kind: "Function",
+            line: ctx.start.line,
+            Type: ctx.TYPE(0).getText() as types,
+            identifier,
+            parameters,
+            body,
+            return: returnVal as Expression,
+        };
+
+        return func;
     };
 
     visitOutput: (ctx: OutputContext) => Result = (ctx: OutputContext): Result => {
@@ -717,7 +808,23 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 
     visitArrayValue: (ctx: ArrayValueContext) => Result = (ctx: ArrayValueContext): Result => {
         console.log("Visiting arrayValue")
-        throw new Error("Not implemented");
+
+        console.log("ArrayValue: ", ctx.getText(), ctx.getChildCount());
+
+        if (ctx.getChild(0).getText() === "[" && ctx.getChild(ctx.getChildCount() - 1).getText() === "]") {
+
+            const value = this.visitValue(ctx.value());
+
+            const array: Array = {
+                kind: "Array",
+                line: ctx.start.line,
+                Type: undefined,
+                value: [value as Expression],
+            }
+            return array;
+        } else {
+            return this.visitValue(ctx.value());
+        }
     }
 
     visitArrayStm: (ctx: ArrayStmContext) => Result = (ctx: ArrayStmContext): Result => {
