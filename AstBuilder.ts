@@ -51,7 +51,12 @@ import {
 	ElseStm,
 	IfStm,
 	WhileStm,
+	IndexOf,
+	Size,
+  IndexAssignment,
 } from "./AST.ts";
+import { Pull } from "./AST.ts";
+import { Push } from "./AST.ts";
 
 // the result of visiting a node in the AST
 type Result = Line | Declaration | Expression;
@@ -86,16 +91,16 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 		console.log("Visiting line");
 		console.log("Line: ", ctx.getText(), ctx.getChildCount());
 
-		if (ctx.getChildCount() > 1) {
-			throw new Error("Not implemented here");
-		} else {
+		if (ctx.getChildCount() === 1) {
 			return this.visit(ctx.getChild(0));
+		} else {
+			throw new Error("SHOULD NOT HAPPEN");
 		}
 	};
 
 	visitValue: (ctx: ValueContext) => Result = (ctx: ValueContext): Result => {
 		console.log("Visiting value");
-		let result: Value | Identifier;
+		let result: Value | Identifier | IndexOf | Size | Function;
 
 		switch (true) {
 			case !!ctx.BOOL(): {
@@ -139,21 +144,74 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 				ctx.getChildCount() === 3 &&
 				ctx.getChild(1).getText() === "[]" &&
 				ctx.getChild(2).getText() === "SIZE": {
-				throw new Error("Not implemented");
+				const identifier: Identifier = {
+					kind: "Identifier",
+					line: ctx.start.line,
+					Type: undefined,
+					name: ctx.ID().getText(),
+				};
+
+				result = {
+					kind: "Size",
+					line: ctx.start.line,
+					identifier,
+				};
+				break;
 			}
 			// case for ID[value]
 			case !!ctx.ID() &&
 				ctx.getChildCount() === 4 &&
 				ctx.getChild(1).getText() === "[" &&
 				ctx.getChild(3).getText() === "]": {
-				throw new Error("Not implemented");
+				const identifier: Identifier = {
+					kind: "Identifier",
+					line: ctx.start.line,
+					Type: undefined,
+					name: ctx.ID().getText(),
+				};
+
+				result = {
+					kind: "IndexOf",
+					line: ctx.start.line,
+					identifier,
+					index: this.visitValue(ctx.value()),
+				};
+				break;
 			}
 			// case for ID(funcReturn)
 			case !!ctx.ID() &&
 				ctx.getChildCount() >= 3 &&
 				ctx.getChild(1).getText() === "(" &&
 				ctx.getChild(ctx.getChildCount() - 1).getText() === ")": {
-				throw new Error("Not implemented");
+                    
+                const identifier: Identifier = {
+                    kind: "Identifier",
+                    line: ctx.start.line,
+                    Type: undefined,
+                    name: ctx.ID().getText(),
+                };
+
+                const parameters: Identifier[] = [];
+
+                ctx.funcReturn_list().forEach((funcReturn) => {
+                    const parameter = this.visitFuncReturn(funcReturn);
+                    if (parameter) {
+                        parameters.push(parameter as Identifier);
+                    }
+                });
+
+                const func: Function = {
+                    kind: "Function",
+                    line: ctx.start.line,
+                    Type: undefined,
+                    identifier,
+                    parameters,
+                    body: undefined,
+                    return: undefined,
+                };
+
+                result = func;
+                break;
 			}
 			default:
 				throw new Error("Unknown value");
@@ -167,28 +225,51 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 		const identifierName = ctx.ID().getText();
 		const startLine = ctx.start.line;
 
-		if (this.visitExpression) {
-			const value = this.visitExpression(ctx.expression());
+        const identifier: Identifier = {
+            kind: "Identifier",
+            line: startLine,
+            Type: type,
+            name: identifierName,
+        };
 
-			const identifier: Identifier = {
-				kind: "Identifier",
-				line: startLine,
-				Type: type,
-				name: identifierName,
-			};
+        switch (true) {
+            case !!ctx.ID() && ctx.getChild(2).getText() === "[]": {
 
-			const declaration: Declaration = {
-				kind: "Declaration",
-				line: startLine,
-				Type: type,
-				identifier,
-				value: value as Expression,
-			};
+                const arrayValues: Expression[] = [];
+                ctx.arrayValue_list().forEach((arrayValue) => {
+                    const value = this.visitArrayValue(arrayValue);
+                    if (value) {
+                        arrayValues.push(value as Expression);
+                    }
+                });
 
-			return declaration;
-		}
+                const array: Array = {
+                    kind: "Array",
+                    line: startLine,
+                    Type: type,
+                    Identifier: identifier,
+                    value: arrayValues,
+                };
 
-		return null as unknown as Result;
+                return array;
+                
+            }
+            case !!ctx.ID() && ctx.getChild(2).getText() !== "[]": {
+                const value = this.visitExpression(ctx.expression());
+
+                const declaration: Declaration = {
+                    kind: "Declaration",
+                    line: startLine,
+                    Type: type,
+                    identifier,
+                    value: value as Expression,
+                };
+
+                return declaration;
+            }
+            default:
+                throw new Error("Unknown declaration");
+        }
 	};
 
 	visitStatements: (ctx: StatementsContext) => Result = (ctx: StatementsContext): Result => {
@@ -224,8 +305,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 				return whileStm;
 			}
 			case !!ctx.arrayStm(): {
-				console.log("Array statement");
-				throw new Error("Not implemented");
+                return this.visitArrayStm(ctx.arrayStm());
 			}
 			default:
 				throw new Error("Unknown statement");
@@ -693,6 +773,51 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 
 				return assignment;
 			}
+            case !!ctx.ID() && ctx.getChild(1).getText() === "[" && !!ctx.value() && ctx.getChild(3).getText() === "]": {
+                const identifier: Identifier = {
+                    kind: "Identifier",
+                    line: ctx.start.line,
+                    Type: undefined,
+                    name: ctx.ID().getText(),
+                };
+
+                const index = this.visitValue(ctx.value());
+
+                const indexAssignment: IndexAssignment = {
+                    kind: "IndexAssignment",
+                    line: ctx.start.line,
+                    identifier,
+                    index: index as Expression,
+                    value: this.visitExpression(ctx.expression()) as Expression,
+                };
+                return indexAssignment;
+            }
+            case !!ctx.ID() && ctx.getChild(1).getText() === "[]" && !!ctx.arrayValue: {
+                const identifier: Identifier = {
+                    kind: "Identifier",
+                    line: ctx.start.line,
+                    Type: undefined,
+                    name: ctx.ID().getText(),
+                };
+
+                const arrayValues: Expression[] = [];
+                ctx.arrayValue_list().forEach((arrayValue) => {
+                    const value = this.visitArrayValue(arrayValue);
+                    if (value) {
+                        arrayValues.push(value as Expression);
+                    }
+                });
+
+                const array: Array = {
+                    kind: "Array",
+                    line: ctx.start.line,
+                    Type: undefined,
+                    Identifier: identifier,
+                    value: arrayValues,
+                };
+
+                return array;
+            }
 			default:
 				throw new Error("Unknown assignment");
 		}
@@ -708,7 +833,21 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 				return this.visitValue(ctx.value());
 			}
 			case !!ctx.ID() && ctx.getChild(1).getText() === "[]": {
-				throw new Error("Not implemented");
+				const identifier: Identifier = {
+                    kind: "Identifier",
+                    line: ctx.start.line,
+                    Type: undefined,
+                    name: ctx.ID().getText(),
+                };
+
+                const array: Array = {
+                    kind: "Array",
+                    line: ctx.start.line,
+                    Type: undefined,
+                    Identifier: identifier,
+                    value: undefined,
+                };
+                return array;
 			}
 			case !!ctx.arithmetic(): {
 				return this.visitArithmetic(ctx.arithmetic());
@@ -858,6 +997,43 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 
 	visitArrayStm: (ctx: ArrayStmContext) => Result = (ctx: ArrayStmContext): Result => {
 		console.log("Visiting arrayStm");
-		throw new Error("Not implemented");
+
+        switch (true) {
+            case ctx.getChild(2).getText() === "PULL": {
+                const identifier: Identifier = {
+                    kind: "Identifier",
+                    line: ctx.start.line,
+                    Type: undefined,
+                    name: ctx.ID().getText(),
+                };
+
+                const pull: Pull = {
+                    kind: "Pull",
+                    line: ctx.start.line,
+                    identifier,
+                };
+                return pull;
+            }
+            case ctx.getChild(2).getText() === "PUSH" && !!ctx.value(): {
+                const identifier: Identifier = {
+                    kind: "Identifier",
+                    line: ctx.start.line,
+                    Type: undefined,
+                    name: ctx.ID().getText(),
+                };
+
+                const value = this.visitValue(ctx.value());
+
+                const push: Push = {
+                    kind: "Push",
+                    line: ctx.start.line,
+                    identifier,
+                    value: value as Expression,
+                };
+                return push;
+            }
+            default:
+                throw new Error("Unknown array statement");
+        }
 	};
 }

@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import AstVisitor from './AstBuilder.ts';
 import util from 'node:util';
 
-const filePath = './code2.ss';
+const filePath = './code.ss';
 const input = fs.readFileSync(filePath, 'utf-8');
 
 const chars = new CharStream(input);

@@ -35,14 +35,14 @@ atomCon : NUMBER | ID | '(' condition ')';
 
 assignments : ID '=' expression ';' | ID'[' value ']' '=' expression ';' | ID'[]' '=' '[' (arrayValue ','?)* ']' ';';
 
-funcReturn : value | ID '[]'? | arithmetic | '[' (arrayValue ','?)* ']';
+funcReturn : value | ID '[]' | arithmetic | '[' (arrayValue ','?)* ']';
 functions : TYPE 'FUNCTION' ID '(' (TYPE ID'[]'? ','?)* ')' '{' line* 'RETURN' funcReturn';''}';
 
 output : 'OUTPUT' (value | ID'[' value ']') ';';
 delay : 'DELAY' value ';';
 
 arrayValue : '[' value ']' | value;
-arrayStm : ID'[' value ']' | ID'[]' ('PUSH' value ';'| 'PULL' ';' | 'SIZE' ';');
+arrayStm : ID'[]' ('PUSH' value ';'| 'PULL' ';');
 
 WS : [ \t\r\n]+ -> skip ; // skip spaces, tabs, newlines
 COMMENT : '#'.*?'#' -> skip ; // skip comments

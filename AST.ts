@@ -14,6 +14,7 @@ export type NodeType =
     | "WhileStm"
     // Array Statements
     | "IndexOf"
+    | "IndexAssignment"
     | "Push" 
     | "Pull"
     | "Size"
@@ -67,6 +68,15 @@ export interface ArrayStm extends Statement {}
 export interface IndexOf extends ArrayStm {
     kind: "IndexOf"
     identifier: Identifier;
+    index: Expression;
+}
+
+export interface IndexAssignment extends ArrayStm {
+    kind: "IndexAssignment";
+    identifier: Identifier;
+    index: Expression;
+    value: Expression;
+
 }
 
 export interface Push extends ArrayStm {
@@ -93,11 +103,11 @@ export interface Assignment extends Line {
 
 export interface Function extends Line {
     kind: "Function";
-    Type: types;
+    Type?: types;
     identifier: Identifier;
     parameters: Identifier[];
-    body: Line[];
-    return: Expression;
+    body?: Line[];
+    return?: Expression;
 }
 
 export interface Output extends Line {
@@ -122,9 +132,9 @@ export interface Value extends Expression {
 export interface Array extends Expression {
     kind: "Array";
     Type?: types;
-    value: Expression[];
+    Identifier?: Identifier;
+    value?: Expression[];
 }
-
 export interface StringConcatenation extends Expression {
     kind: "StringConcatenation";
     values: string[];
