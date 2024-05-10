@@ -25,3 +25,10 @@ IF grade GREATER 900 OR grade EQUAL 900 {
 WHILE grade LESS 1000 {
     grade = grade + 1;
 }
+
+
+
+DELAY 1000;
+
+OUTPUT 5;
+OUTPUT grade;
