@@ -47,6 +47,7 @@ import { LineContext } from "./SmartSyncParser.ts";
 import { Assignment } from "./AST.ts";
 import { ElseStm } from "./AST.ts";
 import { IfStm } from "./AST.ts";
+import { WhileStm } from "./AST.ts";
 
 // the result of visiting a node in the AST
 type Result = Line | Declaration | Expression;
@@ -189,9 +190,38 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 	visitStatements: (ctx: StatementsContext) => Result = (ctx: StatementsContext): Result => {
         console.log("Visiting statements")
 
+        console.log("Statements: ", ctx.getText(), ctx.getChildCount(), ctx.getChild(0).getText());
+
         switch (true) {
             case !!ctx.ifStm(): {
                 return this.visitIfStm(ctx.ifStm());
+            }
+            case ctx.getChild(0).getText() === "WHILE" && !!ctx.condition: {
+                console.log("While statement");
+
+                const condition = this.visitCondition(ctx.condition());
+
+                const body: Line[] = [];
+
+                ctx.line_list().forEach((line) => {
+                    const astLine = this.visit(line);
+                    if (astLine) {
+                        body.push(astLine);
+                    }
+                });
+
+                const whileStm: WhileStm = {
+                    kind: "WhileStm",
+                    line: ctx.start.line,
+                    condition: condition as Expression,
+                    body,
+                };
+
+                return whileStm;
+            }
+            case !!ctx.arrayStm(): {
+                console.log("Array statement");
+                throw new Error("Not implemented");
             }
             default:
                 throw new Error("Unknown statement");
@@ -487,7 +517,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 				const identifier: Identifier = {
 					kind: "Identifier",
 					line: ctx.start.line,
-					Type: "Number",
+					Type: undefined,
 					name: ctx.ID().getText(),
 				};
 
@@ -627,7 +657,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
                 const identifier: Identifier = {
                     kind: "Identifier",
                     line: ctx.start.line,
-                    Type: "Number",
+                    Type: undefined,
                     name: ctx.ID().getText(),
                 };
                 return identifier;
