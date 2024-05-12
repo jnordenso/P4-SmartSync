@@ -61,40 +61,55 @@ import { Push } from "./AST.ts";
 // the result of visiting a node in the AST
 type Result = Line | Declaration | Expression;
 
-export default class AstVisitor extends SmartSyncVisitor<Result> {
+/**
+ * This class defines the Concrete Syntax Tree Visitor.
+ * It visits the nodes in the Concrete Syntax Tree and returns the result of visiting each node.
+ * @param <Result> The return type of the visit operation.
+ * @example const cstVisitor = new cstVisitor();
+ * const ast = cstVisitor.visitProgram(ctx);
+ * @returns the Abstract Syntax Tree by visiting the Program node and its children
+ */
+export default class cstVisitor extends SmartSyncVisitor<Result> {
+	/**
+	 * Visit the Program node in the Concrete Syntax Tree.
+	 * This node is the root of the CST and recursively visits all other nodes.
+	 * @param ctx the CST
+	 * @return the visitor result
+	 */
 	visitProgram: (ctx: ProgramContext) => Result = (ctx: ProgramContext): Result => {
 		console.log("Visiting program");
 		const lines: Line[] = [];
 		const startLine = ctx.start.line;
-
+		// Check if the CST has children
 		if (!ctx.children) {
 			throw new Error("No children found");
 		}
 
+		// Visit each child node in the CST
 		for (const child of ctx.children) {
 			const astLine = this.visit(child);
 			if (astLine) {
 				lines.push(astLine);
 			}
 		}
-
+		// Create the Program node in the AST
 		const program: Program = {
 			kind: "Program",
 			line: startLine,
 			body: lines,
 		};
-
+		// Return the Program node
 		return program;
 	};
 
 	visitLine: (ctx: LineContext) => Result = (ctx: LineContext): Result => {
 		console.log("Visiting line");
 		console.log("Line: ", ctx.getText(), ctx.getChildCount());
-
+		// The line node has only one child node
 		if (ctx.getChildCount() === 1) {
 			return this.visit(ctx.getChild(0));
 		} else {
-			throw new Error("SHOULD NOT HAPPEN");
+			throw new Error("SHOULD NOT HAPPEN"); // This should not happen as the CST should have only one child node
 		}
 	};
 
@@ -102,7 +117,9 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 		console.log("Visiting value");
 		let result: Value | Identifier | IndexOf | Size | Function;
 
+		// Check if the value is a boolean, string, number or identifier
 		switch (true) {
+			// case for boolean
 			case !!ctx.BOOL(): {
 				result = {
 					kind: "Value",
@@ -112,6 +129,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 				};
 				break;
 			}
+			// case for string
 			case !!ctx.STRING(): {
 				result = {
 					kind: "Value",
@@ -121,6 +139,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 				};
 				break;
 			}
+			// case for number
 			case !!ctx.NUMBER(): {
 				result = {
 					kind: "Value",
@@ -130,6 +149,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 				};
 				break;
 			}
+			// case for ID
 			case !!ctx.ID() && ctx.getChildCount() === 1: {
 				result = {
 					kind: "Identifier",
@@ -193,6 +213,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 
                 const parameters: Identifier[] = [];
 
+				// Visit each parameter in the function call
                 ctx.funcReturn_list().forEach((funcReturn) => {
                     const parameter = this.visitFuncReturn(funcReturn);
                     if (parameter) {
@@ -233,9 +254,11 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
         };
 
         switch (true) {
+			// case for Type ID[] = [value, value, value]
             case !!ctx.ID() && ctx.getChild(2).getText() === "[]": {
 
                 const arrayValues: Expression[] = [];
+				// Visit each value in the array
                 ctx.arrayValue_list().forEach((arrayValue) => {
                     const value = this.visitArrayValue(arrayValue);
                     if (value) {
@@ -254,6 +277,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
                 return array;
                 
             }
+			// case for Type ID = value
             case !!ctx.ID() && ctx.getChild(2).getText() !== "[]": {
                 const value = this.visitExpression(ctx.expression());
 
@@ -275,12 +299,12 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 	visitStatements: (ctx: StatementsContext) => Result = (ctx: StatementsContext): Result => {
 		console.log("Visiting statements");
 
-		console.log("Statements: ", ctx.getText(), ctx.getChildCount(), ctx.getChild(0).getText());
-
 		switch (true) {
+			// case for if statement
 			case !!ctx.ifStm(): {
 				return this.visitIfStm(ctx.ifStm());
 			}
+			// case for while statement
 			case ctx.getChild(0).getText() === "WHILE" && !!ctx.condition: {
 				console.log("While statement");
 
@@ -288,6 +312,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 
 				const body: Line[] = [];
 
+				// Visit each line in the while statement
 				ctx.line_list().forEach((line) => {
 					const astLine = this.visit(line);
 					if (astLine) {
@@ -304,6 +329,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 
 				return whileStm;
 			}
+			// case for array statement
 			case !!ctx.arrayStm(): {
                 return this.visitArrayStm(ctx.arrayStm());
 			}
@@ -328,6 +354,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 		});
 
 		switch (true) {
+			// case for else statement
 			case !!ctx.else_(): {
 				const elseBody = this.visitElse(ctx.else_());
 				console.log("Else body: ", elseBody);
@@ -341,6 +368,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 				};
 				return ifStm;
 			}
+			// case for else if... statement
 			case !!ctx.elses(): {
 				const elses = this.visitElses(ctx.elses());
 
@@ -372,6 +400,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 
 		const body: Line[] = [];
 
+		// Visit each line in the else if statement
 		ctx.line_list().forEach((line) => {
 			const astLine = this.visit(line);
 			if (astLine) {
@@ -380,6 +409,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 		});
 
 		switch (true) {
+			// case for else statement
 			case !!ctx.else_(): {
 				const elseBody = this.visitElse(ctx.else_());
 
@@ -392,6 +422,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 				};
 				return ifStm;
 			}
+			// case for else if... statement
 			case !!ctx.elses(): {
 				const elses = this.visitElses(ctx.elses());
 
@@ -404,6 +435,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 				};
 				return ifStm;
 			}
+			// case for a simple if statement without else
 			default: {
 				const ifStm: IfStm = {
 					kind: "ifStm",
@@ -420,7 +452,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 		console.log("Visiting else");
 
 		const body: Line[] = [];
-
+		// Visit each line in the else statement
 		ctx.line_list().forEach((line) => {
 			const astLine = this.visit(line);
 			if (astLine) {
@@ -439,21 +471,15 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 
 	visitExpression: (ctx: ExpressionContext) => Result = (ctx: ExpressionContext): Result => {
 		console.log("Visiting expression");
-		// Check if the expression is a stringArithmetic, arithmetic, value or expression
-		// used !! to convert the value to a boolean and then check if it is true
-
-		console.log("Expression: ", ctx.getText());
 
 		switch (true) {
-			// case for ( expression )
-			/* case ctx.getText().startsWith("(") && ctx.getText().endsWith(")"): {
-                console.log("Expression: ", ctx);
-                return this.visitExpression(ctx.);
-            } */
+			// case for stringArithmetic
 			case !!ctx.stringArithmetic():
 				return this.visitStringArithmetic(ctx.stringArithmetic());
+			// case for arithmetic
 			case !!ctx.arithmetic():
 				return this.visitArithmetic(ctx.arithmetic());
+			// case for value
 			case !!ctx.value():
 				return this.visitValue(ctx.value());
 			default:
@@ -465,10 +491,12 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 		console.log("Visiting stringArithmetic");
 		const values: string[] = [];
 
+		// Check if the CST has children nodes to visit
 		if (!ctx.children) {
 			throw new Error("No children found");
 		}
 
+		// Split the string into values 
 		const text = ctx.getText();
 		const splitValues = text.split("+");
 
@@ -477,6 +505,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 			values.push(value.slice(1, -1));
 		}
 
+		// if there is only one value, return a Value node
 		if (values.length === 1) {
 			const value: Value = {
 				kind: "Value",
@@ -485,6 +514,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 				value: values[0],
 			};
 			return value;
+		// if there are multiple values, return a StringConcatenation node
 		} else {
 			const StringConcatenation: StringConcatenation = {
 				kind: "StringConcatenation",
@@ -497,10 +527,11 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 
 	visitArithmetic: (ctx: ArithmeticContext) => Result = (ctx: ArithmeticContext): Result => {
 		console.log("Visiting arithmetic");
-		console.log("Arithmetic: ", ctx.getText());
 
+		// first get the left operand
 		let left = this.visitMultExpr(ctx.multExpr(0));
 
+		// then iterate through the rest of the children to get the right operand and operator
 		let y = 1;
 		for (let i = 1; i < ctx.getChildCount() - 1; i += 2) {
 			// Skip multExpr children
@@ -540,8 +571,11 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 
 	visitMultExpr: (ctx: MultExprContext) => Result = (ctx: MultExprContext): Result => {
 		console.log("Visiting multExpr");
-		console.log("MultExpr: ", ctx.getText(), ctx.getChildCount());
+
+		// first get the left operand
 		let left = this.visitAtom(ctx.atom(0));
+
+		// then iterate through the rest of the children to get the right operand and operator
 		let y = 1;
 		for (let i = 1; i < ctx.getChildCount() - 1; i += 2) {
 			// Skip multExpr children
@@ -581,11 +615,12 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 
 	visitAtom: (ctx: AtomContext) => Result = (ctx: AtomContext): Result => {
 		console.log("Visiting atom");
-		console.log("Atom: ", ctx.getText(), ctx.getChildCount());
 
 		switch (true) {
+			// case for (arithmetic)
 			case ctx.getChildCount() === 3 && ctx.getChild(0).getText() === "(" && ctx.getChild(2).getText() === ")":
 				return this.visitArithmetic(ctx.arithmetic());
+			// case for number
 			case !!ctx.NUMBER(): {
 				const value: Value = {
 					kind: "Value",
@@ -596,6 +631,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 
 				return value;
 			}
+			// case for ID
 			case !!ctx.ID(): {
 				const identifier: Identifier = {
 					kind: "Identifier",
@@ -614,10 +650,10 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 	visitCondition: (ctx: ConditionContext) => Result = (ctx: ConditionContext): Result => {
 		console.log("Visiting condition");
 
-		console.log("Condition: ", ctx.getText(), ctx.getChildCount());
-
+		// first get the left operand
 		let left = this.visitMultConExpr(ctx.multConExpr(0));
 
+		// then iterate through the rest of the children to get the right operand and operator
 		let y = 1;
 		for (let i = 1; i < ctx.getChildCount() - 1; i += 2) {
 			// Skip multExpr children
@@ -657,11 +693,12 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 
 	visitMultConExpr: (ctx: MultConExprContext) => Result = (ctx: MultConExprContext): Result => {
 		console.log("Visiting multConExpr");
-		console.log("MultConExpr: ", ctx.getText(), ctx.getChildCount());
 
+		// first get the left operand
 		let left = this.visitAtomCon(ctx.atomCon(0));
 		let y = 1;
 
+		// then iterate through the rest of the children to get the right operand and operator
 		for (let i = 1; i < ctx.getChildCount() - 1; i += 2) {
 			// Skip multExpr children
 			const operator = ctx.getChild(i).getText(); // Get operator
@@ -722,11 +759,12 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 
 	visitAtomCon: (ctx: AtomConContext) => Result = (ctx: AtomConContext): Result => {
 		console.log("Visiting atomCon");
-		console.log("AtomCon: ", ctx.getText(), ctx.getChildCount());
 
 		switch (true) {
+			// case for (condition)
 			case ctx.getChildCount() === 3 && ctx.getChild(0).getText() === "(" && ctx.getChild(2).getText() === ")":
 				return this.visitCondition(ctx.condition());
+			// case for number
 			case !!ctx.NUMBER(): {
 				const value: Value = {
 					kind: "Value",
@@ -736,6 +774,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 				};
 				return value;
 			}
+			// case for ID
 			case !!ctx.ID(): {
 				const identifier: Identifier = {
 					kind: "Identifier",
@@ -752,8 +791,9 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 
 	visitAssignments: (ctx: AssignmentsContext) => Result = (ctx: AssignmentsContext): Result => {
 		console.log("Visiting assignments");
-		console.log("Assignments: ", ctx.getText(), ctx.getChildCount());
+
 		switch (true) {
+			// case for ID = expression ;
 			case !!ctx.ID() && ctx.getChildCount() === 4: {
 				const identifier: Identifier = {
 					kind: "Identifier",
@@ -773,6 +813,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 
 				return assignment;
 			}
+			// case for ID[value] = expression ;
             case !!ctx.ID() && ctx.getChild(1).getText() === "[" && !!ctx.value() && ctx.getChild(3).getText() === "]": {
                 const identifier: Identifier = {
                     kind: "Identifier",
@@ -792,6 +833,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
                 };
                 return indexAssignment;
             }
+			// case for ID[] = [value, value, value] ;
             case !!ctx.ID() && ctx.getChild(1).getText() === "[]" && !!ctx.arrayValue: {
                 const identifier: Identifier = {
                     kind: "Identifier",
@@ -826,12 +868,12 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 	visitFuncReturn: (ctx: FuncReturnContext) => Result = (ctx: FuncReturnContext): Result => {
 		console.log("Visiting funcReturn");
 
-		console.log("FuncReturn: ", ctx.getText(), ctx.getChildCount());
-
 		switch (true) {
+			// case for value
 			case !!ctx.value(): {
 				return this.visitValue(ctx.value());
 			}
+			// case for ID[]
 			case !!ctx.ID() && ctx.getChild(1).getText() === "[]": {
 				const identifier: Identifier = {
                     kind: "Identifier",
@@ -849,10 +891,13 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
                 };
                 return array;
 			}
+			// case for arithmetic
 			case !!ctx.arithmetic(): {
 				return this.visitArithmetic(ctx.arithmetic());
 			}
+			// case for [] or [value, value, value]
 			case ctx.getChild(0).getText() === "[]" || !!ctx.arrayValue: {
+				// case for []
 				if (ctx.getChild(0).getText() === "[]") {
 					const array: Array = {
 						kind: "Array",
@@ -861,6 +906,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 						value: [],
 					};
 					return array;
+				// case for [value, value, value]
 				} else {
 					const arrayValues: Expression[] = [];
 					ctx.arrayValue_list().forEach((arrayValue) => {
@@ -887,8 +933,6 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 	visitFunctions: (ctx: FunctionsContext) => Result = (ctx: FunctionsContext): Result => {
 		console.log("Visiting functions");
 
-		console.log("Functions: ", ctx.getText(), ctx.getChildCount(), ctx.TYPE_list().length, ctx.ID_list().length);
-
 		const identifier: Identifier = {
 			kind: "Identifier",
 			line: ctx.start.line,
@@ -898,6 +942,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 
 		const parameters: Identifier[] = [];
 
+		// Visit each parameter in the function declaration to get the type and identifier
 		for (let i = 1; i < ctx.TYPE_list().length; i++) {
 			const parameter: Identifier = {
 				kind: "Identifier",
@@ -910,6 +955,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 
 		const body: Line[] = [];
 
+		// Visit each line in the function
 		ctx.line_list().forEach((line) => {
 			const astLine = this.visit(line);
 			console.log("AST Line: ", astLine);
@@ -918,9 +964,8 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 			}
 		});
 
+		// Get the return value of the function
 		const returnVal = this.visitFuncReturn(ctx.funcReturn());
-
-		console.log("Function: ", identifier, parameters, body);
 
 		const func: Function = {
 			kind: "Function",
@@ -939,6 +984,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 		console.log("Visiting output");
 
 		let value: Value | Identifier;
+		// Check if the output is an identifier or a value
 		if (ctx.ID()) {
 			const identifierName = ctx.ID().getText();
 			const identifier: Identifier = {
@@ -965,6 +1011,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 	visitDelay: (ctx: DelayContext) => Result = (ctx: DelayContext): Result => {
 		console.log("Visiting delay");
 
+		// Get the value of the delay
 		const value = this.visitValue(ctx.value());
 
 		const delay: Delay = {
@@ -978,8 +1025,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 	visitArrayValue: (ctx: ArrayValueContext) => Result = (ctx: ArrayValueContext): Result => {
 		console.log("Visiting arrayValue");
 
-		console.log("ArrayValue: ", ctx.getText(), ctx.getChildCount());
-
+		// case for [value, value, value]
 		if (ctx.getChild(0).getText() === "[" && ctx.getChild(ctx.getChildCount() - 1).getText() === "]") {
 			const value = this.visitValue(ctx.value());
 
@@ -999,6 +1045,7 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
 		console.log("Visiting arrayStm");
 
         switch (true) {
+			// case for ID[] PULL
             case ctx.getChild(2).getText() === "PULL": {
                 const identifier: Identifier = {
                     kind: "Identifier",
@@ -1013,7 +1060,8 @@ export default class AstVisitor extends SmartSyncVisitor<Result> {
                     identifier,
                 };
                 return pull;
-            }
+            }	
+			// case for ID[] PUSH value
             case ctx.getChild(2).getText() === "PUSH" && !!ctx.value(): {
                 const identifier: Identifier = {
                     kind: "Identifier",
