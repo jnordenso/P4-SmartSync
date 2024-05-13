@@ -216,7 +216,7 @@ export default class SymbolTable extends AstVisitor<void> {
                 this.visitDelay(ctx as Delay);
                 break;
 			default:
-				break;
+				throw new Error(`Unknown line kind: ${ctx.kind}`);
 		}
 	};
 
