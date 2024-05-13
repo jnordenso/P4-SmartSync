@@ -27,7 +27,7 @@ interface Scope {
 
 type Result = Program | Line | Declaration | Expression;
 
-export default class SymbolTable extends AstVisitor<Result> {
+export default class SymbolTable extends AstVisitor<void> {
     scopes: Map<Line[], Scope> = new Map(); // Map of scopes in the Symbol Table (key: block of lines, value: Scope)
     stackScopes: Scope[] = []; // Stack of scopes in the Symbol Table
     currentBlock: Line[] = []; // Current block of lines in the Symbol Table
@@ -37,9 +37,8 @@ export default class SymbolTable extends AstVisitor<Result> {
      * @param ast the Abstract Syntax Tree
      * @return the Decorated Abstract Syntax Tree
      */
-    BuildSymbolTable = (ast: Result): Result => {
-        const dast = this.visitProgram(ast);
-        return dast;
+    BuildSymbolTable = (ast: Result): void => {
+        this.visitProgram(ast); // Visits the Program node in the AST
     }
 
     /**
@@ -113,7 +112,23 @@ export default class SymbolTable extends AstVisitor<Result> {
         return null;
     }
 
+    visitProgram = (ctx: Program): void => {
+        this.NewScope(ctx.body); // Adds the global scope
+        
+        if (ctx.body.length > 0) {
+            ctx.body.forEach((line) => {
+                this.visitLine(line);
+            });
+        }
 
-    
+        this.ExitScope(); // Removes the global scope
+    }
+
+    visitLine = (ctx: Line): void => {
+        if (ctx.kind === "Declaration") {
+            this.visitDeclaration(ctx);
+        }
+    }
+
 }
 
