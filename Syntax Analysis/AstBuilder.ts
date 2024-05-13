@@ -54,12 +54,13 @@ import {
 	IndexOf,
 	Size,
   IndexAssignment,
+  ArrayDeclaration,
 } from "./AST.ts";
 import { Pull } from "./AST.ts";
 import { Push } from "./AST.ts";
 
 // the result of visiting a node in the AST
-type Result = Line | Declaration | Expression;
+type Result = Line | Declaration | ArrayDeclaration | Expression;
 
 /**
  * This class defines the Concrete Syntax Tree Visitor.
@@ -77,7 +78,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitProgram = (ctx: ProgramContext): Result => {
-		console.log("Visiting program");
+		//console.log("Visiting program");
 		const lines: Line[] = [];
 		const startLine = ctx.start.line;
 		// Check if the CST has children
@@ -103,18 +104,21 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 	};
 
 	visitLine = (ctx: LineContext): Result => {
-		console.log("Visiting line");
-		console.log("Line: ", ctx.getText(), ctx.getChildCount());
+		//console.log("Visiting line");
+
 		// The line node has only one child node
 		if (ctx.getChildCount() === 1) {
 			return this.visit(ctx.getChild(0));
+		} else if (ctx.getChildCount() === 0) {
+			throw new Error(`Line: ${ctx.start.line}, Invalid variable name`);
+		
 		} else {
 			throw new Error("SHOULD NOT HAPPEN"); // This should not happen as the CST should have only one child node
 		}
 	};
 
 	visitValue = (ctx: ValueContext): Result => {
-		console.log("Visiting value");
+		//console.log("Visiting value");
 		let result: Value | Identifier | IndexOf | Size | Function;
 
 		// Check if the value is a boolean, string, number or identifier
@@ -123,7 +127,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 			case !!ctx.BOOL(): {
 				result = {
 					kind: "Value",
-					Type: "Boolean",
+					type: "Boolean",
 					line: ctx.start.line,
 					value: ctx.BOOL().getText(),
 				};
@@ -133,7 +137,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 			case !!ctx.STRING(): {
 				result = {
 					kind: "Value",
-					Type: "Text",
+					type: "Text",
 					line: ctx.start.line,
 					value: ctx.STRING().getText(),
 				};
@@ -143,7 +147,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 			case !!ctx.NUMBER(): {
 				result = {
 					kind: "Value",
-					Type: "Number",
+					type: "Number",
 					line: ctx.start.line,
 					value: ctx.NUMBER().getText(),
 				};
@@ -154,7 +158,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 				result = {
 					kind: "Identifier",
 					line: ctx.start.line,
-					Type: undefined,
+					type: undefined,
 					name: ctx.ID().getText(),
 				};
 				break;
@@ -167,7 +171,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 				const identifier: Identifier = {
 					kind: "Identifier",
 					line: ctx.start.line,
-					Type: undefined,
+					type: undefined,
 					name: ctx.ID().getText(),
 				};
 
@@ -186,7 +190,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 				const identifier: Identifier = {
 					kind: "Identifier",
 					line: ctx.start.line,
-					Type: undefined,
+					type: undefined,
 					name: ctx.ID().getText(),
 				};
 
@@ -207,7 +211,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
                 const identifier: Identifier = {
                     kind: "Identifier",
                     line: ctx.start.line,
-                    Type: undefined,
+                    type: undefined,
                     name: ctx.ID().getText(),
                 };
 
@@ -224,7 +228,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
                 const func: Function = {
                     kind: "Function",
                     line: ctx.start.line,
-                    Type: undefined,
+                    type: undefined,
                     identifier,
                     parameters,
                     body: undefined,
@@ -241,7 +245,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 	};
 
 	visitDeclaration = (ctx: DeclarationContext): Result => {
-		console.log("Visiting declaration");
+		//console.log("Visiting declaration");
 		const type: types = ctx.TYPE().getText() as types;
 		const identifierName = ctx.ID().getText();
 		const startLine = ctx.start.line;
@@ -249,7 +253,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
         const identifier: Identifier = {
             kind: "Identifier",
             line: startLine,
-            Type: type,
+            type: type,
             name: identifierName,
         };
 
@@ -266,15 +270,15 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
                     }
                 });
 
-                const array: Array = {
-                    kind: "Array",
-                    line: startLine,
-                    Type: type,
-                    Identifier: identifier,
-                    value: arrayValues,
-                };
+				const declaration: ArrayDeclaration = {
+					kind: "ArrayDeclaration",
+					line: startLine,
+					type: type,
+					identifier,
+					value: arrayValues,
+				};
 
-                return array;
+                return declaration;
                 
             }
 			// case for Type ID = value
@@ -284,7 +288,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
                 const declaration: Declaration = {
                     kind: "Declaration",
                     line: startLine,
-                    Type: type,
+                    type: type,
                     identifier,
                     value: value as Expression,
                 };
@@ -297,7 +301,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 	};
 
 	visitStatements = (ctx: StatementsContext): Result => {
-		console.log("Visiting statements");
+		//console.log("Visiting statements");
 
 		switch (true) {
 			// case for if statement
@@ -306,7 +310,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 			}
 			// case for while statement
 			case ctx.getChild(0).getText() === "WHILE" && !!ctx.condition: {
-				console.log("While statement");
+				//console.log("While statement");
 
 				const condition = this.visitCondition(ctx.condition());
 
@@ -339,7 +343,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 	};
 
 	visitIfStm = (ctx: IfStmContext): Result => {
-		console.log("Visiting ifStm");
+		//console.log("Visiting ifStm");
 
 		const condition = this.visitCondition(ctx.condition());
 
@@ -347,7 +351,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 
 		ctx.line_list().forEach((line) => {
 			const astLine = this.visit(line);
-			console.log("AST Line: ", astLine);
+			//console.log("AST Line: ", astLine);
 			if (astLine) {
 				body.push(astLine);
 			}
@@ -357,10 +361,10 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 			// case for else statement
 			case !!ctx.else_(): {
 				const elseBody = this.visitElse(ctx.else_());
-				console.log("Else body: ", elseBody);
+				//console.log("Else body: ", elseBody);
 
 				const ifStm: IfStm = {
-					kind: "ifStm",
+					kind: "IfStm",
 					line: ctx.start.line,
 					condition: condition as Expression,
 					body,
@@ -373,7 +377,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 				const elses = this.visitElses(ctx.elses());
 
 				const ifStm: IfStm = {
-					kind: "ifStm",
+					kind: "IfStm",
 					line: ctx.start.line,
 					condition: condition as Expression,
 					body,
@@ -383,7 +387,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 			}
 			default: {
 				const ifStm: IfStm = {
-					kind: "ifStm",
+					kind: "IfStm",
 					line: ctx.start.line,
 					condition: condition as Expression,
 					body,
@@ -394,7 +398,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 	};
 
 	visitElses = (ctx: ElsesContext): Result => {
-		console.log("Visiting elses");
+		//console.log("Visiting elses");
 
 		const condition = this.visitCondition(ctx.condition());
 
@@ -414,7 +418,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 				const elseBody = this.visitElse(ctx.else_());
 
 				const ifStm: IfStm = {
-					kind: "ifStm",
+					kind: "IfStm",
 					line: ctx.start.line,
 					condition: condition as Expression,
 					body,
@@ -427,7 +431,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 				const elses = this.visitElses(ctx.elses());
 
 				const ifStm: IfStm = {
-					kind: "ifStm",
+					kind: "IfStm",
 					line: ctx.start.line,
 					condition: condition as Expression,
 					body,
@@ -438,7 +442,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 			// case for a simple if statement without else
 			default: {
 				const ifStm: IfStm = {
-					kind: "ifStm",
+					kind: "IfStm",
 					line: ctx.start.line,
 					condition: condition as Expression,
 					body,
@@ -449,7 +453,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 	};
 
 	visitElse = (ctx: ElseContext): Result => {
-		console.log("Visiting else");
+		//console.log("Visiting else");
 
 		const body: Line[] = [];
 		// Visit each line in the else statement
@@ -461,7 +465,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		});
 
 		const elseBody: ElseStm = {
-			kind: "elseStm",
+			kind: "ElseStm",
 			line: ctx.start.line,
 			body,
 		};
@@ -470,7 +474,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 	};
 
 	visitExpression = (ctx: ExpressionContext): Result => {
-		console.log("Visiting expression");
+		//console.log("Visiting expression");
 
 		switch (true) {
 			// case for stringArithmetic
@@ -488,7 +492,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 	};
 
 	visitStringArithmetic = (ctx: StringArithmeticContext): Result => {
-		console.log("Visiting stringArithmetic");
+		//console.log("Visiting stringArithmetic");
 		const values: string[] = [];
 
 		// Check if the CST has children nodes to visit
@@ -509,7 +513,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		if (values.length === 1) {
 			const value: Value = {
 				kind: "Value",
-				Type: "Text",
+				type: "Text",
 				line: ctx.start.line,
 				value: values[0],
 			};
@@ -526,7 +530,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 	};
 
 	visitArithmetic = (ctx: ArithmeticContext): Result => {
-		console.log("Visiting arithmetic");
+		//console.log("Visiting arithmetic");
 
 		// first get the left operand
 		let left = this.visitMultExpr(ctx.multExpr(0));
@@ -570,7 +574,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 	};
 
 	visitMultExpr = (ctx: MultExprContext): Result => {
-		console.log("Visiting multExpr");
+		//console.log("Visiting multExpr");
 
 		// first get the left operand
 		let left = this.visitAtom(ctx.atom(0));
@@ -614,7 +618,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 	};
 
 	visitAtom = (ctx: AtomContext): Result => {
-		console.log("Visiting atom");
+		//console.log("Visiting atom");
 
 		switch (true) {
 			// case for (arithmetic)
@@ -624,7 +628,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 			case !!ctx.NUMBER(): {
 				const value: Value = {
 					kind: "Value",
-					Type: "Number",
+					type: "Number",
 					line: ctx.start.line,
 					value: ctx.NUMBER().getText(),
 				};
@@ -636,7 +640,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 				const identifier: Identifier = {
 					kind: "Identifier",
 					line: ctx.start.line,
-					Type: undefined,
+					type: undefined,
 					name: ctx.ID().getText(),
 				};
 
@@ -648,7 +652,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 	};
 
 	visitCondition = (ctx: ConditionContext): Result => {
-		console.log("Visiting condition");
+		//console.log("Visiting condition");
 
 		// first get the left operand
 		let left = this.visitMultConExpr(ctx.multConExpr(0));
@@ -692,7 +696,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 	};
 
 	visitMultConExpr = (ctx: MultConExprContext): Result => {
-		console.log("Visiting multConExpr");
+		//console.log("Visiting multConExpr");
 
 		// first get the left operand
 		let left = this.visitAtomCon(ctx.atomCon(0));
@@ -758,7 +762,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 	};
 
 	visitAtomCon = (ctx: AtomConContext): Result => {
-		console.log("Visiting atomCon");
+		//console.log("Visiting atomCon");
 
 		switch (true) {
 			// case for (condition)
@@ -768,7 +772,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 			case !!ctx.NUMBER(): {
 				const value: Value = {
 					kind: "Value",
-					Type: "Number",
+					type: "Number",
 					line: ctx.start.line,
 					value: ctx.NUMBER().getText(),
 				};
@@ -779,7 +783,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 				const identifier: Identifier = {
 					kind: "Identifier",
 					line: ctx.start.line,
-					Type: undefined,
+					type: undefined,
 					name: ctx.ID().getText(),
 				};
 				return identifier;
@@ -790,7 +794,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 	};
 
 	visitAssignments = (ctx: AssignmentsContext): Result => {
-		console.log("Visiting assignments");
+		//console.log("Visiting assignments");
 
 		switch (true) {
 			// case for ID = expression ;
@@ -798,7 +802,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 				const identifier: Identifier = {
 					kind: "Identifier",
 					line: ctx.start.line,
-					Type: undefined,
+					type: undefined,
 					name: ctx.ID().getText(),
 				};
 
@@ -818,7 +822,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
                 const identifier: Identifier = {
                     kind: "Identifier",
                     line: ctx.start.line,
-                    Type: undefined,
+                    type: undefined,
                     name: ctx.ID().getText(),
                 };
 
@@ -838,7 +842,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
                 const identifier: Identifier = {
                     kind: "Identifier",
                     line: ctx.start.line,
-                    Type: undefined,
+                    type: undefined,
                     name: ctx.ID().getText(),
                 };
 
@@ -853,8 +857,8 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
                 const array: Array = {
                     kind: "Array",
                     line: ctx.start.line,
-                    Type: undefined,
-                    Identifier: identifier,
+                    type: undefined,
+                    identifier: identifier,
                     value: arrayValues,
                 };
 
@@ -866,7 +870,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 	};
 
 	visitFuncReturn = (ctx: FuncReturnContext): Result => {
-		console.log("Visiting funcReturn");
+		//console.log("Visiting funcReturn");
 
 		switch (true) {
 			// case for value
@@ -878,15 +882,15 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 				const identifier: Identifier = {
                     kind: "Identifier",
                     line: ctx.start.line,
-                    Type: undefined,
+                    type: undefined,
                     name: ctx.ID().getText(),
                 };
 
                 const array: Array = {
                     kind: "Array",
                     line: ctx.start.line,
-                    Type: undefined,
-                    Identifier: identifier,
+                    type: undefined,
+                    identifier: identifier,
                     value: undefined,
                 };
                 return array;
@@ -902,7 +906,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 					const array: Array = {
 						kind: "Array",
 						line: ctx.start.line,
-						Type: undefined,
+						type: undefined,
 						value: [],
 					};
 					return array;
@@ -919,7 +923,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 					const array: Array = {
 						kind: "Array",
 						line: ctx.start.line,
-						Type: undefined,
+						type: undefined,
 						value: arrayValues,
 					};
 					return array;
@@ -931,12 +935,12 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 	};
 
 	visitFunctions = (ctx: FunctionsContext): Result => {
-		console.log("Visiting functions");
+		//console.log("Visiting functions");
 
 		const identifier: Identifier = {
 			kind: "Identifier",
 			line: ctx.start.line,
-			Type: ctx.TYPE(0).getText() as types,
+			type: ctx.TYPE(0).getText() as types,
 			name: ctx.ID(0).getText(),
 		};
 
@@ -947,7 +951,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 			const parameter: Identifier = {
 				kind: "Identifier",
 				line: ctx.start.line,
-				Type: ctx.TYPE(i).getText() as types,
+				type: ctx.TYPE(i).getText() as types,
 				name: ctx.ID(i).getText(),
 			};
 			parameters.push(parameter);
@@ -958,7 +962,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		// Visit each line in the function
 		ctx.line_list().forEach((line) => {
 			const astLine = this.visit(line);
-			console.log("AST Line: ", astLine);
+			//console.log("AST Line: ", astLine);
 			if (astLine) {
 				body.push(astLine);
 			}
@@ -970,7 +974,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		const func: Function = {
 			kind: "Function",
 			line: ctx.start.line,
-			Type: ctx.TYPE(0).getText() as types,
+			type: ctx.TYPE(0).getText() as types,
 			identifier,
 			parameters,
 			body,
@@ -981,7 +985,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 	};
 
 	visitOutput = (ctx: OutputContext): Result => {
-		console.log("Visiting output");
+		//console.log("Visiting output");
 
 		let value: Value | Identifier;
 		// Check if the output is an identifier or a value
@@ -990,7 +994,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 			const identifier: Identifier = {
 				kind: "Identifier",
 				line: ctx.start.line,
-				Type: undefined,
+				type: undefined,
 				name: identifierName,
 			};
 
@@ -1009,7 +1013,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 	};
 
 	visitDelay = (ctx: DelayContext): Result => {
-		console.log("Visiting delay");
+		//console.log("Visiting delay");
 
 		// Get the value of the delay
 		const value = this.visitValue(ctx.value());
@@ -1023,7 +1027,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 	};
 
 	visitArrayValue = (ctx: ArrayValueContext): Result => {
-		console.log("Visiting arrayValue");
+		//console.log("Visiting arrayValue");
 
 		// case for [value, value, value]
 		if (ctx.getChild(0).getText() === "[" && ctx.getChild(ctx.getChildCount() - 1).getText() === "]") {
@@ -1032,7 +1036,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 			const array: Array = {
 				kind: "Array",
 				line: ctx.start.line,
-				Type: undefined,
+				type: undefined,
 				value: [value as Expression],
 			};
 			return array;
@@ -1042,7 +1046,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 	};
 
 	visitArrayStm = (ctx: ArrayStmContext): Result => {
-		console.log("Visiting arrayStm");
+		//console.log("Visiting arrayStm");
 
         switch (true) {
 			// case for ID[] PULL
@@ -1050,7 +1054,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
                 const identifier: Identifier = {
                     kind: "Identifier",
                     line: ctx.start.line,
-                    Type: undefined,
+                    type: undefined,
                     name: ctx.ID().getText(),
                 };
 
@@ -1066,7 +1070,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
                 const identifier: Identifier = {
                     kind: "Identifier",
                     line: ctx.start.line,
-                    Type: undefined,
+                    type: undefined,
                     name: ctx.ID().getText(),
                 };
 

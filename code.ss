@@ -16,10 +16,12 @@ Text outputString = "Letter Grade: " + letterGrade;
 OUTPUT outputString;
 
 Text FUNCTION calculateGrade(Number grade) {
-  Text letterGrade = "";  # Default to empty string #
+  letterGrade = "";  # Default to empty string #
 
   IF (grade GREATER 90) OR (grade EQUAL 90) {
     letterGrade = "A";
+    Text outputString2 = "Grade: " + letterGrade;
+    OUTPUT outputString2;
   } ELSE IF (grade GREATER 80) OR (grade EQUAL 80) {
     letterGrade = "B";
   } ELSE IF (grade GREATER 70) OR (grade EQUAL 70) {
@@ -56,3 +58,4 @@ Number length = grades[] SIZE;
 
 DELAY grades[1];  
 
+Text name = "John IF WHILE";

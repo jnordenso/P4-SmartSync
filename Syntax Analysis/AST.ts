@@ -4,13 +4,14 @@ export type NodeType =
     | "Identifier" 
     | "ArrayIdentifier"
     | "Declaration"
+    | "ArrayDeclaration"
     | "Assignment"
     | "Function"
     | "Output"
     | "Delay"
     // Statements
-    | "ifStm"
-    | "elseStm"
+    | "IfStm"
+    | "ElseStm"
     | "WhileStm"
     // Array Statements
     | "IndexOf"
@@ -38,22 +39,29 @@ export interface Program extends Line {
 
 export interface Declaration extends Line {
     kind: "Declaration";
-    Type: types;
+    type: types;
     identifier: Identifier;
     value: Expression;
+}
+
+export interface ArrayDeclaration extends Line {
+    kind: "ArrayDeclaration";
+    type: types;
+    identifier: Identifier;
+    value: Expression[];
 }
 
 export interface Statement extends Line {}
 
 export interface IfStm extends Statement {
-    kind: "ifStm";
+    kind: "IfStm";
     condition: Expression;
     body: Line[];
     else?: ElseStm | IfStm;
 }
 
 export interface ElseStm extends Statement {
-    kind: "elseStm";
+    kind: "ElseStm";
     body: Line[];
 }
 
@@ -103,7 +111,7 @@ export interface Assignment extends Line {
 
 export interface Function extends Line {
     kind: "Function";
-    Type?: types;
+    type?: types;
     identifier: Identifier;
     parameters: Identifier[];
     body?: Line[];
@@ -125,14 +133,14 @@ export interface Expression extends Line {
 
 export interface Value extends Expression {
     kind: "Value";
-    Type: types;
+    type: types;
     value: string;
 }
 
 export interface Array extends Expression {
     kind: "Array";
-    Type?: types;
-    Identifier?: Identifier;
+    type?: types;
+    identifier?: Identifier;
     value?: Expression[];
 }
 export interface StringConcatenation extends Expression {
@@ -142,7 +150,7 @@ export interface StringConcatenation extends Expression {
 
 export interface Identifier extends Expression {
     kind: "Identifier" | "ArrayIdentifier";
-    Type: types | undefined;
+    type: types | undefined;
     name: string;
 }
 
@@ -190,11 +198,6 @@ export interface Greater extends BinaryOperation {
 
 export interface Less extends BinaryOperation {
     operator: "LESS";
-}
-
-export interface Type extends Expression {
-    kind: "Type";
-    Type: types;
 }
 
 export type types = "Number" | 'Text' | "Boolean";

@@ -32,7 +32,7 @@ import {
     Or,
     Greater,
     Less,
-    Type,
+    ArrayDeclaration,
 } from "../Syntax Analysis/AST.ts";
 
 
@@ -56,6 +56,12 @@ export default class AstVisitor<Result> {
      * @return the visitor result
      */
     visitDeclaration?: (ctx: Declaration) => Result;
+    /**
+     * Visit the ArrayDeclaration node in the Abstract Syntax Tree.
+     * @param ctx the AST
+     * @return the visitor result
+     */
+    visitArrayDeclaration?: (ctx: ArrayDeclaration) => Result;
     /**
      * Visit the Statement node in the Abstract Syntax Tree.
      * @param ctx the AST
@@ -236,10 +242,4 @@ export default class AstVisitor<Result> {
      * @return the visitor result
      */
     visitLess?: (ctx: Less) => Result;
-    /**
-     * Visit the Type node in the Abstract Syntax Tree.
-     * @param ctx the AST
-     * @return the visitor result
-     */
-    visitType?: (ctx: Type) => Result;
 }
