@@ -81,8 +81,9 @@ export default class SymbolTable extends AstVisitor<void> {
 	 * @param ast the Abstract Syntax Tree
 	 * @return the Decorated Abstract Syntax Tree
 	 */
-	BuildSymbolTable = (ast: Program): void => {
+	BuildSymbolTable = (ast: Program): SymbolTable => {
 		this.visitProgram(ast); // Visits the Program node in the AST
+        return this;
 	};
 
 	/**

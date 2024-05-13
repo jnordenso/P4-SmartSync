@@ -33,6 +33,6 @@ console.log("\nAST built successfully. Continuing...");
 
 console.log("\nBuilding symbol table...");
 
-symbolTable.BuildSymbolTable(ast as Program);
+const st = symbolTable.BuildSymbolTable(ast as Program);
 
 console.log("\nSymbol table built successfully. Continuing...");
