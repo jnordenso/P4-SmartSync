@@ -76,7 +76,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 	 * @param ctx the CST
 	 * @return the visitor result
 	 */
-	visitProgram: (ctx: ProgramContext) => Result = (ctx: ProgramContext): Result => {
+	visitProgram = (ctx: ProgramContext): Result => {
 		console.log("Visiting program");
 		const lines: Line[] = [];
 		const startLine = ctx.start.line;
@@ -102,7 +102,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		return program;
 	};
 
-	visitLine: (ctx: LineContext) => Result = (ctx: LineContext): Result => {
+	visitLine = (ctx: LineContext): Result => {
 		console.log("Visiting line");
 		console.log("Line: ", ctx.getText(), ctx.getChildCount());
 		// The line node has only one child node
@@ -113,7 +113,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		}
 	};
 
-	visitValue: (ctx: ValueContext) => Result = (ctx: ValueContext): Result => {
+	visitValue = (ctx: ValueContext): Result => {
 		console.log("Visiting value");
 		let result: Value | Identifier | IndexOf | Size | Function;
 
@@ -240,7 +240,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		return result;
 	};
 
-	visitDeclaration: (ctx: DeclarationContext) => Result = (ctx: DeclarationContext): Result => {
+	visitDeclaration = (ctx: DeclarationContext): Result => {
 		console.log("Visiting declaration");
 		const type: types = ctx.TYPE().getText() as types;
 		const identifierName = ctx.ID().getText();
@@ -296,7 +296,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
         }
 	};
 
-	visitStatements: (ctx: StatementsContext) => Result = (ctx: StatementsContext): Result => {
+	visitStatements = (ctx: StatementsContext): Result => {
 		console.log("Visiting statements");
 
 		switch (true) {
@@ -338,7 +338,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		}
 	};
 
-	visitIfStm: (ctx: IfStmContext) => Result = (ctx: IfStmContext): Result => {
+	visitIfStm = (ctx: IfStmContext): Result => {
 		console.log("Visiting ifStm");
 
 		const condition = this.visitCondition(ctx.condition());
@@ -393,7 +393,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		}
 	};
 
-	visitElses: (ctx: ElsesContext) => Result = (ctx: ElsesContext): Result => {
+	visitElses = (ctx: ElsesContext): Result => {
 		console.log("Visiting elses");
 
 		const condition = this.visitCondition(ctx.condition());
@@ -448,7 +448,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		}
 	};
 
-	visitElse: (ctx: ElseContext) => Result = (ctx: ElseContext): Result => {
+	visitElse = (ctx: ElseContext): Result => {
 		console.log("Visiting else");
 
 		const body: Line[] = [];
@@ -469,7 +469,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		return elseBody;
 	};
 
-	visitExpression: (ctx: ExpressionContext) => Result = (ctx: ExpressionContext): Result => {
+	visitExpression = (ctx: ExpressionContext): Result => {
 		console.log("Visiting expression");
 
 		switch (true) {
@@ -487,7 +487,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		}
 	};
 
-	visitStringArithmetic: (ctx: StringArithmeticContext) => Result = (ctx: StringArithmeticContext): Result => {
+	visitStringArithmetic = (ctx: StringArithmeticContext): Result => {
 		console.log("Visiting stringArithmetic");
 		const values: string[] = [];
 
@@ -525,7 +525,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		}
 	};
 
-	visitArithmetic: (ctx: ArithmeticContext) => Result = (ctx: ArithmeticContext): Result => {
+	visitArithmetic = (ctx: ArithmeticContext): Result => {
 		console.log("Visiting arithmetic");
 
 		// first get the left operand
@@ -569,7 +569,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		return left;
 	};
 
-	visitMultExpr: (ctx: MultExprContext) => Result = (ctx: MultExprContext): Result => {
+	visitMultExpr = (ctx: MultExprContext): Result => {
 		console.log("Visiting multExpr");
 
 		// first get the left operand
@@ -613,7 +613,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		return left;
 	};
 
-	visitAtom: (ctx: AtomContext) => Result = (ctx: AtomContext): Result => {
+	visitAtom = (ctx: AtomContext): Result => {
 		console.log("Visiting atom");
 
 		switch (true) {
@@ -647,7 +647,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		}
 	};
 
-	visitCondition: (ctx: ConditionContext) => Result = (ctx: ConditionContext): Result => {
+	visitCondition = (ctx: ConditionContext): Result => {
 		console.log("Visiting condition");
 
 		// first get the left operand
@@ -691,7 +691,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		return left;
 	};
 
-	visitMultConExpr: (ctx: MultConExprContext) => Result = (ctx: MultConExprContext): Result => {
+	visitMultConExpr = (ctx: MultConExprContext): Result => {
 		console.log("Visiting multConExpr");
 
 		// first get the left operand
@@ -757,7 +757,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		return left;
 	};
 
-	visitAtomCon: (ctx: AtomConContext) => Result = (ctx: AtomConContext): Result => {
+	visitAtomCon = (ctx: AtomConContext): Result => {
 		console.log("Visiting atomCon");
 
 		switch (true) {
@@ -789,7 +789,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		}
 	};
 
-	visitAssignments: (ctx: AssignmentsContext) => Result = (ctx: AssignmentsContext): Result => {
+	visitAssignments = (ctx: AssignmentsContext): Result => {
 		console.log("Visiting assignments");
 
 		switch (true) {
@@ -865,7 +865,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		}
 	};
 
-	visitFuncReturn: (ctx: FuncReturnContext) => Result = (ctx: FuncReturnContext): Result => {
+	visitFuncReturn = (ctx: FuncReturnContext): Result => {
 		console.log("Visiting funcReturn");
 
 		switch (true) {
@@ -930,7 +930,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		}
 	};
 
-	visitFunctions: (ctx: FunctionsContext) => Result = (ctx: FunctionsContext): Result => {
+	visitFunctions = (ctx: FunctionsContext): Result => {
 		console.log("Visiting functions");
 
 		const identifier: Identifier = {
@@ -980,7 +980,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		return func;
 	};
 
-	visitOutput: (ctx: OutputContext) => Result = (ctx: OutputContext): Result => {
+	visitOutput = (ctx: OutputContext): Result => {
 		console.log("Visiting output");
 
 		let value: Value | Identifier;
@@ -1008,7 +1008,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		return output;
 	};
 
-	visitDelay: (ctx: DelayContext) => Result = (ctx: DelayContext): Result => {
+	visitDelay = (ctx: DelayContext): Result => {
 		console.log("Visiting delay");
 
 		// Get the value of the delay
@@ -1022,7 +1022,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		return delay;
 	};
 
-	visitArrayValue: (ctx: ArrayValueContext) => Result = (ctx: ArrayValueContext): Result => {
+	visitArrayValue = (ctx: ArrayValueContext): Result => {
 		console.log("Visiting arrayValue");
 
 		// case for [value, value, value]
@@ -1041,7 +1041,7 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		}
 	};
 
-	visitArrayStm: (ctx: ArrayStmContext) => Result = (ctx: ArrayStmContext): Result => {
+	visitArrayStm = (ctx: ArrayStmContext): Result => {
 		console.log("Visiting arrayStm");
 
         switch (true) {
