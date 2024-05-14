@@ -58,6 +58,7 @@ import {
 } from "./AST.ts";
 import { Pull } from "./AST.ts";
 import { Push } from "./AST.ts";
+import { StringAtomContext } from "./SmartSyncParser.ts";
 
 // the result of visiting a node in the AST
 type Result = Line | Declaration | ArrayDeclaration | Expression;
@@ -476,6 +477,11 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 	visitExpression = (ctx: ExpressionContext): Result => {
 		//console.log("Visiting expression");
 
+		console.log("Expression: ", ctx.getText());
+		console.log("isArithmetic: ", !!ctx.arithmetic());
+		console.log("isStringArithmetic: ", !!ctx.stringArithmetic());
+		console.log("isValue: ", !!ctx.value());
+
 		switch (true) {
 			// case for stringArithmetic
 			case !!ctx.stringArithmetic():
@@ -493,39 +499,61 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 
 	visitStringArithmetic = (ctx: StringArithmeticContext): Result => {
 		//console.log("Visiting stringArithmetic");
-		const values: string[] = [];
+		const values: Result[] = [];
 
 		// Check if the CST has children nodes to visit
 		if (!ctx.children) {
 			throw new Error("No children found");
 		}
 
-		for (const value of ctx.stringAtom_list()) {
-			// remove the double quoutes from string and push to values array
-			values.push(value.getText().replace(/"/g, ''));
+		for (const stringAtom of ctx.stringAtom_list()) {
+			const value = this.visitStringAtom(stringAtom);
+			values.push(value);
 		}
 
-		console.log("Values: ", values);
-
-		// if there is only one value, return a Value node
+		// if there is only one value, return the value
 		if (values.length === 1) {
-			const value: Value = {
-				kind: "Value",
-				type: "Text",
-				line: ctx.start.line,
-				value: values[0],
-			};
-			return value;
+			return values[0];
 		// if there are multiple values, return a StringConcatenation node
 		} else {
 			const StringConcatenation: StringConcatenation = {
 				kind: "StringConcatenation",
 				line: ctx.start.line,
+				type: "Text",
 				values,
 			};
 			return StringConcatenation;
 		}
 	};
+
+	visitStringAtom = (ctx: StringAtomContext): Result => {
+		switch (true) {
+			// case for string
+			case !!ctx.STRING(): {
+				const value: Value = {
+					kind: "Value",
+					type: "Text",
+					line: ctx.start.line,
+					value: ctx.STRING().getText().replace(/"/g, ""), // remove the double quotes from the string
+				};
+				return value;
+			}
+			// case for ID
+			case !!ctx.ID(): {
+				const identifier: Identifier = {
+					kind: "Identifier",
+					line: ctx.start.line,
+					type: undefined,
+					name: ctx.ID().getText(),
+				};
+				return identifier;
+			}
+			default:
+				throw new Error("Unknown string atom");
+		}
+
+		
+	}
 
 	visitArithmetic = (ctx: ArithmeticContext): Result => {
 		//console.log("Visiting arithmetic");

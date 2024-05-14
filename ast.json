@@ -7,14 +7,426 @@
 			"line": 1,
 			"type": "Number",
 			"identifier": { "kind": "Identifier", "line": 1, "type": "Number", "name": "grade" },
-			"value": { "kind": "Value", "type": "Text", "line": 1, "value": "+" }
+			"value": { "kind": "Value", "type": "Number", "line": 1, "value": "85" }
 		},
 		{
 			"kind": "Declaration",
 			"line": 2,
+			"type": "Text",
+			"identifier": { "kind": "Identifier", "line": 2, "type": "Text", "name": "letterGrade" },
+			"value": { "kind": "Value", "type": "Text", "line": 2, "value": "" }
+		},
+		{
+			"kind": "IfStm",
+			"line": 11,
+			"condition": {
+				"kind": "BinaryOperation",
+				"line": 11,
+				"left": {
+					"kind": "BinaryOperation",
+					"line": 11,
+					"left": { "kind": "Identifier", "line": 11, "name": "grade" },
+					"right": { "kind": "Value", "type": "Number", "line": 11, "value": "90" },
+					"operator": "GREATER"
+				},
+				"right": {
+					"kind": "BinaryOperation",
+					"line": 11,
+					"left": { "kind": "Identifier", "line": 11, "name": "grade" },
+					"right": { "kind": "Value", "type": "Number", "line": 11, "value": "90" },
+					"operator": "EQUAL"
+				},
+				"operator": "OR"
+			},
+			"body": [
+				{
+					"kind": "Assignment",
+					"line": 12,
+					"identifier": { "kind": "Identifier", "line": 12, "name": "letterGrade" },
+					"value": { "kind": "Value", "type": "Text", "line": 12, "value": "A" }
+				}
+			],
+			"else": {
+				"kind": "IfStm",
+				"line": 13,
+				"condition": {
+					"kind": "BinaryOperation",
+					"line": 13,
+					"left": {
+						"kind": "BinaryOperation",
+						"line": 13,
+						"left": { "kind": "Identifier", "line": 13, "name": "grade" },
+						"right": { "kind": "Value", "type": "Number", "line": 13, "value": "80" },
+						"operator": "GREATER"
+					},
+					"right": {
+						"kind": "BinaryOperation",
+						"line": 13,
+						"left": { "kind": "Identifier", "line": 13, "name": "grade" },
+						"right": { "kind": "Value", "type": "Number", "line": 13, "value": "80" },
+						"operator": "EQUAL"
+					},
+					"operator": "OR"
+				},
+				"body": [
+					{
+						"kind": "Assignment",
+						"line": 14,
+						"identifier": { "kind": "Identifier", "line": 14, "name": "letterGrade" },
+						"value": { "kind": "Value", "type": "Text", "line": 14, "value": "B" }
+					}
+				],
+				"else": {
+					"kind": "IfStm",
+					"line": 15,
+					"condition": {
+						"kind": "BinaryOperation",
+						"line": 15,
+						"left": {
+							"kind": "BinaryOperation",
+							"line": 15,
+							"left": { "kind": "Identifier", "line": 15, "name": "grade" },
+							"right": { "kind": "Value", "type": "Number", "line": 15, "value": "70" },
+							"operator": "GREATER"
+						},
+						"right": {
+							"kind": "BinaryOperation",
+							"line": 15,
+							"left": { "kind": "Identifier", "line": 15, "name": "grade" },
+							"right": { "kind": "Value", "type": "Number", "line": 15, "value": "70" },
+							"operator": "EQUAL"
+						},
+						"operator": "OR"
+					},
+					"body": [
+						{
+							"kind": "Assignment",
+							"line": 16,
+							"identifier": { "kind": "Identifier", "line": 16, "name": "letterGrade" },
+							"value": { "kind": "Value", "type": "Text", "line": 16, "value": "C" }
+						}
+					],
+					"else": {
+						"kind": "ElseStm",
+						"line": 17,
+						"body": [
+							{
+								"kind": "Assignment",
+								"line": 18,
+								"identifier": { "kind": "Identifier", "line": 18, "name": "letterGrade" },
+								"value": { "kind": "Value", "type": "Text", "line": 18, "value": "F" }
+							}
+						]
+					}
+				}
+			}
+		},
+		{
+			"kind": "Declaration",
+			"line": 22,
+			"type": "Text",
+			"identifier": { "kind": "Identifier", "line": 22, "type": "Text", "name": "outputString" },
+			"value": {
+				"kind": "StringConcatenation",
+				"line": 22,
+				"type": "Text",
+				"values": [
+					{ "kind": "Value", "type": "Text", "line": 22, "value": "Letter Grade: " },
+					{ "kind": "Identifier", "line": 22, "name": "letterGrade" }
+				]
+			}
+		},
+		{ "kind": "Output", "line": 23, "value": { "kind": "Identifier", "line": 23, "name": "outputString" } },
+		{
+			"kind": "Function",
+			"line": 25,
+			"type": "Text",
+			"identifier": { "kind": "Identifier", "line": 25, "type": "Text", "name": "calculateGrade" },
+			"parameters": [{ "kind": "Identifier", "line": 25, "type": "Number", "name": "grade" }],
+			"body": [
+				{
+					"kind": "Assignment",
+					"line": 26,
+					"identifier": { "kind": "Identifier", "line": 26, "name": "letterGrade" },
+					"value": { "kind": "Value", "type": "Text", "line": 26, "value": "" }
+				},
+				{
+					"kind": "IfStm",
+					"line": 28,
+					"condition": {
+						"kind": "BinaryOperation",
+						"line": 28,
+						"left": {
+							"kind": "BinaryOperation",
+							"line": 28,
+							"left": { "kind": "Identifier", "line": 28, "name": "grade" },
+							"right": { "kind": "Value", "type": "Number", "line": 28, "value": "90" },
+							"operator": "GREATER"
+						},
+						"right": {
+							"kind": "BinaryOperation",
+							"line": 28,
+							"left": { "kind": "Identifier", "line": 28, "name": "grade" },
+							"right": { "kind": "Value", "type": "Number", "line": 28, "value": "90" },
+							"operator": "EQUAL"
+						},
+						"operator": "OR"
+					},
+					"body": [
+						{
+							"kind": "Assignment",
+							"line": 29,
+							"identifier": { "kind": "Identifier", "line": 29, "name": "letterGrade" },
+							"value": { "kind": "Value", "type": "Text", "line": 29, "value": "A" }
+						},
+						{
+							"kind": "Declaration",
+							"line": 30,
+							"type": "Text",
+							"identifier": { "kind": "Identifier", "line": 30, "type": "Text", "name": "outputString2" },
+							"value": {
+								"kind": "StringConcatenation",
+								"line": 30,
+								"type": "Text",
+								"values": [
+									{ "kind": "Value", "type": "Text", "line": 30, "value": "Grade: " },
+									{ "kind": "Identifier", "line": 30, "name": "letterGrade" }
+								]
+							}
+						},
+						{
+							"kind": "Output",
+							"line": 31,
+							"value": { "kind": "Identifier", "line": 31, "name": "outputString2" }
+						}
+					],
+					"else": {
+						"kind": "IfStm",
+						"line": 32,
+						"condition": {
+							"kind": "BinaryOperation",
+							"line": 32,
+							"left": {
+								"kind": "BinaryOperation",
+								"line": 32,
+								"left": { "kind": "Identifier", "line": 32, "name": "grade" },
+								"right": { "kind": "Value", "type": "Number", "line": 32, "value": "80" },
+								"operator": "GREATER"
+							},
+							"right": {
+								"kind": "BinaryOperation",
+								"line": 32,
+								"left": { "kind": "Identifier", "line": 32, "name": "grade" },
+								"right": { "kind": "Value", "type": "Number", "line": 32, "value": "80" },
+								"operator": "EQUAL"
+							},
+							"operator": "OR"
+						},
+						"body": [
+							{
+								"kind": "Assignment",
+								"line": 33,
+								"identifier": { "kind": "Identifier", "line": 33, "name": "letterGrade" },
+								"value": { "kind": "Value", "type": "Text", "line": 33, "value": "B" }
+							}
+						],
+						"else": {
+							"kind": "IfStm",
+							"line": 34,
+							"condition": {
+								"kind": "BinaryOperation",
+								"line": 34,
+								"left": {
+									"kind": "BinaryOperation",
+									"line": 34,
+									"left": { "kind": "Identifier", "line": 34, "name": "grade" },
+									"right": { "kind": "Value", "type": "Number", "line": 34, "value": "70" },
+									"operator": "GREATER"
+								},
+								"right": {
+									"kind": "BinaryOperation",
+									"line": 34,
+									"left": { "kind": "Identifier", "line": 34, "name": "grade" },
+									"right": { "kind": "Value", "type": "Number", "line": 34, "value": "70" },
+									"operator": "EQUAL"
+								},
+								"operator": "OR"
+							},
+							"body": [
+								{
+									"kind": "Assignment",
+									"line": 35,
+									"identifier": { "kind": "Identifier", "line": 35, "name": "letterGrade" },
+									"value": { "kind": "Value", "type": "Text", "line": 35, "value": "C" }
+								}
+							],
+							"else": {
+								"kind": "ElseStm",
+								"line": 36,
+								"body": [
+									{
+										"kind": "Assignment",
+										"line": 37,
+										"identifier": { "kind": "Identifier", "line": 37, "name": "letterGrade" },
+										"value": { "kind": "Value", "type": "Text", "line": 37, "value": "F" }
+									}
+								]
+							}
+						}
+					}
+				}
+			],
+			"return": { "kind": "Identifier", "line": 40, "name": "letterGrade" }
+		},
+		{
+			"kind": "Assignment",
+			"line": 43,
+			"identifier": { "kind": "Identifier", "line": 43, "name": "letterGrade" },
+			"value": {
+				"kind": "Function",
+				"line": 43,
+				"identifier": { "kind": "Identifier", "line": 43, "name": "calculateGrade" },
+				"parameters": [{ "kind": "Value", "type": "Number", "line": 43, "value": "85" }]
+			}
+		},
+		{
+			"kind": "Declaration",
+			"line": 46,
+			"type": "Text",
+			"identifier": { "kind": "Identifier", "line": 46, "type": "Text", "name": "outputString2" },
+			"value": {
+				"kind": "StringConcatenation",
+				"line": 46,
+				"type": "Text",
+				"values": [
+					{ "kind": "Value", "type": "Text", "line": 46, "value": "Letter Grade2: " },
+					{ "kind": "Identifier", "line": 46, "name": "letterGrade" }
+				]
+			}
+		},
+		{ "kind": "Output", "line": 47, "value": { "kind": "Identifier", "line": 47, "name": "outputString2" } },
+		{
+			"kind": "WhileStm",
+			"line": 49,
+			"condition": {
+				"kind": "BinaryOperation",
+				"line": 49,
+				"left": { "kind": "Identifier", "line": 49, "name": "grade" },
+				"right": { "kind": "Value", "type": "Number", "line": 49, "value": "100" },
+				"operator": "LESS"
+			},
+			"body": [
+				{
+					"kind": "Assignment",
+					"line": 50,
+					"identifier": { "kind": "Identifier", "line": 50, "name": "grade" },
+					"value": {
+						"kind": "BinaryOperation",
+						"line": 50,
+						"left": { "kind": "Identifier", "line": 50, "name": "grade" },
+						"right": { "kind": "Value", "type": "Number", "line": 50, "value": "1" },
+						"operator": "+"
+					}
+				},
+				{
+					"kind": "Assignment",
+					"line": 51,
+					"identifier": { "kind": "Identifier", "line": 51, "name": "letterGrade" },
+					"value": {
+						"kind": "Function",
+						"line": 51,
+						"identifier": { "kind": "Identifier", "line": 51, "name": "calculateGrade" },
+						"parameters": [{ "kind": "Identifier", "line": 51, "name": "grade" }]
+					}
+				},
+				{
+					"kind": "Output",
+					"line": 52,
+					"value": { "kind": "Value", "type": "Text", "line": 52, "value": "\"Grade: \"" }
+				},
+				{ "kind": "Output", "line": 53, "value": { "kind": "Identifier", "line": 53, "name": "grade" } },
+				{
+					"kind": "Declaration",
+					"line": 54,
+					"type": "Text",
+					"identifier": { "kind": "Identifier", "line": 54, "type": "Text", "name": "outputString3" },
+					"value": {
+						"kind": "StringConcatenation",
+						"line": 54,
+						"type": "Text",
+						"values": [
+							{ "kind": "Value", "type": "Text", "line": 54, "value": " Letter Grade: " },
+							{ "kind": "Identifier", "line": 54, "name": "letterGrade" }
+						]
+					}
+				},
+				{ "kind": "Output", "line": 55, "value": { "kind": "Identifier", "line": 55, "name": "outputString3" } }
+			]
+		},
+		{
+			"kind": "ArrayDeclaration",
+			"line": 59,
 			"type": "Number",
-			"identifier": { "kind": "Identifier", "line": 2, "type": "Number", "name": "grade2" },
-			"value": { "kind": "StringConcatenation", "line": 2, "values": ["A", "10"] }
+			"identifier": { "kind": "Identifier", "line": 59, "type": "Number", "name": "grades" },
+			"value": [
+				{ "kind": "Value", "type": "Number", "line": 59, "value": "1" },
+				{ "kind": "Value", "type": "Number", "line": 59, "value": "2" },
+				{ "kind": "Value", "type": "Number", "line": 59, "value": "3" },
+				{ "kind": "Value", "type": "Number", "line": 59, "value": "4" },
+				{ "kind": "Value", "type": "Number", "line": 59, "value": "5" }
+			]
+		},
+		{
+			"kind": "Output",
+			"line": 60,
+			"value": {
+				"kind": "IndexOf",
+				"line": 60,
+				"identifier": { "kind": "Identifier", "line": 60, "name": "grades" },
+				"index": { "kind": "Value", "type": "Number", "line": 60, "value": "1" }
+			}
+		},
+		{
+			"kind": "IndexAssignment",
+			"line": 61,
+			"identifier": { "kind": "Identifier", "line": 61, "name": "grades" },
+			"index": { "kind": "Value", "type": "Number", "line": 61, "value": "1" },
+			"value": { "kind": "Value", "type": "Number", "line": 61, "value": "0" }
+		},
+		{ "kind": "Pull", "line": 62, "identifier": { "kind": "Identifier", "line": 62, "name": "grades" } },
+		{
+			"kind": "Push",
+			"line": 63,
+			"identifier": { "kind": "Identifier", "line": 63, "name": "grades" },
+			"value": { "kind": "Value", "type": "Number", "line": 63, "value": "6" }
+		},
+		{
+			"kind": "Declaration",
+			"line": 64,
+			"type": "Number",
+			"identifier": { "kind": "Identifier", "line": 64, "type": "Number", "name": "length" },
+			"value": {
+				"kind": "Size",
+				"line": 64,
+				"identifier": { "kind": "Identifier", "line": 64, "name": "grades" }
+			}
+		},
+		{
+			"kind": "Delay",
+			"line": 66,
+			"value": {
+				"kind": "IndexOf",
+				"line": 66,
+				"identifier": { "kind": "Identifier", "line": 66, "name": "grades" },
+				"index": { "kind": "Value", "type": "Number", "line": 66, "value": "1" }
+			}
+		},
+		{
+			"kind": "Declaration",
+			"line": 68,
+			"type": "Text",
+			"identifier": { "kind": "Identifier", "line": 68, "type": "Text", "name": "name" },
+			"value": { "kind": "Value", "type": "Text", "line": 68, "value": "John IF WHILE" }
 		}
 	]
 }

@@ -1,6 +1,16 @@
 Number grade = 85;  # Change this to any grade #
 Text letterGrade = "";  # Default to empty string #
 
+# IF (grade + 10) GREATER 90 {
+  OUTPUT "Grade is greater than 90";
+} ELSE {
+  OUTPUT "Grade is less than 90";
+} #
+#Boolean isGradeGreaterThan90 = grade GREATER 90;#
+
+# Vi skal lige snakke om det her problem :) #
+
+
 IF (grade GREATER 90) OR (grade EQUAL 90) {
   letterGrade = "A";
 } ELSE IF (grade GREATER 80) OR (grade EQUAL 80) {

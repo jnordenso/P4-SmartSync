@@ -145,7 +145,8 @@ export interface Size extends Expression {
 }
 export interface StringConcatenation extends Expression {
     kind: "StringConcatenation";
-    values: string[];
+    type: "Text";
+    values: Expression[];
 }
 
 export interface Identifier extends Expression {

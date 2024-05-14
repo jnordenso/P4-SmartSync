@@ -1,2 +1,9 @@
-Number grade = "+";
-Number grade2 = "A" + "10";
+Number grade = 12;
+Number grade2 = 10 + 2;
+Text name = "John";
+Text name2 = "John" + "Doe";
+Boolean isStudent = TRUE;
+Boolean isTeacher = FALSE;
+Number grade3 = grade;
+Number grade4 = grade + 2;
+Number grade5 = grade + grade2;
