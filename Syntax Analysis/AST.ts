@@ -73,12 +73,6 @@ export interface WhileStm extends Statement {
 
 export interface ArrayStm extends Statement {}
 
-export interface IndexOf extends ArrayStm {
-    kind: "IndexOf"
-    identifier: Identifier;
-    index: Expression;
-}
-
 export interface IndexAssignment extends ArrayStm {
     kind: "IndexAssignment";
     identifier: Identifier;
@@ -95,11 +89,6 @@ export interface Push extends ArrayStm {
 
 export interface Pull extends ArrayStm {
     kind: "Pull";
-    identifier: Identifier;
-}
-
-export interface Size extends ArrayStm {
-    kind: "Size";
     identifier: Identifier;
 }
 
@@ -142,6 +131,17 @@ export interface Array extends Expression {
     type?: types;
     identifier?: Identifier;
     value?: Expression[];
+}
+
+export interface IndexOf extends ArrayStm {
+    kind: "IndexOf"
+    identifier: Identifier;
+    index: Expression;
+}
+
+export interface Size extends Expression {
+    kind: "Size";
+    identifier: Identifier;
 }
 export interface StringConcatenation extends Expression {
     kind: "StringConcatenation";

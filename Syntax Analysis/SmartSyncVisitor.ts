@@ -1,4 +1,4 @@
-// Generated from ./SmartSync.g4 by ANTLR 4.13.1
+// Generated from ./Syntax Analysis/SmartSync.g4 by ANTLR 4.13.1
 
 import {ParseTreeVisitor} from 'antlr4';
 
@@ -13,6 +13,7 @@ import { ElsesContext } from "./SmartSyncParser.ts";
 import { ElseContext } from "./SmartSyncParser.ts";
 import { ExpressionContext } from "./SmartSyncParser.ts";
 import { StringArithmeticContext } from "./SmartSyncParser.ts";
+import { StringAtomContext } from "./SmartSyncParser.ts";
 import { ArithmeticContext } from "./SmartSyncParser.ts";
 import { MultExprContext } from "./SmartSyncParser.ts";
 import { AtomContext } from "./SmartSyncParser.ts";
@@ -96,6 +97,12 @@ export default class SmartSyncVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitStringArithmetic?: (ctx: StringArithmeticContext) => Result;
+	/**
+	 * Visit a parse tree produced by `SmartSyncParser.stringAtom`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitStringAtom?: (ctx: StringAtomContext) => Result;
 	/**
 	 * Visit a parse tree produced by `SmartSyncParser.arithmetic`.
 	 * @param ctx the parse tree

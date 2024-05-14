@@ -23,7 +23,8 @@ else : 'ELSE' '{' line* '}';
 
 expression : stringArithmetic | arithmetic | value | '(' expression ')';
 
-stringArithmetic : (STRING | ID) ('+' (STRING | ID))*;
+stringArithmetic : stringAtom ('+' stringAtom)*;
+stringAtom : STRING | ID;
 
 arithmetic : multExpr (('+' | '-') multExpr)*;
 multExpr : atom (('*' | '/') atom)*;

@@ -500,14 +500,12 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 			throw new Error("No children found");
 		}
 
-		// Split the string into values 
-		const text = ctx.getText();
-		const splitValues = text.split("+");
-
-		for (const value of splitValues) {
-			// remove quotes from string and push to values array
-			values.push(value.slice(1, -1));
+		for (const value of ctx.stringAtom_list()) {
+			// remove the double quoutes from string and push to values array
+			values.push(value.getText().replace(/"/g, ''));
 		}
+
+		console.log("Values: ", values);
 
 		// if there is only one value, return a Value node
 		if (values.length === 1) {

@@ -1,0 +1,20 @@
+{
+	"kind": "Program",
+	"line": 1,
+	"body": [
+		{
+			"kind": "Declaration",
+			"line": 1,
+			"type": "Number",
+			"identifier": { "kind": "Identifier", "line": 1, "type": "Number", "name": "grade" },
+			"value": { "kind": "Value", "type": "Text", "line": 1, "value": "+" }
+		},
+		{
+			"kind": "Declaration",
+			"line": 2,
+			"type": "Number",
+			"identifier": { "kind": "Identifier", "line": 2, "type": "Number", "name": "grade2" },
+			"value": { "kind": "StringConcatenation", "line": 2, "values": ["A", "10"] }
+		}
+	]
+}
