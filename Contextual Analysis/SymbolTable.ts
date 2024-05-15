@@ -31,8 +31,10 @@ import AstVisitor from "./AstVisitor.ts";
  */
 interface Symbol {
 	name: string; // ID (name) of the variable
-	type: types | undefined; // Type of the variable
+	type: types; // Type of the variable
 	reference: Line; // Reference to the declared node in the AST
+	body?: Line[]; // Reference to the body of the function (if the symbol is a function)
+	return?: Expression; // Reference to the return value of the function (if the symbol is a function)
 }
 
 /**
@@ -120,7 +122,7 @@ export default class SymbolTable extends AstVisitor<void> {
 	 * @param type the type of the symbol
 	 * @param reference the reference to the declared node in the AST
 	 */
-	AddSymbol = (name: string, type: types | undefined, reference: Line): void => {
+	AddSymbol = (name: string, type: types, reference: Line, body?: Line[], returnExpr?: Expression): void => {
 		if (this.stackScopes[this.stackScopes.length - 1].symbols.has(name)) {
 			// TODO: Maybe we should make some error handling in another way
 			throw new Error(`Variable '${name}' has already been declared in this scope`);
@@ -128,6 +130,12 @@ export default class SymbolTable extends AstVisitor<void> {
 
 		const symbol: Symbol = { name, type, reference }; // Creates a new symbol
 
+		// If the symbol is a function
+		if (body && returnExpr) {
+			symbol.body = body;
+			symbol.return = returnExpr;
+		}
+		
 		// Adds the symbol to the current scope
 		this.stackScopes[this.stackScopes.length - 1].symbols.set(name, symbol);
 	};
@@ -330,8 +338,14 @@ export default class SymbolTable extends AstVisitor<void> {
         if (ctx.body) {
             this.NewScope(ctx.body);
 
+			if (ctx.type !== undefined) {
+				this.AddSymbol(ctx.identifier.name, ctx.type, ctx, ctx.body, ctx.return);
+			}
+
             ctx.parameters.forEach((parameter) => {
-                this.AddSymbol(parameter.name, parameter.type, ctx);
+				if (parameter.type !== undefined) {
+                	this.AddSymbol(parameter.name, parameter.type, ctx);
+				}
             });
 
             ctx.body.forEach((line) => {

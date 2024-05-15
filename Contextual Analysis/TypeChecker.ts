@@ -45,14 +45,19 @@ export default class TypeChecker extends AstVisitor<void> {
 		this.symbolTable = st;
 	}
 
-	visitProgram = (ctx: Program): void => {
+	visitProgram = (ctx: Program): Program => {
 		this.currentBlock = ctx.body;
 
-		if (ctx.body.length > 0) {
-			ctx.body.forEach((line) => {
+        // Save the AST
+        const AST = ctx;
+
+		if (AST.body.length > 0) {
+			AST.body.forEach((line) => {
 				this.visitLine(line);
 			});
 		}
+        // Return the AST with updated types (Decorated AST)
+        return AST;
 	};
 
 	visitLine = (ctx: Line): void => {
@@ -137,8 +142,6 @@ export default class TypeChecker extends AstVisitor<void> {
         });
         // set the current block back to the previous block
         this.currentBlock = previousBlock;
-
-		throw new Error("2. Method not implemented.");
 	};
 
 	visitElseStm = (ctx: ElseStm): void => {
@@ -162,15 +165,85 @@ export default class TypeChecker extends AstVisitor<void> {
 	};
 
 	visitAssignment = (ctx: Assignment): void => {
-		throw new Error("Method not implemented.");
+        if (ctx.identifier.type === undefined) {
+            const symbol = this.symbolTable.LookupSymbol(ctx.identifier.name, this.currentBlock);
+            if (symbol !== null && symbol.type !== undefined) {
+                ctx.identifier.type = symbol.type;
+            } else {
+                throw new Error(`Line: ${ctx.line}, Undeclared variable: ${ctx.identifier.name}`);
+            }
+
+            const expressionType = this.visitExpression(ctx.value);
+
+            if (expressionType !== ctx.identifier.type) {
+                throw new Error(`Line: ${ctx.line}, Expected ${ctx.identifier.name} to be of type ${ctx.identifier.type}, but got ${expressionType}`);
+            }
+        }
 	};
 
 	visitFunction = (ctx: Function): void => {
+        // if its a function declaration
+        if (ctx.type !== undefined) {
+            if (ctx.type !== ctx.identifier.type) {
+                throw new Error(`Line: ${ctx.line}, Expected function ${ctx.identifier.name} to be of type ${ctx.type}, but got ${ctx.identifier.type}`);
+            }
+            if (ctx.return === undefined) {
+                throw new Error(`Line: ${ctx.line}, Expected function ${ctx.identifier.name} to have a return type, but got none`);
+            }
+            if (ctx.body === undefined) {
+                throw new Error(`Line: ${ctx.line}, Expected function ${ctx.identifier.name} to have a body, but got none`);
+            }
+            // save the current block
+            const previousBlock = this.currentBlock;
+            // set the current block to the function body
+            this.currentBlock = ctx.body;
+            // visit the function body
+            ctx.body.forEach((line) => {
+                this.visitLine(line);
+            });
+            // get the return type of the function
+            const returnType = this.visitExpression(ctx.return);
+            // set the current block back to the previous block
+            this.currentBlock = previousBlock;
+
+            if (returnType !== ctx.type) {
+                throw new Error(`Line: ${ctx.line}, Expected function ${ctx.identifier.name} to return type ${ctx.type}, but got ${returnType}`);
+            }
+        // if its a function call
+        } else {
+            const symbol = this.symbolTable.LookupSymbol(ctx.identifier.name, this.currentBlock);
+            if (symbol !== null && symbol.type !== undefined && symbol.body !== undefined) {
+                ctx.type = symbol.type;
+                ctx.identifier.type = symbol.type;
+
+                const previousBlock = this.currentBlock;
+                this.currentBlock = symbol.body;
+
+                // TODO: prob need to make a new function for adding functions to symboltable 
+                // it needs info such as id, type, parameters, body, return
+                
+
+            } else {
+                throw new Error(`Line: ${ctx.line}, Undeclared function: ${ctx.identifier.name}`);
+            }
+
+
+        }
+
+
+
+        
+
+
+        
+
+
+
 		throw new Error("8. Method not implemented.");
 	};
 
 	visitOutput = (ctx: Output): void => {
-		throw new Error("9. Method not implemented.");
+		this.visitExpression(ctx.value);
 	};
 
 	visitDelay = (ctx: Delay): void => {
@@ -291,7 +364,7 @@ export default class TypeChecker extends AstVisitor<void> {
         if (left === "Number" && right === "Number") {
             return "Number";
         } else {
-            throw new Error(`Line: ${ctx.line}, Expected both sides of the binary operation to be of type Number, but got ${left} and ${right}`);
+            throw new Error(`Line: ${ctx.line}, Expected both sides of the MULTIPLICATION operator to be of type Number, but got ${left} and ${right}`);
         }
     }
 
@@ -300,7 +373,14 @@ export default class TypeChecker extends AstVisitor<void> {
     }
 
     visitEqual = (ctx: Equal): types => {
-        throw new Error("20. Method not implemented.");
+        const left = this.visitExpression(ctx.left);
+        const right = this.visitExpression(ctx.right);
+
+        if (left === right) {
+            return "Boolean";
+        } else {
+            throw new Error(`Line: ${ctx.line}, Expected both sides of the EQUAL operator to be of the same type, but got ${left} and ${right}`);
+        }
     }
 
     visitNotEqual = (ctx: NotEqual): types => {
@@ -308,11 +388,25 @@ export default class TypeChecker extends AstVisitor<void> {
     }
 
     visitAnd = (ctx: And): types => {
-        throw new Error("22. Method not implemented.");
+        const left = this.visitExpression(ctx.left);
+        const right = this.visitExpression(ctx.right);
+
+        if (left === "Boolean" && right === "Boolean") {
+            return "Boolean";
+        } else {
+            throw new Error(`Line: ${ctx.line}, Expected both sides of the AND operator to be of type Boolean, but got ${left} and ${right}`);
+        }
     }
 
     visitOr = (ctx: Or): types => {
-        throw new Error("23. Method not implemented.");
+        const left = this.visitExpression(ctx.left);
+        const right = this.visitExpression(ctx.right);
+
+        if (left === "Boolean" && right === "Boolean") {
+            return "Boolean";
+        } else {
+            throw new Error(`Line: ${ctx.line}, Expected both sides of the OR operator to be of type Boolean, but got ${left} and ${right}`);
+        }
     }
 
     visitGreater = (ctx: Greater): types => {
