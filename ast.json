@@ -18,17 +18,65 @@
 		},
 		{
 			"kind": "IfStm",
+			"line": 4,
+			"condition": {
+				"kind": "BinaryOperation",
+				"line": 4,
+				"left": {
+					"kind": "BinaryOperation",
+					"line": 4,
+					"left": { "kind": "Identifier", "line": 4, "name": "grade" },
+					"right": {
+						"kind": "BinaryOperation",
+						"line": 4,
+						"left": { "kind": "Value", "type": "Number", "line": 4, "value": "10" },
+						"right": { "kind": "Value", "type": "Number", "line": 4, "value": "20" },
+						"operator": "*"
+					},
+					"operator": "+"
+				},
+				"right": { "kind": "Value", "type": "Number", "line": 4, "value": "90" },
+				"operator": "GREATER"
+			},
+			"body": [
+				{
+					"kind": "Output",
+					"line": 5,
+					"value": { "kind": "Value", "type": "Text", "line": 5, "value": "\"Grade is greater than 90\"" }
+				}
+			],
+			"else": {
+				"kind": "ElseStm",
+				"line": 6,
+				"body": [
+					{
+						"kind": "Output",
+						"line": 7,
+						"value": { "kind": "Value", "type": "Text", "line": 7, "value": "\"Grade is less than 90\"" }
+					}
+				]
+			}
+		},
+		{
+			"kind": "Declaration",
+			"line": 9,
+			"type": "Boolean",
+			"identifier": { "kind": "Identifier", "line": 9, "type": "Boolean", "name": "isGradeGreaterThan90" },
+			"value": {
+				"kind": "BinaryOperation",
+				"line": 9,
+				"left": { "kind": "Identifier", "line": 9, "name": "grade" },
+				"right": { "kind": "Value", "type": "Number", "line": 9, "value": "90" },
+				"operator": "GREATER"
+			}
+		},
+		{
+			"kind": "IfStm",
 			"line": 11,
 			"condition": {
 				"kind": "BinaryOperation",
 				"line": 11,
-				"left": {
-					"kind": "BinaryOperation",
-					"line": 11,
-					"left": { "kind": "Identifier", "line": 11, "name": "grade" },
-					"right": { "kind": "Value", "type": "Number", "line": 11, "value": "90" },
-					"operator": "GREATER"
-				},
+				"left": { "kind": "Identifier", "line": 11, "name": "isGradeGreaterThan90" },
 				"right": {
 					"kind": "BinaryOperation",
 					"line": 11,

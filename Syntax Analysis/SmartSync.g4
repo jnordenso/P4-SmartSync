@@ -21,7 +21,7 @@ ifStm : 'IF' condition '{' line* '}' (elses | else)?;
 elses : 'ELSE' 'IF' condition '{' line* '}' (elses | else)?;
 else : 'ELSE' '{' line* '}';
 
-expression : arithmetic | stringArithmetic | value | '(' expression ')';
+expression : arithmetic | stringArithmetic | value | '(' expression ')' | condition;
 
 stringArithmetic : stringAtom ('+' stringAtom)*;
 stringAtom : STRING | ID;
@@ -32,7 +32,7 @@ atom : NUMBER | ID | '(' arithmetic ')';
 
 condition : multConExpr (('AND' | 'OR') multConExpr)*;
 multConExpr : atomCon (('EQUAL' | 'NOT EQUAL' | 'GREATER' | 'LESS') atomCon)*;
-atomCon : NUMBER | ID | '(' condition ')';
+atomCon : arithmetic | value | '(' condition ')';
 
 assignments : ID '=' expression ';' | ID'[' value ']' '=' expression ';' | ID'[]' '=' '[' (arrayValue ','?)* ']' ';';
 

@@ -122,7 +122,21 @@ export default class TypeChecker extends AstVisitor<void> {
 	};
 
 	visitIfStm = (ctx: IfStm): void => {
-		this.visitExpression(ctx.condition);
+		const conditionType = this.visitExpression(ctx.condition);
+        if (conditionType !== "Boolean") {
+            throw new Error(`Line: ${ctx.line}, Expected condition to be of type Boolean, but got ${conditionType}`);
+        }
+
+        // save the current block
+        const previousBlock = this.currentBlock;
+        // set the current block to the if statement body
+        this.currentBlock = ctx.body;
+        // visit the if statement body
+        ctx.body.forEach((line) => {
+            this.visitLine(line);
+        });
+        // set the current block back to the previous block
+        this.currentBlock = previousBlock;
 
 		throw new Error("2. Method not implemented.");
 	};
@@ -215,6 +229,7 @@ export default class TypeChecker extends AstVisitor<void> {
 	};
 
 	visitBinaryOperation = (ctx: BinaryOperation): types => {
+        console.log("binary operation")
 		const left = this.visitExpression(ctx.left);
 		const right = this.visitExpression(ctx.right);
 
@@ -255,47 +270,65 @@ export default class TypeChecker extends AstVisitor<void> {
 	};
 
     visitAddition = (ctx: Addition): types => {
-        console.log(ctx);
-        console.log("we are here");
-        throw new Error("Method not implemented.");
+        const left = this.visitExpression(ctx.left);
+        const right = this.visitExpression(ctx.right);
+
+        if (left === "Number" && right === "Number") {
+            return "Number";
+        } else {
+            throw new Error(`Line: ${ctx.line}, Expected both sides of the binary operation to be of type Number, but got ${left} and ${right}`);
+        }
     }
 
     visitSubtraction = (ctx: Subtraction): types => {
-        throw new Error("Method not implemented.");
+        throw new Error("17. Method not implemented.");
     }
 
     visitMultiplication = (ctx: Multiplication): types => {
-        throw new Error("Method not implemented.");
+        const left = this.visitExpression(ctx.left);
+        const right = this.visitExpression(ctx.right);
+        
+        if (left === "Number" && right === "Number") {
+            return "Number";
+        } else {
+            throw new Error(`Line: ${ctx.line}, Expected both sides of the binary operation to be of type Number, but got ${left} and ${right}`);
+        }
     }
 
     visitDivision = (ctx: Division): types => {
-        throw new Error("Method not implemented.");
+        throw new Error("19. Method not implemented.");
     }
 
     visitEqual = (ctx: Equal): types => {
-        throw new Error("Method not implemented.");
+        throw new Error("20. Method not implemented.");
     }
 
     visitNotEqual = (ctx: NotEqual): types => {
-        throw new Error("Method not implemented.");
+        throw new Error("21. Method not implemented.");
     }
 
     visitAnd = (ctx: And): types => {
-        throw new Error("Method not implemented.");
+        throw new Error("22. Method not implemented.");
     }
 
     visitOr = (ctx: Or): types => {
-        throw new Error("Method not implemented.");
+        throw new Error("23. Method not implemented.");
     }
 
     visitGreater = (ctx: Greater): types => {
-        
-        throw new Error("Method not implemented.");
+        const left = this.visitExpression(ctx.left);
+        const right = this.visitExpression(ctx.right);
+
+        if (left === "Number" && right === "Number") {
+            return "Boolean";
+        } else {
+            throw new Error(`Line: ${ctx.line}, Expected both sides of the binary operation to be of type Number, but got ${left} and ${right}`);
+        }
     }
 
     visitLess = (ctx: Less): types => {
 
-        throw new Error("Method not implemented.");
+        throw new Error("25. Method not implemented.");
     }
 
 

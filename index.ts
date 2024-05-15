@@ -30,10 +30,10 @@ console.log("\nBuilding AST...");
 
 const ast = astVisitor.visitProgram(cst);
 
-const astJson = JSON.stringify(ast);
+/* const astJson = JSON.stringify(ast);
 fs.writeFileSync('ast.json', astJson);
 console.log("\nAST written to ast.json. Continuing...");
-
+ */
 
 console.log("\nAST built successfully. Continuing...");
 

@@ -477,21 +477,22 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 	visitExpression = (ctx: ExpressionContext): Result => {
 		//console.log("Visiting expression");
 
-		console.log("Expression: ", ctx.getText());
-		console.log("isArithmetic: ", !!ctx.arithmetic());
-		console.log("isStringArithmetic: ", !!ctx.stringArithmetic());
-		console.log("isValue: ", !!ctx.value());
-
 		switch (true) {
-			// case for stringArithmetic
-			case !!ctx.stringArithmetic():
-				return this.visitStringArithmetic(ctx.stringArithmetic());
+			// case for (expression)
+				case ctx.getChildCount() === 3 && ctx.getChild(0).getText() === "(" && ctx.getChild(2).getText() === ")":
+			return this.visitExpression(ctx.expression());
 			// case for arithmetic
 			case !!ctx.arithmetic():
 				return this.visitArithmetic(ctx.arithmetic());
+			// case for stringArithmetic
+			case !!ctx.stringArithmetic():
+				return this.visitStringArithmetic(ctx.stringArithmetic());
 			// case for value
 			case !!ctx.value():
 				return this.visitValue(ctx.value());
+			// case for condition
+			case !!ctx.condition():
+				return this.visitCondition(ctx.condition());
 			default:
 				throw new Error("Unknown expression");
 		}
@@ -794,25 +795,13 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 			// case for (condition)
 			case ctx.getChildCount() === 3 && ctx.getChild(0).getText() === "(" && ctx.getChild(2).getText() === ")":
 				return this.visitCondition(ctx.condition());
-			// case for number
-			case !!ctx.NUMBER(): {
-				const value: Value = {
-					kind: "Value",
-					type: "Number",
-					line: ctx.start.line,
-					value: ctx.NUMBER().getText(),
-				};
-				return value;
+			// case for arithmetic
+			case !!ctx.arithmetic(): {
+				return this.visitArithmetic(ctx.arithmetic());
 			}
 			// case for ID
-			case !!ctx.ID(): {
-				const identifier: Identifier = {
-					kind: "Identifier",
-					line: ctx.start.line,
-					type: undefined,
-					name: ctx.ID().getText(),
-				};
-				return identifier;
+			case !!ctx.value(): {
+				return this.visitValue(ctx.value());
 			}
 			default:
 				throw new Error("Unknown atom");
