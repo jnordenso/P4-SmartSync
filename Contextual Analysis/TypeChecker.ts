@@ -181,7 +181,7 @@ export default class TypeChecker extends AstVisitor<void> {
         }
 	};
 
-	visitFunction = (ctx: Function): void => {
+	visitFunction = (ctx: Function): types => {
         // if its a function declaration
         if (ctx.type !== undefined) {
             if (ctx.type !== ctx.identifier.type) {
@@ -208,38 +208,50 @@ export default class TypeChecker extends AstVisitor<void> {
 
             if (returnType !== ctx.type) {
                 throw new Error(`Line: ${ctx.line}, Expected function ${ctx.identifier.name} to return type ${ctx.type}, but got ${returnType}`);
-            }
+            } else {
+				return ctx.type;
+			}
         // if its a function call
         } else {
-            const symbol = this.symbolTable.LookupSymbol(ctx.identifier.name, this.currentBlock);
+            const symbol = this.symbolTable.LookupFunctionSymbol(ctx.identifier.name, this.currentBlock);
+			console.log("symbol", symbol)
             if (symbol !== null && symbol.type !== undefined && symbol.body !== undefined) {
                 ctx.type = symbol.type;
                 ctx.identifier.type = symbol.type;
 
+				// save the current block
                 const previousBlock = this.currentBlock;
+				// set the current block to the function body
                 this.currentBlock = symbol.body;
 
-                // TODO: prob need to make a new function for adding functions to symboltable 
-                // it needs info such as id, type, parameters, body, return
-                
+				// visit the function parameters
+				ctx.parameters.forEach((parameter) => {
+					this.visitIdentifier(parameter);
+				});
+				// visit the function body
+				ctx.body = symbol.body;
+				ctx.body.forEach((line) => {
+					this.visitLine(line);
+				});
+				if (ctx.return === undefined) {
+					ctx.return = symbol.returnExpression;
+				}
+				
+				// get the return type of the function
+				const returnType = this.visitExpression(ctx.return);
+				// set the current block back to the previous block
+				this.currentBlock = previousBlock;
 
+				// check if the return type of the function is the same as the function type
+				if (returnType !== ctx.type) {
+					throw new Error(`Line: ${ctx.line}, Expected function ${ctx.identifier.name} to return type ${ctx.type}, but got ${returnType}`);
+				} else {
+					return ctx.type;
+				}
             } else {
                 throw new Error(`Line: ${ctx.line}, Undeclared function: ${ctx.identifier.name}`);
             }
-
-
         }
-
-
-
-        
-
-
-        
-
-
-
-		throw new Error("8. Method not implemented.");
 	};
 
 	visitOutput = (ctx: Output): void => {
@@ -264,6 +276,8 @@ export default class TypeChecker extends AstVisitor<void> {
 				return this.visitIdentifier(ctx as Identifier);
 			case "BinaryOperation":
 				return this.visitBinaryOperation(ctx as BinaryOperation);
+			case "Function":
+				return this.visitFunction(ctx as Function);
 			default:
 				throw new Error(`Unknown expression kind: ${ctx.kind}`);
 		}
@@ -369,7 +383,14 @@ export default class TypeChecker extends AstVisitor<void> {
     }
 
     visitDivision = (ctx: Division): types => {
-        throw new Error("19. Method not implemented.");
+		const left = this.visitExpression(ctx.left);
+		const right = this.visitExpression(ctx.right);
+
+		if (left === "Number" && right === "Number") {
+			return "Number";
+		} else {
+			throw new Error(`Line: ${ctx.line}, Expected both sides of the DIVISION operator to be of type Number, but got ${left} and ${right}`);
+		}
     }
 
     visitEqual = (ctx: Equal): types => {
