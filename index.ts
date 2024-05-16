@@ -1,4 +1,4 @@
-import { CharStream, CommonTokenStream, ErrorListener }  from 'antlr4';
+import { CharStream, CommonTokenStream }  from 'antlr4';
 import SmartSyncLexer from './Syntax Analysis/SmartSyncLexer.ts';
 import SmartSyncParser from './Syntax Analysis/SmartSyncParser.ts';
 import fs from 'node:fs';
@@ -7,7 +7,7 @@ import SymbolTable from './Contextual Analysis/SymbolTable.ts';
 import { Program } from './Syntax Analysis/AST.ts';
 import TypeChecker from './Contextual Analysis/TypeChecker.ts';
 
-const filePath = './code2.ss';
+const filePath = './code.ss';
 const input = fs.readFileSync(filePath, 'utf-8');
 
 const chars = new CharStream(input);

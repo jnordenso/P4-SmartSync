@@ -151,7 +151,7 @@ export default class SymbolTable extends AstVisitor<void> {
 		}
 
 		const symbol: Symbol = { name, type, reference }; // Creates a new symbol
-		
+
 		// Adds the symbol to the current scope
 		this.stackScopes[this.stackScopes.length - 1].symbols.set(name, symbol);
 	};
@@ -276,6 +276,9 @@ export default class SymbolTable extends AstVisitor<void> {
             case "Delay":
                 this.visitDelay(ctx as Delay);
                 break;
+			case "Array":
+				this.visitArray(ctx as Array);
+				break;
 			default:
 				throw new Error(`Unknown line kind: ${ctx.kind}`);
 		}
@@ -389,20 +392,24 @@ export default class SymbolTable extends AstVisitor<void> {
 
 	visitFunction = (ctx: Function): void => {
         if (ctx.body) {
-            this.NewScope(ctx.body);
 
 			if (ctx.type !== undefined && ctx.return !== undefined) {
 				const parameters: Symbol[] = [];
 				ctx.parameters.forEach((parameter) => {
 					if (parameter.type !== undefined) {
-						this.AddSymbol(parameter.name, parameter.type, ctx);
 						parameters.push({ name: parameter.name, type: parameter.type, reference: ctx });
 					}
 				});
-
+				
 				this.AddFunctionSymbol(ctx.identifier.name, ctx.type, ctx, parameters, ctx.body, ctx.return);
+				
+				this.NewScope(ctx.body);
+				ctx.parameters.forEach((parameter) => {
+					if (parameter.type !== undefined) {
+						this.AddSymbol(parameter.name, parameter.type, ctx);
+					}
+				});
 			}
-
 
             ctx.body.forEach((line) => {
                 this.visitLine(line);
