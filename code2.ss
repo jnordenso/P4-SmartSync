@@ -1,7 +1,6 @@
-Number grade = 0; 
+Number grade = 5; 
 
-Number FUNCTION calcGrade(Number a, Number b) {
-    RETURN (a + b) / 2;
-}
+grade = grade + 10 / 20 * 30;
 
-grade = calcGrade(80, 90);
+OUTPUT "grade: ";
+OUTPUT grade;

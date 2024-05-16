@@ -459,7 +459,6 @@ export default class TypeChecker extends AstVisitor<void> {
 						`Line: ${ctx.line}, Array features are not allowed on non array: ${ctx.identifier.name}.`
 					);
 				}
-				console.log(ctx);
 
 				// if the type of the array is not set yet set it to the type of the symbol
 				if (ctx.type === undefined) {
@@ -546,7 +545,6 @@ export default class TypeChecker extends AstVisitor<void> {
 	};
 
 	visitBinaryOperation = (ctx: BinaryOperation): types => {
-		console.log("binary operation");
 		const left = this.visitExpression(ctx.left);
 		const right = this.visitExpression(ctx.right);
 
