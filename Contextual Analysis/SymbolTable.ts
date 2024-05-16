@@ -31,8 +31,26 @@ import AstVisitor from "./AstVisitor.ts";
  */
 interface Symbol {
 	name: string; // ID (name) of the variable
-	type: types | undefined; // Type of the variable
+	type: types; // Type of the variable
 	reference: Line; // Reference to the declared node in the AST
+}
+
+/**
+ * This interface defines a function symbol in the Symbol Table.
+ * @param name the name of the function
+ * @param type the type of the function
+ * @param reference the reference to the declared node in the AST
+ * @param parameters the parameters of the function
+ * @param body the block of lines in the function
+ * @param returnExpression the return expression of the function
+ */
+interface FunctionSymbol {
+	name: string;
+	type: types;
+	reference: Line;
+	parameters: Symbol[];
+	body: Line[];
+	returnExpression: Expression;
 }
 
 /**
@@ -44,6 +62,7 @@ interface Symbol {
 interface Scope {
 	parent: Scope | null; // Parent scope (outer scope) or null if it is the global scope
 	symbols: Map<string, Symbol>; // Map of symbols in the scope (key: ID, value: Symbol)
+	functionSymbols: Map<string, FunctionSymbol>; // Map of function symbols in the scope (key: ID, value: FunctionSymbol)
 	block: Line[];
 }
 
@@ -96,6 +115,7 @@ export default class SymbolTable extends AstVisitor<void> {
 		const scope: Scope = {
 			parent: this.stackScopes[this.stackScopes.length - 1] || null,
 			symbols: new Map(),
+			functionSymbols: new Map(),
 			block: block,
 		};
 
@@ -120,17 +140,36 @@ export default class SymbolTable extends AstVisitor<void> {
 	 * @param type the type of the symbol
 	 * @param reference the reference to the declared node in the AST
 	 */
-	AddSymbol = (name: string, type: types | undefined, reference: Line): void => {
+	AddSymbol = (name: string, type: types, reference: Line): void => {
 		if (this.stackScopes[this.stackScopes.length - 1].symbols.has(name)) {
 			// TODO: Maybe we should make some error handling in another way
 			throw new Error(`Variable '${name}' has already been declared in this scope`);
 		}
 
-		const symbol: Symbol = { name, type, reference }; // Creates a new symbol
+		if (this.stackScopes[this.stackScopes.length - 1].functionSymbols.has(name)) {
+			throw new Error(`Function '${name}' has already been declared in this scope`);
+		}
 
+		const symbol: Symbol = { name, type, reference }; // Creates a new symbol
+		
 		// Adds the symbol to the current scope
 		this.stackScopes[this.stackScopes.length - 1].symbols.set(name, symbol);
 	};
+
+	AddFunctionSymbol = (name: string, type: types, reference: Line, parameters: Symbol[], body: Line[], returnExpression: Expression): void => {
+		if (this.stackScopes[this.stackScopes.length - 1].symbols.has(name)) {
+			throw new Error(`Variable '${name}' has already been declared in this scope`);
+		}
+
+		if (this.stackScopes[this.stackScopes.length - 1].functionSymbols.has(name)) {
+			throw new Error(`Function '${name}' has already been declared in this scope`);
+		}
+
+		// Creates a new function symbol
+		const functionSymbol: FunctionSymbol = { name, type, reference, parameters, body, returnExpression };
+		// Adds the function symbol to the current scope
+		this.stackScopes[this.stackScopes.length - 1].functionSymbols.set(name, functionSymbol);
+	}
 
 	/**
 	 * Looks up the symbol in the Symbol Table.
@@ -158,6 +197,28 @@ export default class SymbolTable extends AstVisitor<void> {
 		}
 		return null;
 	};
+
+	LookupFunctionSymbol = (name: string, reference: Line[]): FunctionSymbol | null => {
+		let scope = this.scopes.get(reference); // Gets the current scope
+
+		// Loops through the scopes
+		while (scope) {
+			if (scope.functionSymbols.has(name)) {
+				// If the scope has the function symbol
+				const functionSymbol = scope.functionSymbols.get(name); // Gets the function symbol
+				if (functionSymbol) {
+					return functionSymbol;
+				}
+			}
+			if (scope.parent === null) {
+				// If the scope is the global scope
+				break;
+			}
+			scope = scope.parent; // Moves to the parent scope
+		}
+		return null;
+	
+	}
 
 	visitProgram = (ctx: Program): void => {
 		this.NewScope(ctx.body); // Adds the global scope
@@ -330,9 +391,18 @@ export default class SymbolTable extends AstVisitor<void> {
         if (ctx.body) {
             this.NewScope(ctx.body);
 
-            ctx.parameters.forEach((parameter) => {
-                this.AddSymbol(parameter.name, parameter.type, ctx);
-            });
+			if (ctx.type !== undefined && ctx.return !== undefined) {
+				const parameters: Symbol[] = [];
+				ctx.parameters.forEach((parameter) => {
+					if (parameter.type !== undefined) {
+						this.AddSymbol(parameter.name, parameter.type, ctx);
+						parameters.push({ name: parameter.name, type: parameter.type, reference: ctx });
+					}
+				});
+
+				this.AddFunctionSymbol(ctx.identifier.name, ctx.type, ctx, parameters, ctx.body, ctx.return);
+			}
+
 
             ctx.body.forEach((line) => {
                 this.visitLine(line);

@@ -1,0 +1,19 @@
+{
+	"kind": "Program",
+	"line": 1,
+	"body": [
+		{
+			"kind": "Declaration",
+			"line": 1,
+			"type": "Number",
+			"identifier": { "kind": "Identifier", "line": 1, "type": "Number", "name": "grade" },
+			"value": { "kind": "Value", "type": "Number", "line": 1, "value": "12" }
+		},
+		{
+			"kind": "Assignment",
+			"line": 2,
+			"identifier": { "kind": "Identifier", "line": 2, "type": "Number", "name": "grade" },
+			"value": { "kind": "Value", "type": "Number", "line": 2, "value": "12.5" }
+		}
+	]
+}

@@ -1,4 +1,4 @@
-Number grade = 85;  # Change this to any grade #
+Number grade = 0;  # Change this to any grade #
 Text letterGrade = "";  # Default to empty string #
 
 IF grade + 10 * 20 GREATER 90 {

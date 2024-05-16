@@ -1,9 +1,7 @@
-Number grade = 12;
-Number grade2 = 10 + 2;
-Text name = "John";
-Text name2 = "John" + "Doe";
-Boolean isStudent = TRUE;
-Boolean isTeacher = FALSE;
-Number grade3 = grade;
-Number grade4 = grade + 2;
-Number grade5 = grade + grade2;
+Number grade = 0; 
+
+Number FUNCTION calcGrade(Number a, Number b) {
+    RETURN (a + b) / 2;
+}
+
+grade = calcGrade(80, 90);

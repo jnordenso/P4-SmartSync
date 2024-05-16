@@ -3,12 +3,11 @@ import SmartSyncLexer from './Syntax Analysis/SmartSyncLexer.ts';
 import SmartSyncParser from './Syntax Analysis/SmartSyncParser.ts';
 import fs from 'node:fs';
 import AstVisitor from './Syntax Analysis/AstBuilder.ts';
-import util from 'node:util';
 import SymbolTable from './Contextual Analysis/SymbolTable.ts';
 import { Program } from './Syntax Analysis/AST.ts';
 import TypeChecker from './Contextual Analysis/TypeChecker.ts';
 
-const filePath = './code.ss';
+const filePath = './code2.ss';
 const input = fs.readFileSync(filePath, 'utf-8');
 
 const chars = new CharStream(input);
@@ -30,10 +29,10 @@ console.log("\nBuilding AST...");
 
 const ast = astVisitor.visitProgram(cst);
 
-/* const astJson = JSON.stringify(ast);
+const astJson = JSON.stringify(ast);
 fs.writeFileSync('ast.json', astJson);
 console.log("\nAST written to ast.json. Continuing...");
- */
+
 
 console.log("\nAST built successfully. Continuing...");
 
@@ -47,6 +46,11 @@ console.log("\nType checking...");
 
 const typeChecker = new TypeChecker(st);
 
-typeChecker.visitProgram(ast as Program);
+const dast = typeChecker.visitProgram(ast as Program);
+
+const dastJson = JSON.stringify(dast);
+fs.writeFileSync('dast.json', dastJson);
+console.log("\nDAST written to dast.json. Continuing...");
+
 
 console.log("\nType checking completed successfully. Continuing...");
