@@ -42,7 +42,7 @@ functions : TYPE 'FUNCTION' ID '(' (TYPE ID'[]'? ','?)* ')' '{' line* 'RETURN' f
 output : 'OUTPUT' (value | ID'[' value ']') ';';
 delay : 'DELAY' value ';';
 
-arrayValue : '[' value ']' | value;
+arrayValue : '[' (value ','?)* ']' | value;
 arrayStm : ID'[]' ('PUSH' value ';'| 'PULL' ';');
 
 WS : [ \t\r\n]+ -> skip ; // skip spaces, tabs, newlines

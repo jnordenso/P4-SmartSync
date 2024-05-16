@@ -1,6 +1,6 @@
 import AstVisitor from "./AstVisitor.ts";
 import {
-	Array,
+	Array as IArray,
 	ArrayDeclaration,
 	Assignment,
 	BinaryOperation,
@@ -36,12 +36,12 @@ import {
 } from "../Syntax Analysis/AST.ts";
 import SymbolTable from "./SymbolTable.ts";
 
-type FinalValue = number | string | boolean;
+type FinalValue = number | string | boolean | FinalValue[];
 export default class Interpreter extends AstVisitor<any> {
     symbolTable: SymbolTable;
 	currentBlock: Line[] = [];
 
-    environment: Map<string, FinalValue> = new Map(); // Environment for keeping track of variable values
+    environment: Map<string, FinalValue | FinalValue[]> = new Map(); // Environment for keeping track of variable values
 
 	constructor(st: SymbolTable) {
 		super();
@@ -95,7 +95,7 @@ export default class Interpreter extends AstVisitor<any> {
 				this.visitDelay(ctx as Delay);
 				break;
 			case "Array":
-				this.visitArray(ctx as Array);
+				this.visitArray(ctx as IArray);
 				break;
 			default:
 				throw new Error(`Unknown line kind: ${ctx.kind}.`);
@@ -117,7 +117,21 @@ export default class Interpreter extends AstVisitor<any> {
     }
 
     visitArrayDeclaration = (ctx: ArrayDeclaration): void => {
-        throw new Error("4. Method not implemented.");
+        // get the symbol from the symbol table
+        const symbol = this.symbolTable.LookupSymbol(ctx.identifier.name, this.currentBlock);
+
+        // if the symbol is found
+        if (symbol !== null) {
+            const arrayValue: FinalValue[] = [];
+            for (let i = 0; i < ctx.value.length; i++) {
+                const value = this.visitExpression(ctx.value[i]);
+                arrayValue.push(value as FinalValue);
+
+                this.environment.set(ctx.identifier.name, arrayValue);
+            }
+        } else {
+            throw new Error(`Symbol ${ctx.identifier.name} not found.`);
+        }
     }
 
     visitIfStm = (ctx: IfStm): void => {
@@ -141,15 +155,65 @@ export default class Interpreter extends AstVisitor<any> {
     }
 
     visitPush = (ctx: Push): void => {
-        throw new Error("10. Method not implemented.");
+        // get the symbol from the symbol table
+        const symbol = this.symbolTable.LookupSymbol(ctx.identifier.name, this.currentBlock);
+        // get the variable value from the environment
+        const variableValue = this.environment.get(ctx.identifier.name);
+
+        // if the symbol is found
+        if (symbol !== null && variableValue) {
+            // check if the variable is an array
+            if (!Array.isArray(variableValue)) {
+                throw new Error(`Line: ${ctx.line}, ${ctx.identifier.name} is not an array.`);
+            }
+            // push the value to the array
+            variableValue.push(this.visitExpression(ctx.value));
+            // update the value in the environment
+            this.environment.set(ctx.identifier.name, variableValue);
+        } else {
+            throw new Error(`Symbol ${ctx.identifier.name} not found.`);
+        }
+
     }
 
     visitPull = (ctx: Pull): void => {
-        throw new Error("11. Method not implemented.");
+        // get the symbol from the symbol table
+        const symbol = this.symbolTable.LookupSymbol(ctx.identifier.name, this.currentBlock);
+        // get the variable value from the environment
+        const variableValue = this.environment.get(ctx.identifier.name);
+
+        // if the symbol is found
+        if (symbol !== null && variableValue) {
+            // check if the variable is an array
+            if (!Array.isArray(variableValue)) {
+                throw new Error(`Line: ${ctx.line}, ${ctx.identifier.name} is not an array.`);
+            }
+            // remove the last value from the array
+            variableValue.pop();
+            // update the value in the environment
+            this.environment.set(ctx.identifier.name, variableValue);
+        } else {
+            throw new Error(`Symbol ${ctx.identifier.name} not found.`);
+        }
     }
 
-    visitSize = (ctx: Size): void => {
-        throw new Error("12. Method not implemented.");
+    visitSize = (ctx: Size): number => {
+        // get the symbol from the symbol table
+        const symbol = this.symbolTable.LookupSymbol(ctx.identifier.name, this.currentBlock);
+        // get the variable value from the environment
+        const variableValue = this.environment.get(ctx.identifier.name);
+
+        // if the symbol is found
+        if (symbol !== null && variableValue) {
+            // check if the variable is an array
+            if (!Array.isArray(variableValue)) {
+                throw new Error(`Line: ${ctx.line}, ${ctx.identifier.name} is not an array.`);
+            }
+            // return the size of the array
+            return variableValue.length;
+        } else {
+            throw new Error(`Symbol ${ctx.identifier.name} not found.`);
+        }
     }
 
     visitAssignment = (ctx: Assignment): void => {
@@ -179,15 +243,15 @@ export default class Interpreter extends AstVisitor<any> {
         throw new Error("16. Method not implemented.");
     }
 
-    visitExpression = (ctx: Expression): FinalValue => {
+    visitExpression = (ctx: Expression): FinalValue | FinalValue[] => {
         switch (ctx.kind) {
 			case "Value":
 				return this.visitValue(ctx as Value);
-			/* case "Array":
-				return this.visitArray(ctx as Array);
+			case "Array":
+				return this.visitArray(ctx as IArray);
 			case "Size":
 				return this.visitSize(ctx as Size);
-			case "StringConcatenation":
+			/*case "StringConcatenation":
 				return this.visitStringConcatenation(ctx as StringConcatenation); */
 			case "Identifier":
 				return this.visitIdentifier(ctx as Identifier);
@@ -216,15 +280,24 @@ export default class Interpreter extends AstVisitor<any> {
 
     }
 
-    visitArray = (ctx: Array): void => {
-        throw new Error("19. Method not implemented.");
+    visitArray = (ctx: IArray): FinalValue[] => {
+        if (ctx.value === undefined) {
+            throw new Error(`Line: ${ctx.line}, Array value is undefined.`);
+        }
+        
+        const array: (FinalValue[] | FinalValue)[] = [];
+        ctx.value.forEach((value) => {
+            array.push(this.visitExpression(value));
+        });
+
+        return array;
     }
 
     visitStringConcatenation = (ctx: StringConcatenation): void => {
         throw new Error("20. Method not implemented.");
     }
 
-    visitIdentifier = (ctx: Identifier): FinalValue => {
+    visitIdentifier = (ctx: Identifier): FinalValue | FinalValue[] => {
         const value = this.environment.get(ctx.name);
 
         if (value !== undefined) {

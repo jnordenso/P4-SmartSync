@@ -122,6 +122,10 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		//console.log("Visiting value");
 		let result: Value | Identifier | IndexOf | Size | Function;
 
+		if(ctx === null) {
+			throw new Error("No value found");
+		}
+
 		// Check if the value is a boolean, string, number or identifier
 		switch (true) {
 			// case for boolean
@@ -261,8 +265,8 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
         switch (true) {
 			// case for Type ID[] = [value, value, value]
             case !!ctx.ID() && ctx.getChild(2).getText() === "[]": {
-
                 const arrayValues: Expression[] = [];
+
 				// Visit each value in the array
                 ctx.arrayValue_list().forEach((arrayValue) => {
                     const value = this.visitArrayValue(arrayValue);
@@ -285,7 +289,6 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 			// case for Type ID = value
             case !!ctx.ID() && ctx.getChild(2).getText() !== "[]": {
                 const value = this.visitExpression(ctx.expression());
-
                 const declaration: Declaration = {
                     kind: "Declaration",
                     line: startLine,
@@ -1046,17 +1049,24 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 
 		// case for [value, value, value]
 		if (ctx.getChild(0).getText() === "[" && ctx.getChild(ctx.getChildCount() - 1).getText() === "]") {
-			const value = this.visitValue(ctx.value());
+			const arrayValues: Expression[] = [];
+			ctx.value_list().forEach((value) => {
+				const val = this.visitValue(value);
+				if (val) {
+					arrayValues.push(val as Expression);
+				}
+			});
 
 			const array: Array = {
 				kind: "Array",
 				line: ctx.start.line,
 				type: undefined,
-				value: [value as Expression],
+				value: arrayValues,
 			};
 			return array;
+		// case for value
 		} else {
-			return this.visitValue(ctx.value());
+			return this.visitValue(ctx.value(0));
 		}
 	};
 
