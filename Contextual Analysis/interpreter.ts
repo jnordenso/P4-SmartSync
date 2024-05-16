@@ -350,7 +350,14 @@ export default class Interpreter extends AstVisitor<any> {
     }
 
     visitSubtraction = (ctx: Subtraction): number => {
-        throw new Error("24. Method not implemented.");
+        const left = this.visitExpression(ctx.left);
+        const right = this.visitExpression(ctx.right);
+
+        if (typeof left === "number" && typeof right === "number") {
+            return left - right;
+        } else {
+            throw new Error(`Line: ${ctx.line}, Cannot add ${left} and ${right}.`);
+        }
     }
 
     visitMultiplication = (ctx: Multiplication): number => {
