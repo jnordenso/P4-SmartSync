@@ -1,6 +1,6 @@
 import { CharStream, CommonTokenStream } from "antlr4";     
 import { describe, expect, test } from "@jest/globals";   
-import SmartSyncLexer from "./Syntax Analysis/SmartSyncLexer.ts"; 
+import SmartSyncLexer from "../Syntax Analysis/SmartSyncLexer.ts";
 
 
 describe("SmartSyncLexer Integration Tests", () => {

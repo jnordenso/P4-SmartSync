@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@jest/globals": "^29.7.0",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.12.7",
     "jest": "^29.7.0",
@@ -20,7 +21,7 @@
     "antlr4": "^4.13.1-patch-1",
     "antlr4ts": "^0.5.0-alpha.4"
   },
-  "module.exports" : {
+  "module.exports": {
     "present": "ts-jest",
     "testEnvironment": "node"
   }
