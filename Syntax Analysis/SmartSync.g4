@@ -11,7 +11,7 @@ DIGIT : [0-9];
 ARITHMETIC_OP : '+' | '-' | '*' | '/';
 LOGIC_OP : 'EQUAL' | 'NOT EQUAL' | 'AND' | 'OR' | 'GREATER' | 'LESS';
 
-value : BOOL | STRING | NUMBER | ID | ID'[]' 'SIZE' | ID'[' value ']' | ID'(' (funcReturn ','?)* ')';
+value : BOOL | STRING | NUMBER | ID'[]'? | ID'[]' 'SIZE' | ID'[' value ']' | ID'(' (funcReturn ','?)* ')';
 
 declaration : TYPE ID '=' expression ';' | TYPE ID'[]' '=' '[' (arrayValue ','?)* ']' ';';
 

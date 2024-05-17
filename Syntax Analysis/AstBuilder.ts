@@ -168,6 +168,16 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 				};
 				break;
 			}
+			// case for ID[]
+			case !!ctx.ID() && ctx.getChildCount() === 2 && ctx.getChild(1).getText() === "[]": {
+				result = {
+					kind: "ArrayIdentifier",
+					line: ctx.start.line,
+					type: undefined,
+					name: ctx.ID().getText(),
+				};
+				break;
+			}
 			// case for ID[] SIZE
 			case !!ctx.ID() &&
 				ctx.getChildCount() === 3 &&
