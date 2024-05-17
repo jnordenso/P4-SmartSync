@@ -411,6 +411,8 @@ export default class TypeChecker extends AstVisitor<void> {
 				return this.visitStringConcatenation(ctx as StringConcatenation);
 			case "Identifier":
 				return this.visitIdentifier(ctx as Identifier);
+			case "ArrayIdentifier":
+				return this.visitIdentifier(ctx as Identifier);
 			case "BinaryOperation":
 				return this.visitBinaryOperation(ctx as BinaryOperation);
 			case "Function":
@@ -536,6 +538,13 @@ export default class TypeChecker extends AstVisitor<void> {
 			const symbol = this.symbolTable.LookupSymbol(ctx.name, this.currentBlock);
 			if (symbol !== null && symbol.type !== undefined) {
 				ctx.type = symbol.type;
+
+				if (symbol.reference.kind === "ArrayDeclaration" && ctx.kind !== "ArrayIdentifier") {
+					throw new Error(
+						`Line: ${ctx.line}, ${ctx.name} is an Array and has to be called: ${ctx.name}[].`
+					);
+				}
+
 				return symbol.type;
 			} else {
 				throw new Error(`Line: ${ctx.line}, Undeclared variable: ${ctx.name}.`);

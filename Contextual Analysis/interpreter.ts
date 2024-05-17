@@ -22,7 +22,6 @@ import {
 	StringConcatenation,
 	Value,
 	WhileStm,
-	types,
 	Addition,
 	Subtraction,
 	Multiplication,
@@ -106,10 +105,13 @@ export default class Interpreter extends AstVisitor<any> {
         // get the symbol from the symbol table
         const symbol = this.symbolTable.LookupSymbol(ctx.identifier.name, this.currentBlock);
 
+        
         // if the symbol is found
         if (symbol !== null) {
             const value = this.visitExpression(ctx.value);
-
+            
+            console.log(symbol);
+            console.log(value);
             this.environment.set(ctx.identifier.name, value);
         } else {
             throw new Error(`Symbol ${ctx.identifier.name} not found.`);
@@ -135,23 +137,140 @@ export default class Interpreter extends AstVisitor<any> {
     }
 
     visitIfStm = (ctx: IfStm): void => {
-        throw new Error("5. Method not implemented.");
+        // get the condition value
+        const condition = this.visitExpression(ctx.condition);
+
+        if (typeof condition !== "boolean") {
+            throw new Error(`Line: ${ctx.line}, Condition is not a boolean.`);
+        }
+
+        // if the condition is true
+        if (condition) {
+            // save the current block
+            const previousBlock = this.currentBlock;
+            // set the current block to the if block
+            this.currentBlock = ctx.body;
+
+            // visit the body
+            ctx.body.forEach((line) => {
+                this.visitLine(line);
+            });
+
+            // reset the current block
+            this.currentBlock = previousBlock;
+        } else {
+            // if there is an else statement
+            if (ctx.else) {
+                if (ctx.else.kind === "IfStm") {
+                    // visit the else if statement
+                    this.visitIfStm(ctx.else);
+                } else {
+                    // visit the else statement
+                    this.visitElseStm(ctx.else);
+                }
+            }
+        }
     }
 
     visitElseStm = (ctx: ElseStm): void => {
-        throw new Error("6. Method not implemented.");
+        // save the current block
+        const previousBlock = this.currentBlock;
+        // set the current block to the else block
+        this.currentBlock = ctx.body;
+
+        // visit the body
+        ctx.body.forEach((line) => {
+            this.visitLine(line);
+        });
+
+        // reset the current block
+        this.currentBlock = previousBlock;
     }
 
     visitWhileStm = (ctx: WhileStm): void => {
-        throw new Error("7. Method not implemented.");
+        // save the current block
+        const previousBlock = this.currentBlock;
+        // set the current block to the while block
+        this.currentBlock = ctx.body;
+
+        // get the condition value
+        let condition = this.visitExpression(ctx.condition);
+
+        if (typeof condition !== "boolean") {
+            throw new Error(`Line: ${ctx.line}, Condition is not a boolean.`);
+        }
+
+        // while the condition is true
+        while (condition) {
+            // visit the body
+            ctx.body.forEach((line) => {
+                this.visitLine(line);
+            });
+
+            // get the condition value
+            condition = this.visitExpression(ctx.condition);
+        }
+
+        // reset the current block
+        this.currentBlock = previousBlock;
     }
 
-    visitIndexOf = (ctx: IndexOf): void => {
-        throw new Error("8. Method not implemented.");
+    visitIndexOf = (ctx: IndexOf): FinalValue => {
+        // get the symbol from the symbol table
+        const symbol = this.symbolTable.LookupSymbol(ctx.identifier.name, this.currentBlock);
+
+        // if the symbol is found
+        if (symbol !== null) {
+            const index = this.visitExpression(ctx.index);
+            const array = this.environment.get(ctx.identifier.name);
+
+            if (array) {
+                if (!Array.isArray(array)) {
+                    throw new Error(`Line: ${ctx.line}, ${ctx.identifier.name} is not an array.`);
+                }
+
+                if (typeof index === "number") {
+                    return array[index];
+                } else {
+                    throw new Error(`Line: ${ctx.line}, Index value is not a number.`);
+                }
+            } else {
+                throw new Error(`Line: ${ctx.line}, Array ${ctx.identifier.name} not found.`);
+            }
+        } else {
+            throw new Error(`Symbol ${ctx.identifier.name} not found.`);
+        }
+
+
     }
 
     visitIndexAssignment = (ctx: IndexAssignment): void => {
-        throw new Error("9. Method not implemented.");
+        // get the symbol from the symbol table
+        const symbol = this.symbolTable.LookupSymbol(ctx.identifier.name, this.currentBlock);
+
+        // if the symbol is found
+        if (symbol !== null) {
+            const index = this.visitExpression(ctx.index);
+            const array = this.environment.get(ctx.identifier.name);
+
+            if (array) {
+                if (!Array.isArray(array)) {
+                    throw new Error(`Line: ${ctx.line}, ${ctx.identifier.name} is not an array.`);
+                }
+
+                if (typeof index === "number") {
+                    const value = this.visitExpression(ctx.value);
+                    array[index] = value;
+                    this.environment.set(ctx.identifier.name, array);
+                } else {
+                    throw new Error(`Line: ${ctx.line}, Index value is not a number.`);
+                }
+            } else {
+                throw new Error(`Line: ${ctx.line}, Array ${ctx.identifier.name} not found.`);
+            }
+        } else {
+            throw new Error(`Symbol ${ctx.identifier.name} not found.`);
+        }
     }
 
     visitPush = (ctx: Push): void => {
@@ -230,8 +349,52 @@ export default class Interpreter extends AstVisitor<any> {
         }
     }
 
-    visitFunction = (ctx: Function): void => {
-        throw new Error("14. Method not implemented.");
+    visitFunction = (ctx: Function): FinalValue => {
+        // get the symbol from the symbol table
+        const symbol = this.symbolTable.LookupFunctionSymbol(ctx.identifier.name, this.currentBlock);
+
+        // if the symbol is found
+        if (symbol !== null) {
+            if (ctx.return) {
+                if (this.environment.get(ctx.identifier.name) === undefined) {
+                    // save the current block
+                    const previousBlock = this.currentBlock;
+                    // set the current block to the function block
+                    if (ctx.body) {
+                        this.currentBlock = ctx.body;
+                        const value = this.visitExpression(ctx.return);
+                        this.environment.set(ctx.identifier.name, value);
+                        console.log("Her1",value);
+                        this.currentBlock = previousBlock;
+                        // reset the current block
+                        return value;
+                    } else {
+                        throw new Error(`Line: ${ctx.line}, Function ${ctx.identifier.name} missing body.`);
+                    }
+                } else {
+                    const previousBlock = this.currentBlock;
+                    if (ctx.body) {
+                        this.currentBlock = ctx.body;
+
+                        ctx.body.forEach((line) => {
+                            this.visitLine(line);
+                        });
+                    }
+                    this.currentBlock = previousBlock;
+                    const returnVal = this.environment.get(ctx.identifier.name);
+                    console.log("Her2",returnVal);
+                    if (returnVal !== undefined) {
+                        return returnVal;
+                    } else {
+                        throw new Error(`Line: ${ctx.line}, Function ${ctx.identifier.name} missing return value.`);
+                    }
+                }
+            } else {
+                throw new Error(`Line: ${ctx.line}, Function ${ctx.identifier.name} missing return value.`);
+            }
+        } else {
+            throw new Error(`Symbol ${ctx.identifier.name} not found.`);
+        }
     }
 
     visitOutput = (ctx: Output): void => {
@@ -251,16 +414,18 @@ export default class Interpreter extends AstVisitor<any> {
 				return this.visitArray(ctx as IArray);
 			case "Size":
 				return this.visitSize(ctx as Size);
-			/*case "StringConcatenation":
-				return this.visitStringConcatenation(ctx as StringConcatenation); */
+			case "StringConcatenation":
+				return this.visitStringConcatenation(ctx as StringConcatenation);
 			case "Identifier":
 				return this.visitIdentifier(ctx as Identifier);
+            case "ArrayIdentifier":
+                return this.visitIdentifier(ctx as Identifier);
 			case "BinaryOperation":
 				return this.visitBinaryOperation(ctx as BinaryOperation);
-			/* case "Function":
+			case "Function":
 				return this.visitFunction(ctx as Function);
 			case "IndexOf":
-				return this.visitIndexOf(ctx as IndexOf); */
+				return this.visitIndexOf(ctx as IndexOf);
 			default:
 				throw new Error(`Unknown expression kind: ${ctx.kind}.`);
         }
@@ -293,8 +458,14 @@ export default class Interpreter extends AstVisitor<any> {
         return array;
     }
 
-    visitStringConcatenation = (ctx: StringConcatenation): void => {
-        throw new Error("20. Method not implemented.");
+    visitStringConcatenation = (ctx: StringConcatenation): string => {
+        const strings: string[] = [];
+        
+        ctx.values.forEach((value) => {
+            strings.push(this.visitExpression(value) as string);
+        });
+
+        return strings.join("");
     }
 
     visitIdentifier = (ctx: Identifier): FinalValue | FinalValue[] => {
@@ -386,27 +557,69 @@ export default class Interpreter extends AstVisitor<any> {
     }
 
     visitEqual = (ctx: Equal): boolean => {
-        throw new Error("27. Method not implemented.");
+        const left = this.visitExpression(ctx.left);
+        const right = this.visitExpression(ctx.right);
+
+        if (typeof left === typeof right) {
+            return left === right;
+        } else {
+            throw new Error(`Line: ${ctx.line}, Cannot compare ${left} and ${right}.`);
+        }
     }
 
     visitNotEqual = (ctx: NotEqual): boolean => {
-        throw new Error("28. Method not implemented.");
+        const left = this.visitExpression(ctx.left);
+        const right = this.visitExpression(ctx.right);
+
+        if (typeof left === typeof right) {
+            return left !== right;
+        } else {
+            throw new Error(`Line: ${ctx.line}, Cannot compare ${left} and ${right}.`);
+        }
     }
 
     visitAnd = (ctx: And): boolean => {
-        throw new Error("29. Method not implemented.");
+        const left = this.visitExpression(ctx.left);
+        const right = this.visitExpression(ctx.right);
+
+        if (typeof left === "boolean" && typeof right === "boolean") {
+            return left && right;
+        } else {
+            throw new Error(`Line: ${ctx.line}, Cannot compare ${left} and ${right}.`);
+        }
     }
 
     visitOr = (ctx: Or): boolean => {
-        throw new Error("30. Method not implemented.");
+        const left = this.visitExpression(ctx.left);
+        const right = this.visitExpression(ctx.right);
+
+        if (typeof left === "boolean" && typeof right === "boolean") {
+            return left || right;
+        } else {
+            throw new Error(`Line: ${ctx.line}, Cannot compare ${left} and ${right}.`);
+        }
     }
 
     visitGreater = (ctx: Greater): boolean => {
-        throw new Error("31. Method not implemented.");
+        const left = this.visitExpression(ctx.left);
+        const right = this.visitExpression(ctx.right);
+
+        if (typeof left === "number" && typeof right === "number") {
+            return left > right;
+        } else {
+            throw new Error(`Line: ${ctx.line}, Cannot compare ${left} and ${right}.`);
+        }
     }
 
     visitLess = (ctx: Less): boolean => {
-        throw new Error("32. Method not implemented.");
+        const left = this.visitExpression(ctx.left);
+        const right = this.visitExpression(ctx.right);
+
+        if (typeof left === "number" && typeof right === "number") {
+            return left < right;
+        } else {
+            throw new Error(`Line: ${ctx.line}, Cannot compare ${left} and ${right}.`);
+        }
     }
 
 }
