@@ -5,7 +5,6 @@ import {
 	Assignment,
 	BinaryOperation,
 	Declaration,
-	Delay,
 	ElseStm,
 	Expression,
 	Function,
@@ -36,7 +35,7 @@ import {
 import SymbolTable from "./SymbolTable.ts";
 
 type FinalValue = number | string | boolean | FinalValue[];
-export default class Interpreter extends AstVisitor<any> {
+export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | void> {
     symbolTable: SymbolTable;
 	currentBlock: Line[] = [];
 
@@ -90,9 +89,6 @@ export default class Interpreter extends AstVisitor<any> {
 			case "Output":
 				this.visitOutput(ctx as Output);
 				break;
-			case "Delay":
-				this.visitDelay(ctx as Delay);
-				break;
 			case "Array":
 				this.visitArray(ctx as IArray);
 				break;
@@ -109,9 +105,6 @@ export default class Interpreter extends AstVisitor<any> {
         // if the symbol is found
         if (symbol !== null) {
             const value = this.visitExpression(ctx.value);
-            
-            console.log(symbol);
-            console.log(value);
             this.environment.set(ctx.identifier.name, value);
         } else {
             throw new Error(`Symbol ${ctx.identifier.name} not found.`);
@@ -356,37 +349,45 @@ export default class Interpreter extends AstVisitor<any> {
         // if the symbol is found
         if (symbol !== null) {
             if (ctx.return) {
+                // function declaration
                 if (this.environment.get(ctx.identifier.name) === undefined) {
-                    // save the current block
-                    const previousBlock = this.currentBlock;
-                    // set the current block to the function block
                     if (ctx.body) {
+                        // save the current block
+                        const previousBlock = this.currentBlock;
+                        // set the current block to the function block
                         this.currentBlock = ctx.body;
-                        const value = this.visitExpression(ctx.return);
-                        this.environment.set(ctx.identifier.name, value);
-                        console.log("Her1",value);
-                        this.currentBlock = previousBlock;
+
+                        // save the function in the environment with "Placeholder"
+                        // we use placeholder just to ensure that it is declared.
+                        this.environment.set(ctx.identifier.name, "Placeholder");
                         // reset the current block
-                        return value;
+                        this.currentBlock = previousBlock;
+
+                        return "Placeholder";
                     } else {
                         throw new Error(`Line: ${ctx.line}, Function ${ctx.identifier.name} missing body.`);
                     }
+                // function call
                 } else {
                     const previousBlock = this.currentBlock;
                     if (ctx.body) {
                         this.currentBlock = ctx.body;
 
-                        ctx.body.forEach((line) => {
+                        for (let i = 0; i < symbol.parameters.length; i++) {
+                            const value = this.visitExpression(ctx.parameters[i]);
+                            this.environment.set(symbol.parameters[i].name, value);
+                        }
+
+                        ctx.body.forEach(line => {
                             this.visitLine(line);
-                        });
-                    }
-                    this.currentBlock = previousBlock;
-                    const returnVal = this.environment.get(ctx.identifier.name);
-                    console.log("Her2",returnVal);
-                    if (returnVal !== undefined) {
-                        return returnVal;
+                        })
+
+                        const returnValue = this.visitExpression(ctx.return);
+
+                        this.currentBlock = previousBlock;
+                        return returnValue;
                     } else {
-                        throw new Error(`Line: ${ctx.line}, Function ${ctx.identifier.name} missing return value.`);
+                        throw new Error(`Line: ${ctx.line}, Function ${ctx.identifier.name} missing body.`);
                     }
                 }
             } else {
@@ -402,9 +403,10 @@ export default class Interpreter extends AstVisitor<any> {
         console.log(value);
     }
 
-    visitDelay = (ctx: Delay): void => {
+    /* visitDelay = (ctx: Delay): void => {
         throw new Error("16. Method not implemented.");
-    }
+    } */ 
+    // TODO: Remove Delay method everywhere
 
     visitExpression = (ctx: Expression): FinalValue | FinalValue[] => {
         switch (ctx.kind) {

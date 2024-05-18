@@ -64,8 +64,6 @@ grades[] PUSH 6;
 Number length = grades[] SIZE;
 grades[] = [1, 2, 3];
 
-DELAY grades[1];  
-
 Text name = "John IF WHILE";
 
 Number FUNCTION add(Number a, Number b) {

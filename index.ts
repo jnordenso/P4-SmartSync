@@ -8,7 +8,7 @@ import { Program } from './Syntax Analysis/AST.ts';
 import TypeChecker from './Contextual Analysis/TypeChecker.ts';
 import Interpreter from './Contextual Analysis/Interpreter.ts';
 
-const filePath = './code2.ss';
+const filePath = './code.ss';
 const input = fs.readFileSync(filePath, 'utf-8');
 
 const chars = new CharStream(input);
