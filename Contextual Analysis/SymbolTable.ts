@@ -90,7 +90,6 @@ export default class SymbolTable extends AstVisitor<void> {
 		"PULL",
 		"PUSH",
 		"OUTPUT",
-		"DELAY",
 		"FUNCTION",
 	];
 
