@@ -24,7 +24,6 @@ import { AssignmentsContext } from "./SmartSyncParser.ts";
 import { FuncReturnContext } from "./SmartSyncParser.ts";
 import { FunctionsContext } from "./SmartSyncParser.ts";
 import { OutputContext } from "./SmartSyncParser.ts";
-import { DelayContext } from "./SmartSyncParser.ts";
 import { ArrayValueContext } from "./SmartSyncParser.ts";
 import { ArrayStmContext } from "./SmartSyncParser.ts";
 
@@ -163,12 +162,6 @@ export default class SmartSyncVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitOutput?: (ctx: OutputContext) => Result;
-	/**
-	 * Visit a parse tree produced by `SmartSyncParser.delay`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitDelay?: (ctx: DelayContext) => Result;
 	/**
 	 * Visit a parse tree produced by `SmartSyncParser.arrayValue`.
 	 * @param ctx the parse tree

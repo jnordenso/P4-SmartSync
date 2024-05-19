@@ -9,7 +9,6 @@ import {
 	FuncReturnContext,
 	FunctionsContext,
 	OutputContext,
-	DelayContext,
 	ArrayValueContext,
 	ArrayStmContext,
 	ElseContext,
@@ -43,7 +42,6 @@ import {
 	NotEqual,
 	Greater,
 	Less,
-	Delay,
 	Output,
 	Function,
 	Array,
@@ -1038,20 +1036,6 @@ export default class cstVisitor extends SmartSyncVisitor<Result> {
 		};
 
 		return output;
-	};
-
-	visitDelay = (ctx: DelayContext): Result => {
-		//console.log("Visiting delay");
-
-		// Get the value of the delay
-		const value = this.visitValue(ctx.value());
-
-		const delay: Delay = {
-			kind: "Delay",
-			line: ctx.start.line,
-			value: value,
-		};
-		return delay;
 	};
 
 	visitArrayValue = (ctx: ArrayValueContext): Result => {

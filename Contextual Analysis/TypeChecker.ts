@@ -4,7 +4,6 @@ import {
 	Assignment,
 	BinaryOperation,
 	Declaration,
-	Delay,
 	ElseStm,
 	Expression,
 	Function,
@@ -94,9 +93,6 @@ export default class TypeChecker extends AstVisitor<void> {
 				break;
 			case "Output":
 				this.visitOutput(ctx as Output);
-				break;
-			case "Delay":
-				this.visitDelay(ctx as Delay);
 				break;
 			case "Array":
 				this.visitArray(ctx as Array);
@@ -388,15 +384,6 @@ export default class TypeChecker extends AstVisitor<void> {
 
 	visitOutput = (ctx: Output): void => {
 		this.visitExpression(ctx.value);
-	};
-
-	visitDelay = (ctx: Delay): void => {
-		const expressionType = this.visitExpression(ctx.value);
-		if (expressionType !== "Number") {
-			throw new Error(
-				`Line: ${ctx.line}, Expected delay value to be of type Number, but got type ${expressionType}.`
-			);
-		}
 	};
 
 	visitExpression = (ctx: Expression): types => {
