@@ -1,4 +1,4 @@
-import { assertEquals, assertNotEquals, assertThrows } from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { assertEquals, assertThrows } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { CharStream } from "antlr4"; 
 import SmartSyncLexer from "../Syntax Analysis/SmartSyncLexer.ts";
 import ThrowingErrorListener from "../customError.ts";
