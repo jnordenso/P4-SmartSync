@@ -1,15 +1,15 @@
-import { CharStream, CommonTokenStream, BailErrorStrategy,}  from 'antlr4';
+import { CharStream, CommonTokenStream}  from 'antlr4';
 import SmartSyncLexer from './Syntax Analysis/SmartSyncLexer.ts';
 import SmartSyncParser from './Syntax Analysis/SmartSyncParser.ts';
 import fs from 'node:fs';
-import AstVisitor from './Syntax Analysis/AstBuilder.ts';
+import AstBuilder from './Syntax Analysis/AstBuilder.ts';
 import SymbolTable from './Contextual Analysis/SymbolTable.ts';
 import { Program } from './Syntax Analysis/AST.ts';
 import TypeChecker from './Contextual Analysis/TypeChecker.ts';
 import Interpreter from './Contextual Analysis/Interpreter.ts';
-import ThrowingErrorListener from './customError.ts';
+import { ThrowingErrorListener, CustomBailErrorStrategy } from './customError.ts';
 
-const filePath = './code.ss';
+const filePath = './code2.ss';
 const input = fs.readFileSync(filePath, 'utf-8');
 
 const chars = new CharStream(input);
@@ -21,9 +21,9 @@ const tokens = new CommonTokenStream(lexer);
 const parser = new SmartSyncParser(tokens);
 
 // add BailErrorStrategy to stop parsing after first error
-parser._errHandler = new BailErrorStrategy();
+parser._errHandler = new CustomBailErrorStrategy();
 
-const astVisitor = new AstVisitor();
+const astBuilder = new AstBuilder();
 const symbolTable = new SymbolTable();
 
 new Promise((resolve, reject) => {
@@ -32,9 +32,11 @@ new Promise((resolve, reject) => {
 
         const cst = parser.program();
 
+        console.log(cst.toStringTree(null, parser));
+
         console.log("\nBuilding AST...");
 
-        const ast = astVisitor.visitProgram(cst);
+        const ast = astBuilder.visitProgram(cst);
 
         const astJson = JSON.stringify(ast);
         fs.writeFileSync('ast.json', astJson);
