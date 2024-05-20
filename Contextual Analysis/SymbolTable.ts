@@ -14,7 +14,6 @@ import {
 	Size,
 	Assignment,
 	Output,
-	Delay,
 	Identifier,
 	BinaryOperation,
 	Array,
@@ -91,7 +90,6 @@ export default class SymbolTable extends AstVisitor<void> {
 		"PULL",
 		"PUSH",
 		"OUTPUT",
-		"DELAY",
 		"FUNCTION",
 	];
 
@@ -273,9 +271,6 @@ export default class SymbolTable extends AstVisitor<void> {
             case "Output":
                 this.visitOutput(ctx as Output);
                 break;
-            case "Delay":
-                this.visitDelay(ctx as Delay);
-                break;
 			case "Array":
 				this.visitArray(ctx as Array);
 				break;
@@ -421,10 +416,6 @@ export default class SymbolTable extends AstVisitor<void> {
 	visitOutput = (ctx: Output): void => {
 		this.visitExpression(ctx.value);
 	};
-
-	visitDelay = (ctx: Delay): void => {
-        this.visitExpression(ctx.value);
-    };
 
 	visitExpression = (ctx: Expression): void => {
 		switch (ctx.kind) {

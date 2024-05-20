@@ -15,7 +15,6 @@ import {
     Assignment,
     Function,
     Output,
-    Delay,
     Expression,
     Value,
     Array,
@@ -142,12 +141,6 @@ export default class AstVisitor<Result> {
     visitOutput?: (ctx: Output) => Result;
     /**
      * Visit the Delay node in the Abstract Syntax Tree.
-     * @param ctx the AST
-     * @return the visitor result
-     */
-    visitDelay?: (ctx: Delay) => Result;
-    /**
-     * Visit the Expression node in the Abstract Syntax Tree.
      * @param ctx the AST
      * @return the visitor result
      */

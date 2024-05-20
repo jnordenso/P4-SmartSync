@@ -8,7 +8,6 @@ export type NodeType =
     | "Assignment"
     | "Function"
     | "Output"
-    | "Delay"
     // Statements
     | "IfStm"
     | "ElseStm"
@@ -109,11 +108,6 @@ export interface Function extends Line {
 
 export interface Output extends Line {
     kind: "Output";
-    value: Expression;
-}
-
-export interface Delay extends Line {
-    kind: "Delay";
     value: Expression;
 }
 

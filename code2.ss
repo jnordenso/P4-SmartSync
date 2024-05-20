@@ -56,10 +56,11 @@ OUTPUT "fullName: ";
 OUTPUT fullName;
 
 Number FUNCTION add(Number a, Number b) {
-    RETURN a + b;
+    Number c = a + b;
+    RETURN c;
 }
 
-Number sum = add(1, 2);
+Number sum = add(1, grade);
 
 OUTPUT "sum: ";
 OUTPUT sum;

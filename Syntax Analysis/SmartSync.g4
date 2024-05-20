@@ -1,6 +1,6 @@
 grammar SmartSync;
 program : line+;
-line : declaration | statements | assignments | functions | output | delay;
+line : declaration | statements | assignments | functions | output;
 
 BOOL : 'TRUE' | 'FALSE';
 TYPE : 'Number' | 'Text' | 'Boolean';
@@ -40,7 +40,6 @@ funcReturn : value | ID '[]' | arithmetic | '[' (arrayValue ','?)* ']';
 functions : TYPE 'FUNCTION' ID '(' (TYPE ID'[]'? ','?)* ')' '{' line* 'RETURN' funcReturn';''}';
 
 output : 'OUTPUT' (value | ID'[' value ']') ';';
-delay : 'DELAY' value ';';
 
 arrayValue : '[' (value ','?)* ']' | value;
 arrayStm : ID'[]' ('PUSH' value ';'| 'PULL' ';');

@@ -1,10 +1,17 @@
-Number grade = 0;  # Change this to any grade #
+Number grade = 0005;  # Change this to any grade #
 Text letterGrade = "";  # Default to empty string #
 
-IF grade + 10 * 20 GREATER 90 {
+OUTPUT "Grade: ";
+OUTPUT grade;
+
+IF grade + 5 / 20 GREATER 90 {
   OUTPUT "Grade is greater than 90";
+  Number grade1 = grade + 5 / 20;
+  OUTPUT grade1;
 } ELSE {
-  OUTPUT "Grade is less than 90";
+  OUTPUT "Grade is less than 90 what up";
+  Number grade1 = grade + 5 / 20;
+  OUTPUT grade1;
 } 
 Boolean isGradeGreaterThan90 = grade GREATER 90;
 
@@ -63,8 +70,6 @@ grades[] PULL;
 grades[] PUSH 6;
 Number length = grades[] SIZE;
 grades[] = [1, 2, 3];
-
-DELAY grades[1];  
 
 Text name = "John IF WHILE";
 
