@@ -69,7 +69,7 @@ type Result = Line | Declaration | ArrayDeclaration | Expression;
  * const ast = cstVisitor.visitProgram(ctx);
  * @returns the Abstract Syntax Tree by visiting the Program node and its children
  */
-export default class cstVisitor extends SmartSyncVisitor<Result> {
+export default class AstBuilder extends SmartSyncVisitor<Result> {
 	/**
 	 * Visit the Program node in the Concrete Syntax Tree.
 	 * This node is the root of the CST and recursively visits all other nodes.
