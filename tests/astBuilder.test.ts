@@ -481,3 +481,295 @@ Deno.test("AST Builder - Integration test - Identifers", () => {
         }, Error, expectedError);
     });
 });
+
+Deno.test("AST Builder - Integration test - Operators", () => {
+    const testCases = [
+		{
+			input: "x = 1 + 2;",
+			expected: {
+				kind: "Program",
+				line: 1,
+				body: [
+					{
+						kind: "Assignment",
+						line: 1,
+						identifier: { kind: "Identifier", line: 1, name: "x" },
+						value: { 
+                            kind: "BinaryOperation", 
+                            line: 1, 
+                            left: { kind: "Value", type: "Number", line: 1, value: "1" },
+                            right: { kind: "Value", type: "Number", line: 1, value: "2" },
+                            operator: "+"
+                        },
+					},
+				],
+			},
+		},
+		{
+			input: "x = 1 - 2;",
+			expected: {
+				kind: "Program",
+				line: 1,
+				body: [
+					{
+						kind: "Assignment",
+						line: 1,
+						identifier: { kind: "Identifier", line: 1, name: "x" },
+						value: { 
+                            kind: "BinaryOperation", 
+                            line: 1, 
+                            left: { kind: "Value", type: "Number", line: 1, value: "1" },
+                            right: { kind: "Value", type: "Number", line: 1, value: "2" },
+                            operator: "-"
+                        },
+					},
+				],
+			},
+		},
+        {
+			input: "x = 1 * 2;",
+			expected: {
+				kind: "Program",
+				line: 1,
+				body: [
+					{
+						kind: "Assignment",
+						line: 1,
+						identifier: { kind: "Identifier", line: 1, name: "x" },
+						value: { 
+                            kind: "BinaryOperation", 
+                            line: 1, 
+                            left: { kind: "Value", type: "Number", line: 1, value: "1" },
+                            right: { kind: "Value", type: "Number", line: 1, value: "2" },
+                            operator: "*"
+                        },
+					},
+				],
+			},
+		},
+        {
+			input: "x = 1 / 2;",
+			expected: {
+				kind: "Program",
+				line: 1,
+				body: [
+					{
+						kind: "Assignment",
+						line: 1,
+						identifier: { kind: "Identifier", line: 1, name: "x" },
+						value: { 
+                            kind: "BinaryOperation", 
+                            line: 1, 
+                            left: { kind: "Value", type: "Number", line: 1, value: "1" },
+                            right: { kind: "Value", type: "Number", line: 1, value: "2" },
+                            operator: "/"
+                        },
+					},
+				],
+			},
+		},
+        {
+			input: "x = 1 + 2 / 3;",
+			expected: {
+				kind: "Program",
+				line: 1,
+				body: [
+					{
+						kind: "Assignment",
+						line: 1,
+						identifier: { kind: "Identifier", line: 1, name: "x" },
+						value: { 
+                            kind: "BinaryOperation", 
+                            line: 1, 
+                            left: { kind: "Value", type: "Number", line: 1, value: "1" },
+                            right: { 
+                                kind: "BinaryOperation", 
+                                line: 1, 
+                                left: { kind: "Value", type: "Number", line: 1, value: "2" },
+                                right: { kind: "Value", type: "Number", line: 1, value: "3" },
+                                operator: "/"
+                            },
+                            operator: "+"
+                        },
+					},
+				],
+			},
+		},
+        {
+			input: "x = 1 EQUAL 2;",
+			expected: {
+				kind: "Program",
+				line: 1,
+				body: [
+					{
+						kind: "Assignment",
+						line: 1,
+						identifier: { kind: "Identifier", line: 1, name: "x" },
+						value: { 
+                            kind: "BinaryOperation", 
+                            line: 1, 
+                            left: { kind: "Value", type: "Number", line: 1, value: "1" },
+                            right: { kind: "Value", type: "Number", line: 1, value: "2" },
+                            operator: "EQUAL"
+                        },
+					},
+				],
+			},
+		},
+        {
+			input: "x = 1 NOT EQUAL 2;",
+			expected: {
+				kind: "Program",
+				line: 1,
+				body: [
+					{
+						kind: "Assignment",
+						line: 1,
+						identifier: { kind: "Identifier", line: 1, name: "x" },
+						value: { 
+                            kind: "BinaryOperation", 
+                            line: 1, 
+                            left: { kind: "Value", type: "Number", line: 1, value: "1" },
+                            right: { kind: "Value", type: "Number", line: 1, value: "2" },
+                            operator: "NOT EQUAL"
+                        },
+					},
+				],
+			},
+		},
+        {
+			input: "x = 1 GREATER 2;",
+			expected: {
+				kind: "Program",
+				line: 1,
+				body: [
+					{
+						kind: "Assignment",
+						line: 1,
+						identifier: { kind: "Identifier", line: 1, name: "x" },
+						value: { 
+                            kind: "BinaryOperation", 
+                            line: 1, 
+                            left: { kind: "Value", type: "Number", line: 1, value: "1" },
+                            right: { kind: "Value", type: "Number", line: 1, value: "2" },
+                            operator: "GREATER"
+                        },
+					},
+				],
+			},
+		},
+        {
+			input: "x = 1 LESS 2;",
+			expected: {
+				kind: "Program",
+				line: 1,
+				body: [
+					{
+						kind: "Assignment",
+						line: 1,
+						identifier: { kind: "Identifier", line: 1, name: "x" },
+						value: { 
+                            kind: "BinaryOperation", 
+                            line: 1, 
+                            left: { kind: "Value", type: "Number", line: 1, value: "1" },
+                            right: { kind: "Value", type: "Number", line: 1, value: "2" },
+                            operator: "LESS"
+                        },
+					},
+				],
+			},
+		},
+        {
+			input: "x = (1 GREATER 2) OR (1 LESS 2);",
+			expected: {
+				kind: "Program",
+				line: 1,
+				body: [
+					{
+						kind: "Assignment",
+						line: 1,
+						identifier: { kind: "Identifier", line: 1, name: "x" },
+						value: { 
+                            kind: "BinaryOperation", 
+                            line: 1, 
+                            left: { 
+                                kind: "BinaryOperation", 
+                                line: 1, 
+                                left: { kind: "Value", type: "Number", line: 1, value: "1" },
+                                right: { kind: "Value", type: "Number", line: 1, value: "2" },
+                                operator: "GREATER"
+                            },
+                            right: { 
+                                kind: "BinaryOperation", 
+                                line: 1, 
+                                left: { kind: "Value", type: "Number", line: 1, value: "1" },
+                                right: { kind: "Value", type: "Number", line: 1, value: "2" },
+                                operator: "LESS"
+                            },
+                            operator: "OR"
+                        },
+					},
+				],
+			},
+		},
+        {
+			input: "x = (1 GREATER 2) AND (1 LESS 2)",
+			expected: {
+				kind: "Program",
+				line: 1,
+				body: [
+					{
+						kind: "Assignment",
+						line: 1,
+						identifier: { kind: "Identifier", line: 1, name: "x" },
+						value: { 
+                            kind: "BinaryOperation", 
+                            line: 1, 
+                            left: { 
+                                kind: "BinaryOperation", 
+                                line: 1, 
+                                left: { kind: "Value", type: "Number", line: 1, value: "1" },
+                                right: { kind: "Value", type: "Number", line: 1, value: "2" },
+                                operator: "GREATER"
+                            },
+                            right: { 
+                                kind: "BinaryOperation", 
+                                line: 1, 
+                                left: { kind: "Value", type: "Number", line: 1, value: "1" },
+                                right: { kind: "Value", type: "Number", line: 1, value: "2" },
+                                operator: "LESS"
+                            },
+                            operator: "AND"
+                        },
+					},
+				],
+			},
+		},
+
+    ];
+
+    testCases.forEach((testCase) => {
+        const input = testCase.input;
+        const expected = testCase.expected;
+        
+        const chars = new CharStream(input);
+        const lexer = new SmartSyncLexer(chars);
+        lexer.removeErrorListeners();
+        lexer.addErrorListener(new ThrowingErrorListener());
+
+        const tokens = new CommonTokenStream(lexer);
+        const parser = new SmartSyncParser(tokens);
+
+        parser._errHandler = new CustomBailErrorStrategy();
+
+        const astVisitor = new AstVisitor();
+
+        const cst = parser.program();
+
+        const ast = astVisitor.visitProgram(cst);
+
+        const astJson = JSON.stringify(ast);
+
+        assertEquals(astJson, JSON.stringify(expected));
+    });
+});

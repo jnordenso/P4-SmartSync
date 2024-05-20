@@ -1,1 +1,1 @@
-Number grade = 5; 
+Boolean grade = 1 EQUAL 2

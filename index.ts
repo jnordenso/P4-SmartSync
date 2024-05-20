@@ -1,4 +1,4 @@
-import { CharStream, CommonTokenStream, BailErrorStrategy,}  from 'antlr4';
+import { CharStream, CommonTokenStream}  from 'antlr4';
 import SmartSyncLexer from './Syntax Analysis/SmartSyncLexer.ts';
 import SmartSyncParser from './Syntax Analysis/SmartSyncParser.ts';
 import fs from 'node:fs';
