@@ -140,7 +140,6 @@ export default class SymbolTable extends AstVisitor<void> {
 	 */
 	AddSymbol = (name: string, type: types, reference: Line): void => {
 		if (this.stackScopes[this.stackScopes.length - 1].symbols.has(name)) {
-			// TODO: Maybe we should make some error handling in another way
 			throw new Error(`Variable '${name}' has already been declared in this scope`);
 		}
 

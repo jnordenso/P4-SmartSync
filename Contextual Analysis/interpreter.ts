@@ -403,11 +403,6 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
         console.log(value);
     }
 
-    /* visitDelay = (ctx: Delay): void => {
-        throw new Error("16. Method not implemented.");
-    } */ 
-    // TODO: Remove Delay method everywhere
-
     visitExpression = (ctx: Expression): FinalValue | FinalValue[] => {
         switch (ctx.kind) {
 			case "Value":
