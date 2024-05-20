@@ -596,6 +596,33 @@ Deno.test("AST Builder - Integration test - Operators", () => {
 			},
 		},
         {
+			input: "x = (1 + 2) / 3;",
+			expected: {
+				kind: "Program",
+				line: 1,
+				body: [
+					{
+						kind: "Assignment",
+						line: 1,
+						identifier: { kind: "Identifier", line: 1, name: "x" },
+						value: { 
+                            kind: "BinaryOperation", 
+                            line: 1, 
+                            left: { 
+                                kind: "BinaryOperation", 
+                                line: 1, 
+                                left: { kind : "Value", type: "Number", line: 1, value: "1" }, 
+                                right: { kind: "Value", type: "Number", line: 1, value: "2" },
+                                operator: "+"
+                            },
+                            right: { kind: "Value", type: "Number", line: 1, value: "3" },
+                            operator: "/"
+                        },
+					},
+				],
+			},
+		},
+        {
 			input: "x = 1 EQUAL 2;",
 			expected: {
 				kind: "Program",
@@ -680,7 +707,7 @@ Deno.test("AST Builder - Integration test - Operators", () => {
 			},
 		},
         {
-			input: "x = (1 GREATER 2) OR (1 LESS 2);",
+			input: "x = 1 GREATER 2 OR 1 LESS 2;",
 			expected: {
 				kind: "Program",
 				line: 1,
@@ -713,7 +740,7 @@ Deno.test("AST Builder - Integration test - Operators", () => {
 			},
 		},
         {
-			input: "x = (1 GREATER 2) AND (1 LESS 2)",
+			input: "x = (1 GREATER 2) AND (1 LESS 2);",
 			expected: {
 				kind: "Program",
 				line: 1,
@@ -752,6 +779,98 @@ Deno.test("AST Builder - Integration test - Operators", () => {
         const input = testCase.input;
         const expected = testCase.expected;
         
+        const chars = new CharStream(input);
+        const lexer = new SmartSyncLexer(chars);
+        lexer.removeErrorListeners();
+        lexer.addErrorListener(new ThrowingErrorListener());
+
+        const tokens = new CommonTokenStream(lexer);
+        const parser = new SmartSyncParser(tokens);
+
+        parser._errHandler = new CustomBailErrorStrategy();
+
+        const astVisitor = new AstVisitor();
+
+        const cst = parser.program();
+
+        const ast = astVisitor.visitProgram(cst);
+
+        const astJson = JSON.stringify(ast);
+
+        assertEquals(astJson, JSON.stringify(expected));
+    });
+});
+
+Deno.test("AST Builder - Integration test - Arrays", () => {
+    const testCases = [
+        {
+            input: "Number x[] = [1, 2, 3];",
+            expected: {
+                kind: "Program",
+                line: 1,
+                body: [
+                    {
+                        kind: "ArrayDeclaration",
+                        line: 1,
+                        type: "Number",
+                        identifier: { kind: "Identifier", line: 1, type: "Number", name: "x" },
+                        value: [
+                            { kind: "Value", type: "Number", line: 1, value: "1" },
+                            { kind: "Value", type: "Number", line: 1, value: "2" },
+                            { kind: "Value", type: "Number", line: 1, value: "3" },
+                        ]
+                    },
+                ],
+            },
+        },
+        {
+            input: 'Text x[] = ["Hey", "how", "are", "you", "!"];',
+            expected: {
+                kind: "Program",
+                line: 1,
+                body: [
+                    {
+                        kind: "ArrayDeclaration",
+                        line: 1,
+                        type: "Text",
+                        identifier: { kind: "Identifier", line: 1, type: "Text", name: "x" },
+                        value: [
+                            { kind: "Value", type: "Text", line: 1, value: '"Hey"' },
+                            { kind: "Value", type: "Text", line: 1, value: '"how"' },
+                            { kind: "Value", type: "Text", line: 1, value: '"are"' },
+                            { kind: "Value", type: "Text", line: 1, value: '"you"' },
+                            { kind: "Value", type: "Text", line: 1, value: '"!"' },
+                        ]
+                    },
+                ],
+            },
+        },
+        {
+            input: "Number x[] = [];",
+            expected: {
+                kind: "Program",
+                line: 1,
+                body: [
+                    {
+                        kind: "Declaration",
+                        line: 1,
+                        type: "Number",
+                        identifier: { kind: "Identifier", line: 1, type: "Number", name: "x" },
+                        value: { 
+                            kind: "Array", 
+                            line: 1, 
+                            values: []
+                        },
+                    },
+                ],
+            },
+        },
+    ];
+
+    testCases.forEach((testCase) => {
+        const input = testCase.input;
+        const expected = testCase.expected;
+
         const chars = new CharStream(input);
         const lexer = new SmartSyncLexer(chars);
         lexer.removeErrorListeners();

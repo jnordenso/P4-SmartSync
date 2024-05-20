@@ -1,1 +1,1 @@
-Boolean grade = 1 EQUAL 2
+Number grade[] = [];

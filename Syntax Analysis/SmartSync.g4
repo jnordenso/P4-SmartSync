@@ -13,7 +13,7 @@ LOGIC_OP : 'EQUAL' | 'NOT EQUAL' | 'AND' | 'OR' | 'GREATER' | 'LESS';
 
 value : BOOL | STRING | NUMBER | ID'[]'? | ID'[]' 'SIZE' | ID'[' value ']' | ID'(' (funcReturn ','?)* ')';
 
-declaration : TYPE ID '=' expression ';' | TYPE ID'[]' '=' '[' (arrayValue ','?)* ']' ';';
+declaration : TYPE ID '=' expression ';' | TYPE ID'[]' '=' '[' (arrayValue ','?)* ']' ';' | TYPE ID'[]' '=' '[]' ';';
 
 statements : ifStm | 'WHILE' condition '{' line* '}' | arrayStm;
             
@@ -34,7 +34,7 @@ condition : multConExpr (('AND' | 'OR') multConExpr)*;
 multConExpr : atomCon (('EQUAL' | 'NOT EQUAL' | 'GREATER' | 'LESS') atomCon)*;
 atomCon : arithmetic | value | '(' condition ')';
 
-assignments : ID '=' expression ';' | ID'[' value ']' '=' expression ';' | ID'[]' '=' '[' (arrayValue ','?)* ']' ';';
+assignments : ID '=' expression ';' | ID'[' value ']' '=' expression ';' | ID'[]' '=' '[' (arrayValue ','?)* ']' ';' | ID'[]' '=' '[]' ';';
 
 funcReturn : value | ID '[]' | arithmetic | '[' (arrayValue ','?)* ']';
 functions : TYPE 'FUNCTION' ID '(' (TYPE ID'[]'? ','?)* ')' '{' line* 'RETURN' funcReturn';''}';
