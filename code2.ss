@@ -4,7 +4,6 @@ IF grade GREATER 9 {
     OUTPUT "Excellent";
 } ELSE {
     OUTPUT "Not Excellent";
-    RETURN 0;
 }
 
 Text FUNCTION add(Number a, Number b) {
@@ -15,5 +14,4 @@ Text FUNCTION add(Number a, Number b) {
     }
 }
 
-
-RETURN add(10, 20);
+OUTPUT add(1, 2);
