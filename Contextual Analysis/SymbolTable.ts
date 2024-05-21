@@ -62,6 +62,7 @@ interface Scope {
 	symbols: Map<string, Symbol>; // Map of symbols in the scope (key: ID, value: Symbol)
 	functionSymbols: Map<string, FunctionSymbol>; // Map of function symbols in the scope (key: ID, value: FunctionSymbol)
 	block: Line[]; // Block of lines in the scope
+	IsFunctionScope: boolean; // Boolean to check if the scope is a function scope
 }
 
 export default class SymbolTable extends AstVisitor<void> {
@@ -107,13 +108,14 @@ export default class SymbolTable extends AstVisitor<void> {
 	 * and sets the current block to the block of lines in the scope.
 	 * @param block the block of lines in the scope
 	 */
-	NewScope = (block: Line[]): void => {
+	NewScope = (block: Line[], IsFunctionScope?: boolean): void => {
 		// Creates a new scope
 		const scope: Scope = {
 			parent: this.stackScopes[this.stackScopes.length - 1] || null,
 			symbols: new Map(),
 			functionSymbols: new Map(),
 			block: block,
+			IsFunctionScope: IsFunctionScope || false,
 		};
 
 		this.scopes.set(block, scope); // Adds the scope to the scopes map
@@ -399,7 +401,7 @@ export default class SymbolTable extends AstVisitor<void> {
 				
 				this.AddFunctionSymbol(ctx.identifier.name, ctx.type, ctx, parameters, ctx.body);
 				
-				this.NewScope(ctx.body);
+				this.NewScope(ctx.body, true);
 				ctx.parameters.forEach((parameter) => {
 					if (parameter.type !== undefined) {
 						this.AddSymbol(parameter.name, parameter.type, ctx);
@@ -419,7 +421,21 @@ export default class SymbolTable extends AstVisitor<void> {
 	};
 
 	visitReturnValue = (ctx: ReturnValue): void => {
-		this.visitExpression(ctx.value);
+		// check if the return statement is inside a function by looping through the stack of scopes
+		let isFunctionScope = false;
+		for (let i = this.stackScopes.length - 1; i >= 0; i--) {
+			if (this.stackScopes[i].IsFunctionScope === true) {
+				isFunctionScope = true;
+				break;
+			}
+		}
+		// if the return statement is inside a function scope, visit the expression node in the AST
+		if (isFunctionScope) {
+			this.visitExpression(ctx.value);
+		// else throw an error
+		} else {
+			throw new Error(`Line: ${ctx.line}, Return statement is not allowed outside of a function`);
+		}
 	};
 
 	visitExpression = (ctx: Expression): void => {
