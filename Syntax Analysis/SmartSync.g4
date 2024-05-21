@@ -1,6 +1,6 @@
 grammar SmartSync;
 program : line+;
-line : declaration | statements | assignments | functions | output;
+line : declaration | statements | assignments | functions | output | 'RETURN' funcReturn ';';
 
 BOOL : 'TRUE' | 'FALSE';
 TYPE : 'Number' | 'Text' | 'Boolean';
@@ -16,7 +16,7 @@ value : BOOL | STRING | NUMBER | ID'[]'? | ID'[]' 'SIZE' | ID'[' value ']' | ID'
 declaration : TYPE ID '=' expression ';' | TYPE ID'[]' '=' '[' (arrayValue ','?)* ']' ';' | TYPE ID'[]' '=' '[]' ';';
 
 statements : ifStm | 'WHILE' condition '{' line* '}' | arrayStm;
-            
+        
 ifStm : 'IF' condition '{' line* '}' (elses | else)?;
 elses : 'ELSE' 'IF' condition '{' line* '}' (elses | else)?;
 else : 'ELSE' '{' line* '}';
@@ -37,7 +37,7 @@ atomCon : arithmetic | value | '(' condition ')';
 assignments : ID '=' expression ';' | ID'[' value ']' '=' expression ';' | ID'[]' '=' '[' (arrayValue ','?)* ']' ';' | ID'[]' '=' '[]' ';';
 
 funcReturn : value | ID '[]' | arithmetic | '[' (arrayValue ','?)* ']';
-functions : TYPE 'FUNCTION' ID '(' (TYPE ID'[]'? ','?)* ')' '{' line* 'RETURN' funcReturn';''}';
+functions : TYPE 'FUNCTION' ID '(' (TYPE ID'[]'? ','?)* ')' '{' line* '}';
 
 output : 'OUTPUT' (value | ID'[' value ']') ';';
 

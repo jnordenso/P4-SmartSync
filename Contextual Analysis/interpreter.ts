@@ -31,6 +31,7 @@ import {
 	Or,
 	Greater,
 	Less,
+  ReturnValue,
 } from "../Syntax Analysis/AST.ts";
 import SymbolTable from "./SymbolTable.ts";
 
@@ -54,44 +55,37 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
         });
     }
 
-    visitLine = (ctx: Line): void => {
+    visitLine = (ctx: Line): void | FinalValue => {
         switch (ctx.kind) {
 			case "Declaration":
-				this.visitDeclaration(ctx as Declaration);
-				break;
+				return this.visitDeclaration(ctx as Declaration);
 			case "ArrayDeclaration":
-				this.visitArrayDeclaration(ctx as ArrayDeclaration);
-				break;
+				return this.visitArrayDeclaration(ctx as ArrayDeclaration);
 			case "IfStm":
-				this.visitIfStm(ctx as IfStm);
-				break;
+				return this.visitIfStm(ctx as IfStm);
 			case "ElseStm":
-				this.visitElseStm(ctx as ElseStm);
-				break;
+				return this.visitElseStm(ctx as ElseStm);
 			case "WhileStm":
-				this.visitWhileStm(ctx as WhileStm);
-				break;
+				return this.visitWhileStm(ctx as WhileStm);
 			case "IndexAssignment":
-				this.visitIndexAssignment(ctx as IndexAssignment);
-				break;
+				return this.visitIndexAssignment(ctx as IndexAssignment);
 			case "Push":
-				this.visitPush(ctx as Push);
-				break;
+				return this.visitPush(ctx as Push);
 			case "Pull":
 				this.visitPull(ctx as Pull);
 				break;
 			case "Assignment":
-				this.visitAssignment(ctx as Assignment);
-				break;
+				return this.visitAssignment(ctx as Assignment);
 			case "Function":
 				this.visitFunction(ctx as Function);
-				break;
+				return; // Function should not return anything
 			case "Output":
-				this.visitOutput(ctx as Output);
-				break;
+				return this.visitOutput(ctx as Output);
 			case "Array":
 				this.visitArray(ctx as IArray);
-				break;
+				return; // Array should not return anything
+            case "Return":
+                return this.visitReturnValue(ctx as ReturnValue);
 			default:
 				throw new Error(`Unknown line kind: ${ctx.kind}.`);
 		}
@@ -129,7 +123,7 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
         }
     }
 
-    visitIfStm = (ctx: IfStm): void => {
+    visitIfStm = (ctx: IfStm): void | FinalValue => {
         // get the condition value
         const condition = this.visitExpression(ctx.condition);
 
@@ -145,9 +139,21 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
             this.currentBlock = ctx.body;
 
             // visit the body
+            let returnValue: FinalValue | undefined = undefined;
             ctx.body.forEach((line) => {
-                this.visitLine(line);
+                if (line.kind === "Return") {
+                    const value = this.visitReturnValue(line as ReturnValue);
+                    if (returnValue === undefined) {
+                        returnValue = value;
+                    }
+                } else {
+                    this.visitLine(line);
+                }
             });
+
+            if (returnValue !== undefined) {
+                return returnValue;
+            }
 
             // reset the current block
             this.currentBlock = previousBlock;
@@ -156,31 +162,43 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
             if (ctx.else) {
                 if (ctx.else.kind === "IfStm") {
                     // visit the else if statement
-                    this.visitIfStm(ctx.else);
+                    return this.visitIfStm(ctx.else);
                 } else {
                     // visit the else statement
-                    this.visitElseStm(ctx.else);
+                    return this.visitElseStm(ctx.else);
                 }
             }
         }
     }
 
-    visitElseStm = (ctx: ElseStm): void => {
+    visitElseStm = (ctx: ElseStm): void | FinalValue => {
         // save the current block
         const previousBlock = this.currentBlock;
         // set the current block to the else block
         this.currentBlock = ctx.body;
 
         // visit the body
+        let returnValue: FinalValue | undefined = undefined;
         ctx.body.forEach((line) => {
-            this.visitLine(line);
+            if (line.kind === "Return") {
+                const value = this.visitReturnValue(line as ReturnValue);
+                if (returnValue === undefined) {
+                    returnValue = value;
+                }
+            } else {
+                this.visitLine(line);
+            }
         });
+
+        if (returnValue !== undefined) {
+            return returnValue;
+        }
 
         // reset the current block
         this.currentBlock = previousBlock;
     }
 
-    visitWhileStm = (ctx: WhileStm): void => {
+    visitWhileStm = (ctx: WhileStm): void | FinalValue => {
         // save the current block
         const previousBlock = this.currentBlock;
         // set the current block to the while block
@@ -196,9 +214,26 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
         // while the condition is true
         while (condition) {
             // visit the body
+            let returnValue: FinalValue | undefined = undefined;
             ctx.body.forEach((line) => {
-                this.visitLine(line);
+                if (returnValue === undefined) {
+                    if (line.kind === "Return") {
+                        const value = this.visitReturnValue(line as ReturnValue);
+                        if (returnValue === undefined) {
+                            returnValue = value;
+                        }
+                    } else {
+                        const value = this.visitLine(line);
+                        if (value) {
+                            returnValue = value;
+                        }
+                    }
+                }
             });
+
+            if (returnValue !== undefined) {
+                return returnValue;
+            }
 
             // get the condition value
             condition = this.visitExpression(ctx.condition);
@@ -348,54 +383,69 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 
         // if the symbol is found
         if (symbol !== null) {
-            if (ctx.return) {
-                // function declaration
-                if (this.environment.get(ctx.identifier.name) === undefined) {
-                    if (ctx.body) {
-                        // save the current block
-                        const previousBlock = this.currentBlock;
-                        // set the current block to the function block
-                        this.currentBlock = ctx.body;
-
-                        // save the function in the environment with "Placeholder"
-                        // we use placeholder just to ensure that it is declared.
-                        this.environment.set(ctx.identifier.name, "Placeholder");
-                        // reset the current block
-                        this.currentBlock = previousBlock;
-
-                        return "Placeholder";
-                    } else {
-                        throw new Error(`Line: ${ctx.line}, Function ${ctx.identifier.name} missing body.`);
-                    }
-                // function call
-                } else {
+            // function declaration
+            if (this.environment.get(ctx.identifier.name) === undefined) {
+                if (ctx.body) {
+                    // save the current block
                     const previousBlock = this.currentBlock;
-                    if (ctx.body) {
-                        this.currentBlock = ctx.body;
+                    // set the current block to the function block
+                    this.currentBlock = ctx.body;
 
-                        for (let i = 0; i < symbol.parameters.length; i++) {
-                            const value = this.visitExpression(ctx.parameters[i]);
-                            this.environment.set(symbol.parameters[i].name, value);
+                    // save the function in the environment with "Placeholder"
+                    // we use placeholder just to ensure that it is declared.
+                    this.environment.set(ctx.identifier.name, "Placeholder");
+                    // reset the current block
+                    this.currentBlock = previousBlock;
+
+                    return "Placeholder";
+                } else {
+                    throw new Error(`Line: ${ctx.line}, Function ${ctx.identifier.name} missing body.`);
+                }
+            // function call
+            } else {
+                const previousBlock = this.currentBlock;
+                if (ctx.body) {
+                    this.currentBlock = ctx.body;
+
+                    for (let i = 0; i < symbol.parameters.length; i++) {
+                        const value = this.visitExpression(ctx.parameters[i]);
+                        this.environment.set(symbol.parameters[i].name, value);
+                    }
+                    let returnValue: FinalValue | undefined = undefined;
+                    ctx.body.forEach(line => {
+                        if (returnValue === undefined) {
+                            if (line.kind === "Return") {
+                                returnValue = this.visitReturnValue(line as ReturnValue);
+                            } else {
+                                const value = this.visitLine(line);
+                                if (value) {
+                                    returnValue = value;
+                                }
+                            }
                         }
-
-                        ctx.body.forEach(line => {
-                            this.visitLine(line);
-                        })
-
-                        const returnValue = this.visitExpression(ctx.return);
-
-                        this.currentBlock = previousBlock;
+                    })
+                    
+                    this.currentBlock = previousBlock;
+                    
+                    if (returnValue !== undefined) {
                         return returnValue;
                     } else {
-                        throw new Error(`Line: ${ctx.line}, Function ${ctx.identifier.name} missing body.`);
+                        throw new Error(`Line: ${ctx.line}, Function ${ctx.identifier.name} missing return statement.`);
                     }
+
+
+                } else {
+                    throw new Error(`Line: ${ctx.line}, Function ${ctx.identifier.name} missing body.`);
                 }
-            } else {
-                throw new Error(`Line: ${ctx.line}, Function ${ctx.identifier.name} missing return value.`);
             }
         } else {
             throw new Error(`Symbol ${ctx.identifier.name} not found.`);
         }
+    }
+
+    visitReturnValue = (ctx: ReturnValue): FinalValue => {
+        const value = this.visitExpression(ctx.value);
+        return value;
     }
 
     visitOutput = (ctx: Output): void => {

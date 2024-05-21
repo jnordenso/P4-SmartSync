@@ -21,6 +21,7 @@ export type NodeType =
     // Expressions
     | "BinaryOperation"
     | "StringConcatenation"
+    | "Return"
     | "Value"
     | "Type"
     | "Array";
@@ -103,7 +104,6 @@ export interface Function extends Line {
     identifier: Identifier;
     parameters: Identifier[];
     body?: Line[];
-    return?: Expression;
 }
 
 export interface Output extends Line {
@@ -112,6 +112,12 @@ export interface Output extends Line {
 }
 
 export interface Expression extends Line {
+}
+
+export interface ReturnValue extends Expression {
+    kind: "Return";
+    type?: types;
+    value: Expression;
 }
 
 export interface Value extends Expression {

@@ -53,6 +53,7 @@ import {
 	Size,
   IndexAssignment,
   ArrayDeclaration,
+  ReturnValue,
 } from "./AST.ts";
 import { Pull } from "./AST.ts";
 import { Push } from "./AST.ts";
@@ -112,7 +113,17 @@ export default class AstBuilder extends SmartSyncVisitor<Result> {
 			throw new Error(`Line: ${ctx.start.line}, Invalid variable name`);
 		
 		} else {
-			throw new Error("SHOULD NOT HAPPEN"); // This should not happen as the CST should have only one child node
+			if (ctx.getChildCount() === 3 && ctx.getChild(0).getText() === "RETURN") {
+				const returnValue = this.visitFuncReturn(ctx.funcReturn());
+				const result: ReturnValue = {
+					kind: "Return",
+					line: ctx.start.line,
+					value: returnValue as Expression,
+				}
+				return result;
+			} else {
+				throw new Error("SHOULD NOT HAPPEN"); // This should not happen as the CST should have only one child node
+			}
 		}
 	};
 
@@ -245,7 +256,6 @@ export default class AstBuilder extends SmartSyncVisitor<Result> {
                     identifier,
                     parameters,
                     body: undefined,
-                    return: undefined,
                 };
 
                 result = func;
@@ -994,9 +1004,6 @@ export default class AstBuilder extends SmartSyncVisitor<Result> {
 			}
 		});
 
-		// Get the return value of the function
-		const returnVal = this.visitFuncReturn(ctx.funcReturn());
-
 		const func: Function = {
 			kind: "Function",
 			line: ctx.start.line,
@@ -1004,7 +1011,6 @@ export default class AstBuilder extends SmartSyncVisitor<Result> {
 			identifier,
 			parameters,
 			body,
-			return: returnVal as Expression,
 		};
 
 		return func;
