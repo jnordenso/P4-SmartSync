@@ -414,7 +414,17 @@ export default class SymbolTable extends AstVisitor<void> {
                 this.visitLine(line);
             });
             this.ExitScope();
-        }
+        } else {
+			const functionSymbol = this.LookupFunctionSymbol(ctx.identifier.name, this.currentBlock);
+			if (functionSymbol === null) {
+				throw new Error(`Line: ${ctx.line}, Function '${ctx.identifier.name}' has not been declared`);
+			} else {
+				// check if the called function has the same number of parameters as the declared function
+				if (ctx.parameters.length !== functionSymbol.parameters.length) {
+					throw new Error(`Line: ${ctx.line}, Function '${ctx.identifier.name}' has the wrong number of parameters, expected ${functionSymbol.parameters.length} but got ${ctx.parameters.length}`);
+				}
+			}
+		}
 	};
 
 	visitOutput = (ctx: Output): void => {
@@ -449,6 +459,9 @@ export default class SymbolTable extends AstVisitor<void> {
 				break;
 			case "BinaryOperation":
 				this.visitBinaryOperation(ctx as BinaryOperation);
+				break;
+			case "Function":
+				this.visitFunction(ctx as Function);
 				break;
 			default:
                 // visits such as value and string concatenation does nothing and therefore does not need to be implemented
