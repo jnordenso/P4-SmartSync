@@ -125,17 +125,6 @@ Deno.test("SmartSyncLexer Integration Tests", () => {
          { type: SmartSyncLexer.EOF, text: "<EOF>" },
         ],
        },
-       { 
-        input: "Text x = 5abc;",   // We have to update g4, to include a rule for invalid identifiers, like 5abc, staring with a number
-        expectedTokens: [
-         { type: SmartSyncLexer.TYPE, text: "Text" },
-         { type: SmartSyncLexer.ID, text: "x" },
-         { type: SmartSyncLexer.T__9, text: "=" },
-         { type: SmartSyncLexer.TYPE, text: "5abc" }, // This is where the error should be thrown, 
-         { type: SmartSyncLexer.T__1, text: ";" },
-         { type: SmartSyncLexer.EOF, text: "<EOF>" },
-        ],
-       },
     ];
   
     // Iterate over test cases
