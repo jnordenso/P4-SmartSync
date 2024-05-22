@@ -19,6 +19,7 @@ import {
 	Array,
 	Function,
   ArrayDeclaration,
+  ReturnValue,
 } from "../Syntax Analysis/AST.ts";
 import AstVisitor from "./AstVisitor.ts";
 
@@ -41,7 +42,6 @@ interface Symbol {
  * @param reference the reference to the declared node in the AST
  * @param parameters the parameters of the function
  * @param body the block of lines in the function
- * @param returnExpression the return expression of the function
  */
 interface FunctionSymbol {
 	name: string;
@@ -49,7 +49,6 @@ interface FunctionSymbol {
 	reference: Line;
 	parameters: Symbol[];
 	body: Line[];
-	returnExpression: Expression;
 }
 
 /**
@@ -57,12 +56,14 @@ interface FunctionSymbol {
  * @param parent the parent scope
  * @param symbols the symbols in the scope
  * @param block the block of lines in the scope
+ * @param IsFunctionScope a boolean to check if the scope is a function scope
  */
 interface Scope {
 	parent: Scope | null; // Parent scope (outer scope) or null if it is the global scope
 	symbols: Map<string, Symbol>; // Map of symbols in the scope (key: ID, value: Symbol)
 	functionSymbols: Map<string, FunctionSymbol>; // Map of function symbols in the scope (key: ID, value: FunctionSymbol)
-	block: Line[];
+	block: Line[]; // Block of lines in the scope
+	IsFunctionScope: boolean; // Boolean to check if the scope is a function scope
 }
 
 export default class SymbolTable extends AstVisitor<void> {
@@ -108,13 +109,14 @@ export default class SymbolTable extends AstVisitor<void> {
 	 * and sets the current block to the block of lines in the scope.
 	 * @param block the block of lines in the scope
 	 */
-	NewScope = (block: Line[]): void => {
+	NewScope = (block: Line[], IsFunctionScope?: boolean): void => {
 		// Creates a new scope
 		const scope: Scope = {
 			parent: this.stackScopes[this.stackScopes.length - 1] || null,
 			symbols: new Map(),
 			functionSymbols: new Map(),
 			block: block,
+			IsFunctionScope: IsFunctionScope || false,
 		};
 
 		this.scopes.set(block, scope); // Adds the scope to the scopes map
@@ -140,7 +142,6 @@ export default class SymbolTable extends AstVisitor<void> {
 	 */
 	AddSymbol = (name: string, type: types, reference: Line): void => {
 		if (this.stackScopes[this.stackScopes.length - 1].symbols.has(name)) {
-			// TODO: Maybe we should make some error handling in another way
 			throw new Error(`Variable '${name}' has already been declared in this scope`);
 		}
 
@@ -154,7 +155,7 @@ export default class SymbolTable extends AstVisitor<void> {
 		this.stackScopes[this.stackScopes.length - 1].symbols.set(name, symbol);
 	};
 
-	AddFunctionSymbol = (name: string, type: types, reference: Line, parameters: Symbol[], body: Line[], returnExpression: Expression): void => {
+	AddFunctionSymbol = (name: string, type: types, reference: Line, parameters: Symbol[], body: Line[]): void => {
 		if (this.stackScopes[this.stackScopes.length - 1].symbols.has(name)) {
 			throw new Error(`Variable '${name}' has already been declared in this scope`);
 		}
@@ -164,7 +165,7 @@ export default class SymbolTable extends AstVisitor<void> {
 		}
 
 		// Creates a new function symbol
-		const functionSymbol: FunctionSymbol = { name, type, reference, parameters, body, returnExpression };
+		const functionSymbol: FunctionSymbol = { name, type, reference, parameters, body };
 		// Adds the function symbol to the current scope
 		this.stackScopes[this.stackScopes.length - 1].functionSymbols.set(name, functionSymbol);
 	}
@@ -273,6 +274,9 @@ export default class SymbolTable extends AstVisitor<void> {
                 break;
 			case "Array":
 				this.visitArray(ctx as Array);
+				break;
+			case "Return":
+				this.visitReturnValue(ctx as ReturnValue);
 				break;
 			default:
 				throw new Error(`Unknown line kind: ${ctx.kind}`);
@@ -388,7 +392,7 @@ export default class SymbolTable extends AstVisitor<void> {
 	visitFunction = (ctx: Function): void => {
         if (ctx.body) {
 
-			if (ctx.type !== undefined && ctx.return !== undefined) {
+			if (ctx.type !== undefined) {
 				const parameters: Symbol[] = [];
 				ctx.parameters.forEach((parameter) => {
 					if (parameter.type !== undefined) {
@@ -396,9 +400,9 @@ export default class SymbolTable extends AstVisitor<void> {
 					}
 				});
 				
-				this.AddFunctionSymbol(ctx.identifier.name, ctx.type, ctx, parameters, ctx.body, ctx.return);
+				this.AddFunctionSymbol(ctx.identifier.name, ctx.type, ctx, parameters, ctx.body);
 				
-				this.NewScope(ctx.body);
+				this.NewScope(ctx.body, true);
 				ctx.parameters.forEach((parameter) => {
 					if (parameter.type !== undefined) {
 						this.AddSymbol(parameter.name, parameter.type, ctx);
@@ -415,6 +419,24 @@ export default class SymbolTable extends AstVisitor<void> {
 
 	visitOutput = (ctx: Output): void => {
 		this.visitExpression(ctx.value);
+	};
+
+	visitReturnValue = (ctx: ReturnValue): void => {
+		// check if the return statement is inside a function by looping through the stack of scopes
+		let isFunctionScope = false;
+		for (let i = this.stackScopes.length - 1; i >= 0; i--) {
+			if (this.stackScopes[i].IsFunctionScope === true) {
+				isFunctionScope = true;
+				break;
+			}
+		}
+		// if the return statement is inside a function scope, visit the expression node in the AST
+		if (isFunctionScope) {
+			this.visitExpression(ctx.value);
+		// else throw an error
+		} else {
+			throw new Error(`Line: ${ctx.line}, Return statement is not allowed outside of a function`);
+		}
 	};
 
 	visitExpression = (ctx: Expression): void => {

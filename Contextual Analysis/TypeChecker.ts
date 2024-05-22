@@ -31,6 +31,7 @@ import {
 	Or,
 	Greater,
 	Less,
+	ReturnValue,
 } from "../Syntax Analysis/AST.ts";
 import AstVisitor from "./AstVisitor.ts";
 import SymbolTable from "./SymbolTable.ts";
@@ -59,44 +60,35 @@ export default class TypeChecker extends AstVisitor<void> {
 		return AST;
 	};
 
-	visitLine = (ctx: Line): void => {
+	visitLine = (ctx: Line): types | void => {
+		// each line returns a boolean if it has a return statement (used by functions only)
 		switch (ctx.kind) {
 			case "Declaration":
-				this.visitDeclaration(ctx as Declaration);
-				break;
+				return this.visitDeclaration(ctx as Declaration);
 			case "ArrayDeclaration":
-				this.visitArrayDeclaration(ctx as ArrayDeclaration);
-				break;
+				return this.visitArrayDeclaration(ctx as ArrayDeclaration);
 			case "IfStm":
-				this.visitIfStm(ctx as IfStm);
-				break;
+				return this.visitIfStm(ctx as IfStm);
 			case "ElseStm":
-				this.visitElseStm(ctx as ElseStm);
-				break;
+				return this.visitElseStm(ctx as ElseStm);
 			case "WhileStm":
-				this.visitWhileStm(ctx as WhileStm);
-				break;
+				return this.visitWhileStm(ctx as WhileStm);
 			case "IndexAssignment":
-				this.visitIndexAssignment(ctx as IndexAssignment);
-				break;
+				return this.visitIndexAssignment(ctx as IndexAssignment);
 			case "Push":
-				this.visitPush(ctx as Push);
-				break;
+				return this.visitPush(ctx as Push);
 			case "Pull":
-				this.visitPull(ctx as Pull);
-				break;
+				return this.visitPull(ctx as Pull);
 			case "Assignment":
-				this.visitAssignment(ctx as Assignment);
-				break;
+				return this.visitAssignment(ctx as Assignment);
 			case "Function":
-				this.visitFunction(ctx as Function);
-				break;
+				return this.visitFunction(ctx as Function);
 			case "Output":
-				this.visitOutput(ctx as Output);
-				break;
+				return this.visitOutput(ctx as Output);
 			case "Array":
-				this.visitArray(ctx as Array);
-				break;
+				return this.visitArray(ctx as Array);
+			case "Return":
+				return this.visitReturnValue(ctx as ReturnValue);
 			default:
 				throw new Error(`Unknown line kind: ${ctx.kind}.`);
 		}
@@ -142,7 +134,7 @@ export default class TypeChecker extends AstVisitor<void> {
 		}
 	};
 
-	visitIfStm = (ctx: IfStm): void => {
+	visitIfStm = (ctx: IfStm): types | void => {
 		const conditionType = this.visitExpression(ctx.condition);
 		if (conditionType !== "Boolean") {
 			throw new Error(
@@ -154,36 +146,84 @@ export default class TypeChecker extends AstVisitor<void> {
 		const previousBlock = this.currentBlock;
 		// set the current block to the if statement body
 		this.currentBlock = ctx.body;
-		// visit the if statement body
+		// visit the if statement body and check if there is a return statement
+		const returnTypes: types[] = [];
 		ctx.body.forEach((line) => {
-			this.visitLine(line);
+			if (line.kind === "Return") {
+				returnTypes.push(this.visitReturnValue(line as ReturnValue));
+			} else {
+				if (line.kind === "IfStm") {
+					const returnTypeIf = this.visitIfStm(line as IfStm);
+					if (returnTypeIf) {
+						returnTypes.push(returnTypeIf);
+					}
+				} else {
+					this.visitLine(line);
+				}
+			}
 		});
+
 		// set the current block back to the previous block
 		this.currentBlock = previousBlock;
 
 		if (ctx.else !== undefined) {
 			if (ctx.else.kind === "IfStm") {
-				this.visitIfStm(ctx.else);
+				const returnTypeElse = this.visitIfStm(ctx.else);
+				if (returnTypeElse) {
+					returnTypes.push(returnTypeElse);
+				}
 			} else {
-				this.visitElseStm(ctx.else);
+				const returnTypeElse = this.visitElseStm(ctx.else);
+				if (returnTypeElse) {
+					returnTypes.push(returnTypeElse);
+				}
 			}
 		}
+		// check if all return statements are of the same type
+		returnTypes.forEach((type) => {
+			if (type !== returnTypes[0]) {
+				throw new Error(`Line: ${ctx.line}, Expected all return statements to be of the same type.`);
+			}
+		});
+		// return the type of the return statement
+		return returnTypes[0];
 	};
 
-	visitElseStm = (ctx: ElseStm): void => {
+	visitElseStm = (ctx: ElseStm): types | void => {
 		// save the current block
 		const previousBlock = this.currentBlock;
 		// set the current block to the else statement body
 		this.currentBlock = ctx.body;
-		// visit the else statement body
+		// visit the else statement body and check if there is a return statement
+		const returnTypes: types[] = [];
 		ctx.body.forEach((line) => {
-			this.visitLine(line);
+			if (line.kind === "Return") {
+				returnTypes.push(this.visitReturnValue(line as ReturnValue));
+			} else {
+				if (line.kind === "IfStm") {
+					const returnTypeIf = this.visitIfStm(line as IfStm);
+					if (returnTypeIf !== undefined) {
+						returnTypes.push(returnTypeIf);
+					}
+				} else {
+					this.visitLine(line);
+				}
+			}
 		});
 		// set the current block back to the previous block
 		this.currentBlock = previousBlock;
+
+		// check if all return statements are of the same type
+		returnTypes.forEach((type) => {
+			if (type !== returnTypes[0]) {
+				throw new Error(`Line: ${ctx.line}, Expected all return statements to be of the same type.`);
+			}
+		});
+		// return the type of the return statement
+		return returnTypes[0];
 	};
 
-	visitWhileStm = (ctx: WhileStm): void => {
+	visitWhileStm = (ctx: WhileStm): types | void => {
 		const conditionType = this.visitExpression(ctx.condition);
 		if (conditionType !== "Boolean") {
 			throw new Error(
@@ -195,12 +235,35 @@ export default class TypeChecker extends AstVisitor<void> {
 		const previousBlock = this.currentBlock;
 		// set the current block to the while statement body
 		this.currentBlock = ctx.body;
-		// visit the while statement body
+		// visit the while statement body and check if there is a return statement
+		const returnTypes: types[] = [];
 		ctx.body.forEach((line) => {
 			this.visitLine(line);
+
+			if (line.kind === "Return") {
+				returnTypes.push(this.visitReturnValue(line as ReturnValue));
+			} else {
+				if (line.kind === "IfStm") {
+					const returnTypeIf = this.visitIfStm(line as IfStm);
+					if (returnTypeIf !== undefined) {
+						returnTypes.push(returnTypeIf);
+					}
+				} else {
+					this.visitLine(line);
+				}
+			}
 		});
 		// set the current block back to the previous block
 		this.currentBlock = previousBlock;
+
+		// check if all return statements are of the same type
+		returnTypes.forEach((type) => {
+			if (type !== returnTypes[0]) {
+				throw new Error(`Line: ${ctx.line}, Expected all return statements to be of the same type.`);
+			}
+		});
+		// return the type of the return statement
+		return returnTypes[0];
 	};
 
 	visitIndexAssignment = (ctx: IndexAssignment): void => {
@@ -294,11 +357,6 @@ export default class TypeChecker extends AstVisitor<void> {
 					`Line: ${ctx.line}, Expected function ${ctx.identifier.name} to be of type ${ctx.type}, but got type ${ctx.identifier.type}.`
 				);
 			}
-			if (ctx.return === undefined) {
-				throw new Error(
-					`Line: ${ctx.line}, Expected function ${ctx.identifier.name} to have a return type, but got none.`
-				);
-			}
 			if (ctx.body === undefined) {
 				throw new Error(
 					`Line: ${ctx.line}, Expected function ${ctx.identifier.name} to have a body, but got none.`
@@ -308,22 +366,37 @@ export default class TypeChecker extends AstVisitor<void> {
 			const previousBlock = this.currentBlock;
 			// set the current block to the function body
 			this.currentBlock = ctx.body;
-			// visit the function body
+			// visit the function body and check if there is a return statement
+			const returnType: types[] = [];
 			ctx.body.forEach((line) => {
-				this.visitLine(line);
+				console.log(line.kind);
+				const type = this.visitLine(line);
+				if (type !== undefined) {
+					returnType.push(type);
+				}
 			});
-			// get the return type of the function
-			const returnType = this.visitExpression(ctx.return);
+
+			// if return type is undefined throw an error
+			if (returnType.length === 0) {
+				throw new Error(
+					`Line: ${ctx.line}, Expected function ${ctx.identifier.name} to have a return statement.`
+				);
+			}
+
+			// if the return type of the function is not the same as the function type
+			returnType.forEach((type) => {
+				if (type !== ctx.type) {
+					throw new Error(
+						`Line: ${ctx.line}, Expected function ${ctx.identifier.name} to return type ${ctx.type}, but got type ${type}.`
+					);
+				}
+			});
+
 			// set the current block back to the previous block
 			this.currentBlock = previousBlock;
 
-			if (returnType !== ctx.type) {
-				throw new Error(
-					`Line: ${ctx.line}, Expected function ${ctx.identifier.name} to return type ${ctx.type}, but got type ${returnType}.`
-				);
-			} else {
-				return ctx.type;
-			}
+			return ctx.type;
+
 			// if its a function call
 		} else {
 			const symbol = this.symbolTable.LookupFunctionSymbol(ctx.identifier.name, this.currentBlock);
@@ -359,23 +432,12 @@ export default class TypeChecker extends AstVisitor<void> {
 				ctx.body.forEach((line) => {
 					this.visitLine(line);
 				});
-				if (ctx.return === undefined) {
-					ctx.return = symbol.returnExpression;
-				}
 
-				// get the return type of the function
-				const returnType = this.visitExpression(ctx.return);
 				// set the current block back to the previous block
 				this.currentBlock = previousBlock;
 
 				// check if the return type of the function is the same as the function type
-				if (returnType !== ctx.type) {
-					throw new Error(
-						`Line: ${ctx.line}, Expected function ${ctx.identifier.name} to return type ${ctx.type}, but got type ${returnType}.`
-					);
-				} else {
-					return ctx.type;
-				}
+				return ctx.type;
 			} else {
 				throw new Error(`Line: ${ctx.line}, Undeclared function: ${ctx.identifier.name}.`);
 			}
@@ -409,6 +471,14 @@ export default class TypeChecker extends AstVisitor<void> {
 			default:
 				throw new Error(`Unknown expression kind: ${ctx.kind}.`);
 		}
+	};
+
+	visitReturnValue = (ctx: ReturnValue): types => {
+		const expressionType = this.visitExpression(ctx.value);
+		if (ctx.type === undefined) {
+			ctx.type = expressionType;
+		}
+		return ctx.type;
 	};
 
 	visitValue = (ctx: Value): types => {
@@ -527,9 +597,7 @@ export default class TypeChecker extends AstVisitor<void> {
 				ctx.type = symbol.type;
 
 				if (symbol.reference.kind === "ArrayDeclaration" && ctx.kind !== "ArrayIdentifier") {
-					throw new Error(
-						`Line: ${ctx.line}, ${ctx.name} is an Array and has to be called: ${ctx.name}[].`
-					);
+					throw new Error(`Line: ${ctx.line}, ${ctx.name} is an Array and has to be called: ${ctx.name}[].`);
 				}
 
 				return symbol.type;

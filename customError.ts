@@ -21,14 +21,23 @@ export class CustomBailErrorStrategy extends BailErrorStrategy {
             const message = `Parser Error: unexpected token '${errorToken?.text}' at line ${errorToken?.line}:${errorToken?.tokenIndex}`;
             throw new Error(message); 
         } else {
-            throw new Error("Parser Error: mismatched character '" + e.offendingToken?.text + "' at line " + e.offendingToken?.line + ":" + e.offendingToken?.stop);
+            let token = e.offendingToken?.text;
+            if (token === "<EOF>") {
+                token = ";";
+            }
+            throw new Error("Parser Error: mismatched character '" + token + "' at line " + e.offendingToken?.line + ":" + e.offendingToken?.stop);
         }
     }
     recover(_recognizer: Parser, e: RecognitionException): void {
-        // Te is an error that is thrown when a ';' is missing
-        if (e.constructor.name === "Te") {
-            throw new Error("Parser Error: missing ';' at line " + e.offendingToken?.line + ":" + e.offendingToken?.stop);
+        // Te is an error that is thrown when a token is missing
+        let token = e.offendingToken?.text;
+        if (token === "<EOF>") {
+            token = ";";
         }
-        throw new Error("Parser Error: mismatched character '" + e.offendingToken?.text + "' at line " + e.offendingToken?.line + ":" + e.offendingToken?.stop);
+        if (e.constructor.name === "Te") {
+            throw new Error("Parser Error: missing or wrongly placed '" + token + "' at line " + e.offendingToken?.line + ":" + e.offendingToken?.stop);
+        }
+
+        throw new Error("Parser Error: mismatched character '" + token + "' at line " + e.offendingToken?.line + ":" + e.offendingToken?.stop);
     }
 }

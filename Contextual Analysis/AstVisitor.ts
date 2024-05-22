@@ -32,6 +32,7 @@ import {
     Greater,
     Less,
     ArrayDeclaration,
+    ReturnValue,
 } from "../Syntax Analysis/AST.ts";
 
 
@@ -145,6 +146,12 @@ export default class AstVisitor<Result> {
      * @return the visitor result
      */
     visitExpression?: (ctx: Expression) => Result;
+    /**
+     * Visit the returnValue node in the Abstract Syntax Tree.
+     * @param ctx the AST
+     * @return the visitor result
+     */
+    visitReturnValue?: (ctx: ReturnValue) => Result;
     /**
      * Visit the Value node in the Abstract Syntax Tree.
      * @param ctx the AST
