@@ -369,7 +369,6 @@ export default class TypeChecker extends AstVisitor<void> {
 			// visit the function body and check if there is a return statement
 			const returnType: types[] = [];
 			ctx.body.forEach((line) => {
-				console.log(line.kind);
 				const type = this.visitLine(line);
 				if (type !== undefined) {
 					returnType.push(type);
