@@ -56,6 +56,7 @@ interface FunctionSymbol {
  * @param parent the parent scope
  * @param symbols the symbols in the scope
  * @param block the block of lines in the scope
+ * @param IsFunctionScope a boolean to check if the scope is a function scope
  */
 interface Scope {
 	parent: Scope | null; // Parent scope (outer scope) or null if it is the global scope
