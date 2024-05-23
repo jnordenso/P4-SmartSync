@@ -41,7 +41,7 @@ Deno.test("Type Checker - Integration test - Program", () => {
 			} as Line,
 		],
 	};
-	symbolTable.visitProgram(program);
+	symbolTable.BuildSymbolTable(program);
 	const typeChecker = new TypeChecker(symbolTable);
 
 	assert(typeChecker.visitProgram(program));
@@ -79,7 +79,7 @@ Deno.test("Type Checker - Integration test - validate declaration", () => {
 	// check if the type checker throws an error when the variable is not declared (i.e. not in the symbol table)
 	assertThrows(() => typeChecker.visitDeclaration(declaration), Error, " Undeclared variable: x.");
 
-	symbolTable.visitProgram(program);
+	symbolTable.BuildSymbolTable(program);
 
 	const spyDec = spy(typeChecker, "visitDeclaration");
 
@@ -134,7 +134,7 @@ Deno.test("Type Checker - Integration test - validate arrayDeclaration", () => {
 	// check if the type checker throws an error when the variable is not declared (i.e. not in the symbol table)
 	assertThrows(() => typeChecker.visitArrayDeclaration(declaration), Error, " Undeclared variable: x.");
 
-	symbolTable.visitProgram(program);
+	symbolTable.BuildSymbolTable(program);
 
 	const spyDec = spy(typeChecker, "visitArrayDeclaration");
 
@@ -184,7 +184,7 @@ Deno.test("Type Checker - Integration test - validate if statement", () => {
 		body: [ifStm as Line],
 	};
 
-	symbolTable.visitProgram(program);
+	symbolTable.BuildSymbolTable(program);
 
 	const spyIf = spy(typeChecker, "visitIfStm");
 	const spyElse = spy(typeChecker, "visitElseStm");
@@ -230,7 +230,7 @@ Deno.test("Type Checker - Integration test - validate if statement", () => {
 		body: [ifStm2 as Line],
 	};
 
-	symbolTable.visitProgram(program2);
+	symbolTable.BuildSymbolTable(program2);
 
 	assertThrows(
 		() => typeChecker.visitProgram(program2),
@@ -297,7 +297,7 @@ Deno.test("Type Checker - Integration test - validate if statement", () => {
 		body: [ifStm3 as Line],
 	};
 
-	symbolTable.visitProgram(program3);
+	symbolTable.BuildSymbolTable(program3);
 
 	assert(typeChecker.visitProgram(program3));
 
@@ -368,7 +368,7 @@ Deno.test("Type Checker - Integration test - validate if statement", () => {
 		body: [ifStm4 as Line],
 	};
 
-	symbolTable.visitProgram(program4);
+	symbolTable.BuildSymbolTable(program4);
 
 	assert(typeChecker.visitProgram(program4));
 
@@ -428,7 +428,7 @@ Deno.test("Type Checker - Integration test - validate while statement", () => {
 		body: [whileStm as Line],
 	};
 
-	symbolTable.visitProgram(program);
+	symbolTable.BuildSymbolTable(program);
 
 	const spyWhile = spy(typeChecker, "visitWhileStm");
 
@@ -483,7 +483,7 @@ Deno.test("Type Checker - Integration test - validate while statement", () => {
 		body: [whileStm2 as Line],
 	};
 
-	symbolTable.visitProgram(program2);
+	symbolTable.BuildSymbolTable(program2);
 
 	assertThrows(
 		() => typeChecker.visitProgram(program2),
@@ -557,7 +557,7 @@ Deno.test("Type Checker - Integration test - validate index assignment", () => {
 		],
 	};
 
-	symbolTable.visitProgram(program);
+	symbolTable.BuildSymbolTable(program);
 	const spyIndex = spy(typeChecker, "visitIndexAssignment");
 
 	assert(typeChecker.visitProgram(program));
@@ -625,7 +625,7 @@ Deno.test("Type Checker - Integration test - validate index assignment", () => {
 		],
 	};
 
-	symbolTable.visitProgram(program2);
+	symbolTable.BuildSymbolTable(program2);
 
 	assertThrows(
 		() => typeChecker.visitProgram(program2),
@@ -694,7 +694,7 @@ Deno.test("Type Checker - Integration test - validate index assignment", () => {
 		],
 	};
 
-	symbolTable.visitProgram(program3);
+	symbolTable.BuildSymbolTable(program3);
 
 	assertThrows(
 		() => typeChecker.visitProgram(program3),
@@ -762,7 +762,7 @@ Deno.test("Type Checker - Integration test - validate push statement", () => {
 		],
 	};
 
-	symbolTable.visitProgram(program);
+	symbolTable.BuildSymbolTable(program);
 	const spyPush = spy(typeChecker, "visitPush");
 
 	assert(typeChecker.visitProgram(program));
@@ -823,7 +823,7 @@ Deno.test("Type Checker - Integration test - validate push statement", () => {
 		],
 	};
 
-	symbolTable.visitProgram(program2);
+	symbolTable.BuildSymbolTable(program2);
 
 	assertThrows(
 		() => typeChecker.visitProgram(program2),
@@ -872,7 +872,7 @@ Deno.test("Type Checker - Integration test - validate push statement", () => {
 		],
 	};
 
-	symbolTable.visitProgram(program3);
+	symbolTable.BuildSymbolTable(program3);
 
 	assertThrows(() => typeChecker.visitProgram(program3), Error, "Array features are not allowed on non array: x.");
 });
@@ -930,7 +930,7 @@ Deno.test("Type Checker - Integration test - validate pull statement", () => {
 		],
 	};
 
-	symbolTable.visitProgram(program);
+	symbolTable.BuildSymbolTable(program);
 
 	const spyPull = spy(typeChecker, "visitPull");
 
@@ -972,7 +972,7 @@ Deno.test("Type Checker - Integration test - validate pull statement", () => {
 		],
 	};
 
-	symbolTable.visitProgram(program2);
+	symbolTable.BuildSymbolTable(program2);
 
 	assertThrows(() => typeChecker.visitProgram(program2), Error, "Array features are not allowed on non array: x.");
 });
@@ -1037,7 +1037,7 @@ Deno.test("Type Checker - Integration test - validate assignment", () => {
 		],
 	};
 
-	symbolTable.visitProgram(program);
+	symbolTable.BuildSymbolTable(program);
 
 	const spyAssign = spy(typeChecker, "visitAssignment");
 
@@ -1105,7 +1105,7 @@ Deno.test("Type Checker - Integration test - validate assignment", () => {
 		],
 	};
 
-	symbolTable.visitProgram(program2);
+	symbolTable.BuildSymbolTable(program2);
 
 	assertThrows(() => typeChecker.visitProgram(program2), Error, "Expected y to be of type Number, but got Text.");
 });
@@ -1234,7 +1234,7 @@ Deno.test("Type Checker - Integration test - validate function call", () => {
 		],
 	};
 
-	symbolTable.visitProgram(program);
+	symbolTable.BuildSymbolTable(program);
 	const dast = typeChecker.visitProgram(program);
 
 	const func = (dast.body[1] as Declaration).value as Function;
@@ -1326,7 +1326,7 @@ Deno.test("Type Checker - Integration test - validate array", () => {
 		],
 	};
 
-	symbolTable.visitProgram(program);
+	symbolTable.BuildSymbolTable(program);
 
 	const spyArray = spy(typeChecker, "visitArray");
 
@@ -1383,7 +1383,7 @@ Deno.test("Type Checker - Integration test - validate array", () => {
 		],
 	};
 
-	symbolTable.visitProgram(program2);
+	symbolTable.BuildSymbolTable(program2);
 
 	assertThrows(
 		() => typeChecker.visitProgram(program2),
@@ -1428,7 +1428,7 @@ Deno.test("Type Checker - Integration test - validate array", () => {
 		],
 	};
 
-	symbolTable.visitProgram(program3);
+	symbolTable.BuildSymbolTable(program3);
 
 	const dast = typeChecker.visitProgram(program3);
 	const array = dast.body[1] as Array;
@@ -1504,7 +1504,7 @@ Deno.test("Type Checker - Integration test - validate index of array", () => {
 		],
 	};
 
-	symbolTable.visitProgram(program);
+	symbolTable.BuildSymbolTable(program);
 
 	const spyIndex = spy(typeChecker, "visitIndexOf");
 
@@ -1575,7 +1575,7 @@ Deno.test("Type Checker - Integration test - validate index of array", () => {
 		],
 	};
 
-    symbolTable.visitProgram(program2);
+    symbolTable.BuildSymbolTable(program2);
 
     assertThrows(
         () => typeChecker.visitProgram(program2),
@@ -1643,7 +1643,7 @@ Deno.test("Type Checker - Integration test - validate Size of array", () => {
 		],
 	};
 
-	symbolTable.visitProgram(program);
+	symbolTable.BuildSymbolTable(program);
 
 	const spySize = spy(typeChecker, "visitSize");
 
@@ -1713,7 +1713,7 @@ Deno.test("Type Checker - Integration test - validate Size of array", () => {
 		],
 	};
 
-    symbolTable.visitProgram(program2);
+    symbolTable.BuildSymbolTable(program2);
 
     assertThrows(
         () => typeChecker.visitProgram(program2),
@@ -1762,7 +1762,7 @@ Deno.test("Type Checker - Integration test - validate string concatenation", () 
         ],
     };
 
-    symbolTable.visitProgram(program);
+    symbolTable.BuildSymbolTable(program);
 
     const spyConcat = spy(typeChecker, "visitStringConcatenation");
 
@@ -1816,7 +1816,7 @@ Deno.test("Type Checker - Integration test - validate identifier", () => {
         ],
     };
 
-    symbolTable.visitProgram(program);
+    symbolTable.BuildSymbolTable(program);
 
     const spyIdentifier = spy(typeChecker, "visitIdentifier");
 
@@ -1890,7 +1890,7 @@ Deno.test("Type Checker - Integration test - validate identifier", () => {
         ],
     };
 
-    symbolTable.visitProgram(program2);
+    symbolTable.BuildSymbolTable(program2);
 
     assertThrows(
         () => typeChecker.visitProgram(program2),
