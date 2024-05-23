@@ -106,7 +106,7 @@ export default class TypeChecker extends AstVisitor<void> {
 			if (expressionType !== symbol.type) {
 				throw new Error(
 					`Line: ${ctx.line}, Expected ${ctx.identifier.name} to be of type ${symbol.type}, but got ${expressionType}.`
-				);
+				); // TODO: Write 'TypeChecker Error:' in front of each error message also in the other files
 			}
 		} else {
 			throw new Error(`Line: ${ctx.line}, Undeclared variable: ${ctx.identifier.name}.`);

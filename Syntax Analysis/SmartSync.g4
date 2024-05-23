@@ -36,7 +36,7 @@ atomCon : arithmetic | value | '(' condition ')';
 
 assignments : ID '=' expression ';' | ID'[' value ']' '=' expression ';' | ID'[]' '=' '[' (arrayValue ','?)* ']' ';' | ID'[]' '=' '[]' ';';
 
-funcReturn : value | ID '[]' | arithmetic | '[' (arrayValue ','?)* ']';
+funcReturn : value | ID '[]' | arithmetic | '[' (arrayValue ','?)+ ']';
 functions : TYPE 'FUNCTION' ID '(' (TYPE ID'[]'? ','?)* ')' '{' line* '}';
 
 output : 'OUTPUT' (value | ID'[' value ']') ';';

@@ -61,7 +61,7 @@ export default class SmartSyncLexer extends Lexer {
                                                             "','", "')'", 
                                                             "'='", "'WHILE'", 
                                                             "'{'", "'}'", 
-                                                            "'IF'", "'ELSE'", 	
+                                                            "'IF'", "'ELSE'", 
                                                             "'+'", "'-'", 
                                                             "'*'", "'/'", 
                                                             "'AND'", "'OR'", 
