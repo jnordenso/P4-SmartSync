@@ -81,11 +81,11 @@ export default class SmartSyncParser extends Parser {
 	public static readonly RULE_output = 20;
 	public static readonly RULE_arrayValue = 21;
 	public static readonly RULE_arrayStm = 22;
-	public static readonly literalNames: (string | null)[] = [ null, "'RETURN'", 
-                                                            "';'", "'[]'", 
-                                                            "'SIZE'", "'['", 
-                                                            "']'", "'('", 
+	public static readonly literalNames: (string | null)[] = [ null, "'('", 
                                                             "','", "')'", 
+                                                            "';'", "'RETURN'", 
+                                                            "'[]'", "'SIZE'", 
+                                                            "'['", "']'", 
                                                             "'='", "'WHILE'", 
                                                             "'{'", "'}'", 
                                                             "'IF'", "'ELSE'", 
@@ -160,7 +160,7 @@ export default class SmartSyncParser extends Parser {
 				this.state = 49;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-			} while (((((_la - 1)) & ~0x1F) === 0 && ((1 << (_la - 1)) & 3288343553) !== 0));
+			} while (((((_la - 5)) & ~0x1F) === 0 && ((1 << (_la - 5)) & 205521473) !== 0));
 			}
 		}
 		catch (re) {
@@ -181,10 +181,11 @@ export default class SmartSyncParser extends Parser {
 	public line(): LineContext {
 		let localctx: LineContext = new LineContext(this, this._ctx, this.state);
 		this.enterRule(localctx, 2, SmartSyncParser.RULE_line);
+		let _la: number;
 		try {
-			this.state = 60;
+			this.state = 73;
 			this._errHandler.sync(this);
-			switch ( this._interp.adaptivePredict(this._input, 1, this._ctx) ) {
+			switch ( this._interp.adaptivePredict(this._input, 3, this._ctx) ) {
 			case 1:
 				this.enterOuterAlt(localctx, 1);
 				{
@@ -217,18 +218,55 @@ export default class SmartSyncParser extends Parser {
 				this.enterOuterAlt(localctx, 5);
 				{
 				this.state = 55;
-				this.output();
+				this.match(SmartSyncParser.ID);
+				this.state = 56;
+				this.match(SmartSyncParser.T__0);
+				this.state = 63;
+				this._errHandler.sync(this);
+				_la = this._input.LA(1);
+				while ((((_la) & ~0x1F) === 0 && ((1 << _la) & 1073742082) !== 0) || ((((_la - 32)) & ~0x1F) === 0 && ((1 << (_la - 32)) & 7) !== 0)) {
+					{
+					{
+					this.state = 57;
+					this.funcReturn();
+					this.state = 59;
+					this._errHandler.sync(this);
+					_la = this._input.LA(1);
+					if (_la===2) {
+						{
+						this.state = 58;
+						this.match(SmartSyncParser.T__1);
+						}
+					}
+
+					}
+					}
+					this.state = 65;
+					this._errHandler.sync(this);
+					_la = this._input.LA(1);
+				}
+				this.state = 66;
+				this.match(SmartSyncParser.T__2);
+				this.state = 67;
+				this.match(SmartSyncParser.T__3);
 				}
 				break;
 			case 6:
 				this.enterOuterAlt(localctx, 6);
 				{
-				this.state = 56;
-				this.match(SmartSyncParser.T__0);
-				this.state = 57;
+				this.state = 68;
+				this.output();
+				}
+				break;
+			case 7:
+				this.enterOuterAlt(localctx, 7);
+				{
+				this.state = 69;
+				this.match(SmartSyncParser.T__4);
+				this.state = 70;
 				this.funcReturn();
-				this.state = 58;
-				this.match(SmartSyncParser.T__1);
+				this.state = 71;
+				this.match(SmartSyncParser.T__3);
 				}
 				break;
 			}
@@ -253,42 +291,42 @@ export default class SmartSyncParser extends Parser {
 		this.enterRule(localctx, 4, SmartSyncParser.RULE_value);
 		let _la: number;
 		try {
-			this.state = 89;
+			this.state = 102;
 			this._errHandler.sync(this);
-			switch ( this._interp.adaptivePredict(this._input, 5, this._ctx) ) {
+			switch ( this._interp.adaptivePredict(this._input, 7, this._ctx) ) {
 			case 1:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 62;
+				this.state = 75;
 				this.match(SmartSyncParser.BOOL);
 				}
 				break;
 			case 2:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 63;
+				this.state = 76;
 				this.match(SmartSyncParser.STRING);
 				}
 				break;
 			case 3:
 				this.enterOuterAlt(localctx, 3);
 				{
-				this.state = 64;
+				this.state = 77;
 				this.match(SmartSyncParser.NUMBER);
 				}
 				break;
 			case 4:
 				this.enterOuterAlt(localctx, 4);
 				{
-				this.state = 65;
+				this.state = 78;
 				this.match(SmartSyncParser.ID);
-				this.state = 67;
+				this.state = 80;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-				if (_la===3) {
+				if (_la===6) {
 					{
-					this.state = 66;
-					this.match(SmartSyncParser.T__2);
+					this.state = 79;
+					this.match(SmartSyncParser.T__5);
 					}
 				}
 
@@ -297,60 +335,60 @@ export default class SmartSyncParser extends Parser {
 			case 5:
 				this.enterOuterAlt(localctx, 5);
 				{
-				this.state = 69;
+				this.state = 82;
 				this.match(SmartSyncParser.ID);
-				this.state = 70;
-				this.match(SmartSyncParser.T__2);
-				this.state = 71;
-				this.match(SmartSyncParser.T__3);
+				this.state = 83;
+				this.match(SmartSyncParser.T__5);
+				this.state = 84;
+				this.match(SmartSyncParser.T__6);
 				}
 				break;
 			case 6:
 				this.enterOuterAlt(localctx, 6);
 				{
-				this.state = 72;
+				this.state = 85;
 				this.match(SmartSyncParser.ID);
-				this.state = 73;
-				this.match(SmartSyncParser.T__4);
-				this.state = 74;
+				this.state = 86;
+				this.match(SmartSyncParser.T__7);
+				this.state = 87;
 				this.value();
-				this.state = 75;
-				this.match(SmartSyncParser.T__5);
+				this.state = 88;
+				this.match(SmartSyncParser.T__8);
 				}
 				break;
 			case 7:
 				this.enterOuterAlt(localctx, 7);
 				{
-				this.state = 77;
+				this.state = 90;
 				this.match(SmartSyncParser.ID);
-				this.state = 78;
-				this.match(SmartSyncParser.T__6);
-				this.state = 85;
+				this.state = 91;
+				this.match(SmartSyncParser.T__0);
+				this.state = 98;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-				while (((((_la - 5)) & ~0x1F) === 0 && ((1 << (_la - 5)) & 973078533) !== 0)) {
+				while ((((_la) & ~0x1F) === 0 && ((1 << _la) & 1073742082) !== 0) || ((((_la - 32)) & ~0x1F) === 0 && ((1 << (_la - 32)) & 7) !== 0)) {
 					{
 					{
-					this.state = 79;
+					this.state = 92;
 					this.funcReturn();
-					this.state = 81;
+					this.state = 94;
 					this._errHandler.sync(this);
 					_la = this._input.LA(1);
-					if (_la===8) {
+					if (_la===2) {
 						{
-						this.state = 80;
-						this.match(SmartSyncParser.T__7);
+						this.state = 93;
+						this.match(SmartSyncParser.T__1);
 						}
 					}
 
 					}
 					}
-					this.state = 87;
+					this.state = 100;
 					this._errHandler.sync(this);
 					_la = this._input.LA(1);
 				}
-				this.state = 88;
-				this.match(SmartSyncParser.T__8);
+				this.state = 101;
+				this.match(SmartSyncParser.T__2);
 				}
 				break;
 			}
@@ -375,82 +413,82 @@ export default class SmartSyncParser extends Parser {
 		this.enterRule(localctx, 6, SmartSyncParser.RULE_declaration);
 		let _la: number;
 		try {
-			this.state = 119;
+			this.state = 132;
 			this._errHandler.sync(this);
-			switch ( this._interp.adaptivePredict(this._input, 8, this._ctx) ) {
+			switch ( this._interp.adaptivePredict(this._input, 10, this._ctx) ) {
 			case 1:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 91;
+				this.state = 104;
 				this.match(SmartSyncParser.TYPE);
-				this.state = 92;
+				this.state = 105;
 				this.match(SmartSyncParser.ID);
-				this.state = 93;
+				this.state = 106;
 				this.match(SmartSyncParser.T__9);
-				this.state = 94;
+				this.state = 107;
 				this.expression();
-				this.state = 95;
-				this.match(SmartSyncParser.T__1);
+				this.state = 108;
+				this.match(SmartSyncParser.T__3);
 				}
 				break;
 			case 2:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 97;
+				this.state = 110;
 				this.match(SmartSyncParser.TYPE);
-				this.state = 98;
+				this.state = 111;
 				this.match(SmartSyncParser.ID);
-				this.state = 99;
-				this.match(SmartSyncParser.T__2);
-				this.state = 100;
+				this.state = 112;
+				this.match(SmartSyncParser.T__5);
+				this.state = 113;
 				this.match(SmartSyncParser.T__9);
-				this.state = 101;
-				this.match(SmartSyncParser.T__4);
-				this.state = 108;
+				this.state = 114;
+				this.match(SmartSyncParser.T__7);
+				this.state = 121;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-				while (((((_la - 5)) & ~0x1F) === 0 && ((1 << (_la - 5)) & 973078529) !== 0)) {
+				while (((((_la - 8)) & ~0x1F) === 0 && ((1 << (_la - 8)) & 121634817) !== 0)) {
 					{
 					{
-					this.state = 102;
+					this.state = 115;
 					this.arrayValue();
-					this.state = 104;
+					this.state = 117;
 					this._errHandler.sync(this);
 					_la = this._input.LA(1);
-					if (_la===8) {
+					if (_la===2) {
 						{
-						this.state = 103;
-						this.match(SmartSyncParser.T__7);
+						this.state = 116;
+						this.match(SmartSyncParser.T__1);
 						}
 					}
 
 					}
 					}
-					this.state = 110;
+					this.state = 123;
 					this._errHandler.sync(this);
 					_la = this._input.LA(1);
 				}
-				this.state = 111;
-				this.match(SmartSyncParser.T__5);
-				this.state = 112;
-				this.match(SmartSyncParser.T__1);
+				this.state = 124;
+				this.match(SmartSyncParser.T__8);
+				this.state = 125;
+				this.match(SmartSyncParser.T__3);
 				}
 				break;
 			case 3:
 				this.enterOuterAlt(localctx, 3);
 				{
-				this.state = 113;
+				this.state = 126;
 				this.match(SmartSyncParser.TYPE);
-				this.state = 114;
+				this.state = 127;
 				this.match(SmartSyncParser.ID);
-				this.state = 115;
-				this.match(SmartSyncParser.T__2);
-				this.state = 116;
+				this.state = 128;
+				this.match(SmartSyncParser.T__5);
+				this.state = 129;
 				this.match(SmartSyncParser.T__9);
-				this.state = 117;
-				this.match(SmartSyncParser.T__2);
-				this.state = 118;
-				this.match(SmartSyncParser.T__1);
+				this.state = 130;
+				this.match(SmartSyncParser.T__5);
+				this.state = 131;
+				this.match(SmartSyncParser.T__3);
 				}
 				break;
 			}
@@ -475,47 +513,47 @@ export default class SmartSyncParser extends Parser {
 		this.enterRule(localctx, 8, SmartSyncParser.RULE_statements);
 		let _la: number;
 		try {
-			this.state = 134;
+			this.state = 147;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
 			case 14:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 121;
+				this.state = 134;
 				this.ifStm();
 				}
 				break;
 			case 11:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 122;
+				this.state = 135;
 				this.match(SmartSyncParser.T__10);
-				this.state = 123;
+				this.state = 136;
 				this.condition();
-				this.state = 124;
+				this.state = 137;
 				this.match(SmartSyncParser.T__11);
-				this.state = 128;
+				this.state = 141;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-				while (((((_la - 1)) & ~0x1F) === 0 && ((1 << (_la - 1)) & 3288343553) !== 0)) {
+				while (((((_la - 5)) & ~0x1F) === 0 && ((1 << (_la - 5)) & 205521473) !== 0)) {
 					{
 					{
-					this.state = 125;
+					this.state = 138;
 					this.line();
 					}
 					}
-					this.state = 130;
+					this.state = 143;
 					this._errHandler.sync(this);
 					_la = this._input.LA(1);
 				}
-				this.state = 131;
+				this.state = 144;
 				this.match(SmartSyncParser.T__12);
 				}
 				break;
 			case 32:
 				this.enterOuterAlt(localctx, 3);
 				{
-				this.state = 133;
+				this.state = 146;
 				this.arrayStm();
 				}
 				break;
@@ -545,40 +583,40 @@ export default class SmartSyncParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 136;
+			this.state = 149;
 			this.match(SmartSyncParser.T__13);
-			this.state = 137;
+			this.state = 150;
 			this.condition();
-			this.state = 138;
+			this.state = 151;
 			this.match(SmartSyncParser.T__11);
-			this.state = 142;
+			this.state = 155;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			while (((((_la - 1)) & ~0x1F) === 0 && ((1 << (_la - 1)) & 3288343553) !== 0)) {
+			while (((((_la - 5)) & ~0x1F) === 0 && ((1 << (_la - 5)) & 205521473) !== 0)) {
 				{
 				{
-				this.state = 139;
+				this.state = 152;
 				this.line();
 				}
 				}
-				this.state = 144;
+				this.state = 157;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 145;
+			this.state = 158;
 			this.match(SmartSyncParser.T__12);
-			this.state = 148;
+			this.state = 161;
 			this._errHandler.sync(this);
-			switch ( this._interp.adaptivePredict(this._input, 12, this._ctx) ) {
+			switch ( this._interp.adaptivePredict(this._input, 14, this._ctx) ) {
 			case 1:
 				{
-				this.state = 146;
+				this.state = 159;
 				this.elses();
 				}
 				break;
 			case 2:
 				{
-				this.state = 147;
+				this.state = 160;
 				this.else_();
 				}
 				break;
@@ -607,42 +645,42 @@ export default class SmartSyncParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 150;
+			this.state = 163;
 			this.match(SmartSyncParser.T__14);
-			this.state = 151;
+			this.state = 164;
 			this.match(SmartSyncParser.T__13);
-			this.state = 152;
+			this.state = 165;
 			this.condition();
-			this.state = 153;
+			this.state = 166;
 			this.match(SmartSyncParser.T__11);
-			this.state = 157;
+			this.state = 170;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			while (((((_la - 1)) & ~0x1F) === 0 && ((1 << (_la - 1)) & 3288343553) !== 0)) {
+			while (((((_la - 5)) & ~0x1F) === 0 && ((1 << (_la - 5)) & 205521473) !== 0)) {
 				{
 				{
-				this.state = 154;
+				this.state = 167;
 				this.line();
 				}
 				}
-				this.state = 159;
+				this.state = 172;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 160;
+			this.state = 173;
 			this.match(SmartSyncParser.T__12);
-			this.state = 163;
+			this.state = 176;
 			this._errHandler.sync(this);
-			switch ( this._interp.adaptivePredict(this._input, 14, this._ctx) ) {
+			switch ( this._interp.adaptivePredict(this._input, 16, this._ctx) ) {
 			case 1:
 				{
-				this.state = 161;
+				this.state = 174;
 				this.elses();
 				}
 				break;
 			case 2:
 				{
-				this.state = 162;
+				this.state = 175;
 				this.else_();
 				}
 				break;
@@ -671,25 +709,25 @@ export default class SmartSyncParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 165;
+			this.state = 178;
 			this.match(SmartSyncParser.T__14);
-			this.state = 166;
+			this.state = 179;
 			this.match(SmartSyncParser.T__11);
-			this.state = 170;
+			this.state = 183;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			while (((((_la - 1)) & ~0x1F) === 0 && ((1 << (_la - 1)) & 3288343553) !== 0)) {
+			while (((((_la - 5)) & ~0x1F) === 0 && ((1 << (_la - 5)) & 205521473) !== 0)) {
 				{
 				{
-				this.state = 167;
+				this.state = 180;
 				this.line();
 				}
 				}
-				this.state = 172;
+				this.state = 185;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 173;
+			this.state = 186;
 			this.match(SmartSyncParser.T__12);
 			}
 		}
@@ -712,45 +750,45 @@ export default class SmartSyncParser extends Parser {
 		let localctx: ExpressionContext = new ExpressionContext(this, this._ctx, this.state);
 		this.enterRule(localctx, 16, SmartSyncParser.RULE_expression);
 		try {
-			this.state = 183;
+			this.state = 196;
 			this._errHandler.sync(this);
-			switch ( this._interp.adaptivePredict(this._input, 16, this._ctx) ) {
+			switch ( this._interp.adaptivePredict(this._input, 18, this._ctx) ) {
 			case 1:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 175;
+				this.state = 188;
 				this.arithmetic();
 				}
 				break;
 			case 2:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 176;
+				this.state = 189;
 				this.stringArithmetic();
 				}
 				break;
 			case 3:
 				this.enterOuterAlt(localctx, 3);
 				{
-				this.state = 177;
+				this.state = 190;
 				this.value();
 				}
 				break;
 			case 4:
 				this.enterOuterAlt(localctx, 4);
 				{
-				this.state = 178;
-				this.match(SmartSyncParser.T__6);
-				this.state = 179;
+				this.state = 191;
+				this.match(SmartSyncParser.T__0);
+				this.state = 192;
 				this.expression();
-				this.state = 180;
-				this.match(SmartSyncParser.T__8);
+				this.state = 193;
+				this.match(SmartSyncParser.T__2);
 				}
 				break;
 			case 5:
 				this.enterOuterAlt(localctx, 5);
 				{
-				this.state = 182;
+				this.state = 195;
 				this.condition();
 				}
 				break;
@@ -778,21 +816,21 @@ export default class SmartSyncParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 185;
+			this.state = 198;
 			this.stringAtom();
-			this.state = 190;
+			this.state = 203;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la===16) {
 				{
 				{
-				this.state = 186;
+				this.state = 199;
 				this.match(SmartSyncParser.T__15);
-				this.state = 187;
+				this.state = 200;
 				this.stringAtom();
 				}
 				}
-				this.state = 192;
+				this.state = 205;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
@@ -820,7 +858,7 @@ export default class SmartSyncParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 193;
+			this.state = 206;
 			_la = this._input.LA(1);
 			if(!(_la===32 || _la===33)) {
 			this._errHandler.recoverInline(this);
@@ -853,15 +891,15 @@ export default class SmartSyncParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 195;
+			this.state = 208;
 			this.multExpr();
-			this.state = 200;
+			this.state = 213;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la===16 || _la===17) {
 				{
 				{
-				this.state = 196;
+				this.state = 209;
 				_la = this._input.LA(1);
 				if(!(_la===16 || _la===17)) {
 				this._errHandler.recoverInline(this);
@@ -870,11 +908,11 @@ export default class SmartSyncParser extends Parser {
 					this._errHandler.reportMatch(this);
 				    this.consume();
 				}
-				this.state = 197;
+				this.state = 210;
 				this.multExpr();
 				}
 				}
-				this.state = 202;
+				this.state = 215;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
@@ -902,15 +940,15 @@ export default class SmartSyncParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 203;
+			this.state = 216;
 			this.atom();
-			this.state = 208;
+			this.state = 221;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la===18 || _la===19) {
 				{
 				{
-				this.state = 204;
+				this.state = 217;
 				_la = this._input.LA(1);
 				if(!(_la===18 || _la===19)) {
 				this._errHandler.recoverInline(this);
@@ -919,11 +957,11 @@ export default class SmartSyncParser extends Parser {
 					this._errHandler.reportMatch(this);
 				    this.consume();
 				}
-				this.state = 205;
+				this.state = 218;
 				this.atom();
 				}
 				}
-				this.state = 210;
+				this.state = 223;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
@@ -948,32 +986,28 @@ export default class SmartSyncParser extends Parser {
 		let localctx: AtomContext = new AtomContext(this, this._ctx, this.state);
 		this.enterRule(localctx, 26, SmartSyncParser.RULE_atom);
 		try {
-			this.state = 217;
+			this.state = 229;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
+			case 30:
+			case 32:
+			case 33:
 			case 34:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 211;
-				this.match(SmartSyncParser.NUMBER);
+				this.state = 224;
+				this.value();
 				}
 				break;
-			case 32:
+			case 1:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 212;
-				this.match(SmartSyncParser.ID);
-				}
-				break;
-			case 7:
-				this.enterOuterAlt(localctx, 3);
-				{
-				this.state = 213;
-				this.match(SmartSyncParser.T__6);
-				this.state = 214;
+				this.state = 225;
+				this.match(SmartSyncParser.T__0);
+				this.state = 226;
 				this.arithmetic();
-				this.state = 215;
-				this.match(SmartSyncParser.T__8);
+				this.state = 227;
+				this.match(SmartSyncParser.T__2);
 				}
 				break;
 			default:
@@ -1002,15 +1036,15 @@ export default class SmartSyncParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 219;
+			this.state = 231;
 			this.multConExpr();
-			this.state = 224;
+			this.state = 236;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la===20 || _la===21) {
 				{
 				{
-				this.state = 220;
+				this.state = 232;
 				_la = this._input.LA(1);
 				if(!(_la===20 || _la===21)) {
 				this._errHandler.recoverInline(this);
@@ -1019,11 +1053,11 @@ export default class SmartSyncParser extends Parser {
 					this._errHandler.reportMatch(this);
 				    this.consume();
 				}
-				this.state = 221;
+				this.state = 233;
 				this.multConExpr();
 				}
 				}
-				this.state = 226;
+				this.state = 238;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
@@ -1051,15 +1085,15 @@ export default class SmartSyncParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 227;
+			this.state = 239;
 			this.atomCon();
-			this.state = 232;
+			this.state = 244;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & 62914560) !== 0)) {
 				{
 				{
-				this.state = 228;
+				this.state = 240;
 				_la = this._input.LA(1);
 				if(!((((_la) & ~0x1F) === 0 && ((1 << _la) & 62914560) !== 0))) {
 				this._errHandler.recoverInline(this);
@@ -1068,11 +1102,11 @@ export default class SmartSyncParser extends Parser {
 					this._errHandler.reportMatch(this);
 				    this.consume();
 				}
-				this.state = 229;
+				this.state = 241;
 				this.atomCon();
 				}
 				}
-				this.state = 234;
+				this.state = 246;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
@@ -1097,32 +1131,32 @@ export default class SmartSyncParser extends Parser {
 		let localctx: AtomConContext = new AtomConContext(this, this._ctx, this.state);
 		this.enterRule(localctx, 32, SmartSyncParser.RULE_atomCon);
 		try {
-			this.state = 241;
+			this.state = 253;
 			this._errHandler.sync(this);
-			switch ( this._interp.adaptivePredict(this._input, 23, this._ctx) ) {
+			switch ( this._interp.adaptivePredict(this._input, 25, this._ctx) ) {
 			case 1:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 235;
+				this.state = 247;
 				this.arithmetic();
 				}
 				break;
 			case 2:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 236;
+				this.state = 248;
 				this.value();
 				}
 				break;
 			case 3:
 				this.enterOuterAlt(localctx, 3);
 				{
-				this.state = 237;
-				this.match(SmartSyncParser.T__6);
-				this.state = 238;
+				this.state = 249;
+				this.match(SmartSyncParser.T__0);
+				this.state = 250;
 				this.condition();
-				this.state = 239;
-				this.match(SmartSyncParser.T__8);
+				this.state = 251;
+				this.match(SmartSyncParser.T__2);
 				}
 				break;
 			}
@@ -1147,95 +1181,95 @@ export default class SmartSyncParser extends Parser {
 		this.enterRule(localctx, 34, SmartSyncParser.RULE_assignments);
 		let _la: number;
 		try {
-			this.state = 276;
+			this.state = 288;
 			this._errHandler.sync(this);
-			switch ( this._interp.adaptivePredict(this._input, 26, this._ctx) ) {
+			switch ( this._interp.adaptivePredict(this._input, 28, this._ctx) ) {
 			case 1:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 243;
+				this.state = 255;
 				this.match(SmartSyncParser.ID);
-				this.state = 244;
+				this.state = 256;
 				this.match(SmartSyncParser.T__9);
-				this.state = 245;
+				this.state = 257;
 				this.expression();
-				this.state = 246;
-				this.match(SmartSyncParser.T__1);
+				this.state = 258;
+				this.match(SmartSyncParser.T__3);
 				}
 				break;
 			case 2:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 248;
+				this.state = 260;
 				this.match(SmartSyncParser.ID);
-				this.state = 249;
-				this.match(SmartSyncParser.T__4);
-				this.state = 250;
+				this.state = 261;
+				this.match(SmartSyncParser.T__7);
+				this.state = 262;
 				this.value();
-				this.state = 251;
-				this.match(SmartSyncParser.T__5);
-				this.state = 252;
+				this.state = 263;
+				this.match(SmartSyncParser.T__8);
+				this.state = 264;
 				this.match(SmartSyncParser.T__9);
-				this.state = 253;
+				this.state = 265;
 				this.expression();
-				this.state = 254;
-				this.match(SmartSyncParser.T__1);
+				this.state = 266;
+				this.match(SmartSyncParser.T__3);
 				}
 				break;
 			case 3:
 				this.enterOuterAlt(localctx, 3);
 				{
-				this.state = 256;
+				this.state = 268;
 				this.match(SmartSyncParser.ID);
-				this.state = 257;
-				this.match(SmartSyncParser.T__2);
-				this.state = 258;
+				this.state = 269;
+				this.match(SmartSyncParser.T__5);
+				this.state = 270;
 				this.match(SmartSyncParser.T__9);
-				this.state = 259;
-				this.match(SmartSyncParser.T__4);
-				this.state = 266;
+				this.state = 271;
+				this.match(SmartSyncParser.T__7);
+				this.state = 278;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-				while (((((_la - 5)) & ~0x1F) === 0 && ((1 << (_la - 5)) & 973078529) !== 0)) {
+				while (((((_la - 8)) & ~0x1F) === 0 && ((1 << (_la - 8)) & 121634817) !== 0)) {
 					{
 					{
-					this.state = 260;
+					this.state = 272;
 					this.arrayValue();
-					this.state = 262;
+					this.state = 274;
 					this._errHandler.sync(this);
 					_la = this._input.LA(1);
-					if (_la===8) {
+					if (_la===2) {
 						{
-						this.state = 261;
-						this.match(SmartSyncParser.T__7);
+						this.state = 273;
+						this.match(SmartSyncParser.T__1);
 						}
 					}
 
 					}
 					}
-					this.state = 268;
+					this.state = 280;
 					this._errHandler.sync(this);
 					_la = this._input.LA(1);
 				}
-				this.state = 269;
-				this.match(SmartSyncParser.T__5);
-				this.state = 270;
-				this.match(SmartSyncParser.T__1);
+				this.state = 281;
+				this.match(SmartSyncParser.T__8);
+				this.state = 282;
+				this.match(SmartSyncParser.T__3);
 				}
 				break;
 			case 4:
 				this.enterOuterAlt(localctx, 4);
 				{
-				this.state = 271;
+				this.state = 283;
 				this.match(SmartSyncParser.ID);
-				this.state = 272;
-				this.match(SmartSyncParser.T__2);
-				this.state = 273;
+				this.state = 284;
+				this.match(SmartSyncParser.T__5);
+				this.state = 285;
 				this.match(SmartSyncParser.T__9);
-				this.state = 274;
-				this.match(SmartSyncParser.T__2);
-				this.state = 275;
-				this.match(SmartSyncParser.T__1);
+				this.state = 286;
+				this.match(SmartSyncParser.T__5);
+				this.state = 287;
+				this.match(SmartSyncParser.T__3);
 				}
 				break;
 			}
@@ -1260,63 +1294,63 @@ export default class SmartSyncParser extends Parser {
 		this.enterRule(localctx, 36, SmartSyncParser.RULE_funcReturn);
 		let _la: number;
 		try {
-			this.state = 293;
+			this.state = 305;
 			this._errHandler.sync(this);
-			switch ( this._interp.adaptivePredict(this._input, 29, this._ctx) ) {
+			switch ( this._interp.adaptivePredict(this._input, 31, this._ctx) ) {
 			case 1:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 278;
+				this.state = 290;
 				this.value();
 				}
 				break;
 			case 2:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 279;
+				this.state = 291;
 				this.match(SmartSyncParser.ID);
-				this.state = 280;
-				this.match(SmartSyncParser.T__2);
+				this.state = 292;
+				this.match(SmartSyncParser.T__5);
 				}
 				break;
 			case 3:
 				this.enterOuterAlt(localctx, 3);
 				{
-				this.state = 281;
+				this.state = 293;
 				this.arithmetic();
 				}
 				break;
 			case 4:
 				this.enterOuterAlt(localctx, 4);
 				{
-				this.state = 282;
-				this.match(SmartSyncParser.T__4);
-				this.state = 287;
+				this.state = 294;
+				this.match(SmartSyncParser.T__7);
+				this.state = 299;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 				do {
 					{
 					{
-					this.state = 283;
+					this.state = 295;
 					this.arrayValue();
-					this.state = 285;
+					this.state = 297;
 					this._errHandler.sync(this);
 					_la = this._input.LA(1);
-					if (_la===8) {
+					if (_la===2) {
 						{
-						this.state = 284;
-						this.match(SmartSyncParser.T__7);
+						this.state = 296;
+						this.match(SmartSyncParser.T__1);
 						}
 					}
 
 					}
 					}
-					this.state = 289;
+					this.state = 301;
 					this._errHandler.sync(this);
 					_la = this._input.LA(1);
-				} while (((((_la - 5)) & ~0x1F) === 0 && ((1 << (_la - 5)) & 973078529) !== 0));
-				this.state = 291;
-				this.match(SmartSyncParser.T__5);
+				} while (((((_la - 8)) & ~0x1F) === 0 && ((1 << (_la - 8)) & 121634817) !== 0));
+				this.state = 303;
+				this.match(SmartSyncParser.T__8);
 				}
 				break;
 			}
@@ -1343,69 +1377,69 @@ export default class SmartSyncParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 295;
+			this.state = 307;
 			this.match(SmartSyncParser.TYPE);
-			this.state = 296;
+			this.state = 308;
 			this.match(SmartSyncParser.T__25);
-			this.state = 297;
-			this.match(SmartSyncParser.ID);
-			this.state = 298;
-			this.match(SmartSyncParser.T__6);
 			this.state = 309;
+			this.match(SmartSyncParser.ID);
+			this.state = 310;
+			this.match(SmartSyncParser.T__0);
+			this.state = 321;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la===31) {
 				{
 				{
-				this.state = 299;
-				this.match(SmartSyncParser.TYPE);
-				this.state = 300;
-				this.match(SmartSyncParser.ID);
-				this.state = 302;
-				this._errHandler.sync(this);
-				_la = this._input.LA(1);
-				if (_la===3) {
-					{
-					this.state = 301;
-					this.match(SmartSyncParser.T__2);
-					}
-				}
-
-				this.state = 305;
-				this._errHandler.sync(this);
-				_la = this._input.LA(1);
-				if (_la===8) {
-					{
-					this.state = 304;
-					this.match(SmartSyncParser.T__7);
-					}
-				}
-
-				}
-				}
 				this.state = 311;
+				this.match(SmartSyncParser.TYPE);
+				this.state = 312;
+				this.match(SmartSyncParser.ID);
+				this.state = 314;
+				this._errHandler.sync(this);
+				_la = this._input.LA(1);
+				if (_la===6) {
+					{
+					this.state = 313;
+					this.match(SmartSyncParser.T__5);
+					}
+				}
+
+				this.state = 317;
+				this._errHandler.sync(this);
+				_la = this._input.LA(1);
+				if (_la===2) {
+					{
+					this.state = 316;
+					this.match(SmartSyncParser.T__1);
+					}
+				}
+
+				}
+				}
+				this.state = 323;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 312;
-			this.match(SmartSyncParser.T__8);
-			this.state = 313;
+			this.state = 324;
+			this.match(SmartSyncParser.T__2);
+			this.state = 325;
 			this.match(SmartSyncParser.T__11);
-			this.state = 317;
+			this.state = 329;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			while (((((_la - 1)) & ~0x1F) === 0 && ((1 << (_la - 1)) & 3288343553) !== 0)) {
+			while (((((_la - 5)) & ~0x1F) === 0 && ((1 << (_la - 5)) & 205521473) !== 0)) {
 				{
 				{
-				this.state = 314;
+				this.state = 326;
 				this.line();
 				}
 				}
-				this.state = 319;
+				this.state = 331;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 320;
+			this.state = 332;
 			this.match(SmartSyncParser.T__12);
 			}
 		}
@@ -1430,32 +1464,32 @@ export default class SmartSyncParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 322;
+			this.state = 334;
 			this.match(SmartSyncParser.T__26);
-			this.state = 329;
+			this.state = 341;
 			this._errHandler.sync(this);
-			switch ( this._interp.adaptivePredict(this._input, 34, this._ctx) ) {
+			switch ( this._interp.adaptivePredict(this._input, 36, this._ctx) ) {
 			case 1:
 				{
-				this.state = 323;
+				this.state = 335;
 				this.value();
 				}
 				break;
 			case 2:
 				{
-				this.state = 324;
+				this.state = 336;
 				this.match(SmartSyncParser.ID);
-				this.state = 325;
-				this.match(SmartSyncParser.T__4);
-				this.state = 326;
+				this.state = 337;
+				this.match(SmartSyncParser.T__7);
+				this.state = 338;
 				this.value();
-				this.state = 327;
-				this.match(SmartSyncParser.T__5);
+				this.state = 339;
+				this.match(SmartSyncParser.T__8);
 				}
 				break;
 			}
-			this.state = 331;
-			this.match(SmartSyncParser.T__1);
+			this.state = 343;
+			this.match(SmartSyncParser.T__3);
 			}
 		}
 		catch (re) {
@@ -1478,40 +1512,40 @@ export default class SmartSyncParser extends Parser {
 		this.enterRule(localctx, 42, SmartSyncParser.RULE_arrayValue);
 		let _la: number;
 		try {
-			this.state = 345;
+			this.state = 357;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
-			case 5:
+			case 8:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 333;
-				this.match(SmartSyncParser.T__4);
-				this.state = 340;
+				this.state = 345;
+				this.match(SmartSyncParser.T__7);
+				this.state = 352;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 				while (((((_la - 30)) & ~0x1F) === 0 && ((1 << (_la - 30)) & 29) !== 0)) {
 					{
 					{
-					this.state = 334;
+					this.state = 346;
 					this.value();
-					this.state = 336;
+					this.state = 348;
 					this._errHandler.sync(this);
 					_la = this._input.LA(1);
-					if (_la===8) {
+					if (_la===2) {
 						{
-						this.state = 335;
-						this.match(SmartSyncParser.T__7);
+						this.state = 347;
+						this.match(SmartSyncParser.T__1);
 						}
 					}
 
 					}
 					}
-					this.state = 342;
+					this.state = 354;
 					this._errHandler.sync(this);
 					_la = this._input.LA(1);
 				}
-				this.state = 343;
-				this.match(SmartSyncParser.T__5);
+				this.state = 355;
+				this.match(SmartSyncParser.T__8);
 				}
 				break;
 			case 30:
@@ -1520,7 +1554,7 @@ export default class SmartSyncParser extends Parser {
 			case 34:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 344;
+				this.state = 356;
 				this.value();
 				}
 				break;
@@ -1549,29 +1583,29 @@ export default class SmartSyncParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 347;
+			this.state = 359;
 			this.match(SmartSyncParser.ID);
-			this.state = 348;
-			this.match(SmartSyncParser.T__2);
-			this.state = 355;
+			this.state = 360;
+			this.match(SmartSyncParser.T__5);
+			this.state = 367;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
 			case 28:
 				{
-				this.state = 349;
+				this.state = 361;
 				this.match(SmartSyncParser.T__27);
-				this.state = 350;
+				this.state = 362;
 				this.value();
-				this.state = 351;
-				this.match(SmartSyncParser.T__1);
+				this.state = 363;
+				this.match(SmartSyncParser.T__3);
 				}
 				break;
 			case 29:
 				{
-				this.state = 353;
+				this.state = 365;
 				this.match(SmartSyncParser.T__28);
-				this.state = 354;
-				this.match(SmartSyncParser.T__1);
+				this.state = 366;
+				this.match(SmartSyncParser.T__3);
 				}
 				break;
 			default:
@@ -1594,124 +1628,128 @@ export default class SmartSyncParser extends Parser {
 		return localctx;
 	}
 
-	public static readonly _serializedATN: number[] = [4,1,39,358,2,0,7,0,2,
+	public static readonly _serializedATN: number[] = [4,1,39,370,2,0,7,0,2,
 	1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,7,7,2,8,7,8,2,9,7,9,2,
 	10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,14,2,15,7,15,2,16,7,16,2,17,
 	7,17,2,18,7,18,2,19,7,19,2,20,7,20,2,21,7,21,2,22,7,22,1,0,4,0,48,8,0,11,
-	0,12,0,49,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1,61,8,1,1,2,1,2,1,2,1,
-	2,1,2,3,2,68,8,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,3,2,82,
-	8,2,5,2,84,8,2,10,2,12,2,87,9,2,1,2,3,2,90,8,2,1,3,1,3,1,3,1,3,1,3,1,3,
-	1,3,1,3,1,3,1,3,1,3,1,3,1,3,3,3,105,8,3,5,3,107,8,3,10,3,12,3,110,9,3,1,
-	3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,3,3,120,8,3,1,4,1,4,1,4,1,4,1,4,5,4,127,8,
-	4,10,4,12,4,130,9,4,1,4,1,4,1,4,3,4,135,8,4,1,5,1,5,1,5,1,5,5,5,141,8,5,
-	10,5,12,5,144,9,5,1,5,1,5,1,5,3,5,149,8,5,1,6,1,6,1,6,1,6,1,6,5,6,156,8,
-	6,10,6,12,6,159,9,6,1,6,1,6,1,6,3,6,164,8,6,1,7,1,7,1,7,5,7,169,8,7,10,
-	7,12,7,172,9,7,1,7,1,7,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,3,8,184,8,8,1,9,
-	1,9,1,9,5,9,189,8,9,10,9,12,9,192,9,9,1,10,1,10,1,11,1,11,1,11,5,11,199,
-	8,11,10,11,12,11,202,9,11,1,12,1,12,1,12,5,12,207,8,12,10,12,12,12,210,
-	9,12,1,13,1,13,1,13,1,13,1,13,1,13,3,13,218,8,13,1,14,1,14,1,14,5,14,223,
-	8,14,10,14,12,14,226,9,14,1,15,1,15,1,15,5,15,231,8,15,10,15,12,15,234,
-	9,15,1,16,1,16,1,16,1,16,1,16,1,16,3,16,242,8,16,1,17,1,17,1,17,1,17,1,
-	17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,
-	3,17,263,8,17,5,17,265,8,17,10,17,12,17,268,9,17,1,17,1,17,1,17,1,17,1,
-	17,1,17,1,17,3,17,277,8,17,1,18,1,18,1,18,1,18,1,18,1,18,1,18,3,18,286,
-	8,18,4,18,288,8,18,11,18,12,18,289,1,18,1,18,3,18,294,8,18,1,19,1,19,1,
-	19,1,19,1,19,1,19,1,19,3,19,303,8,19,1,19,3,19,306,8,19,5,19,308,8,19,10,
-	19,12,19,311,9,19,1,19,1,19,1,19,5,19,316,8,19,10,19,12,19,319,9,19,1,19,
-	1,19,1,20,1,20,1,20,1,20,1,20,1,20,1,20,3,20,330,8,20,1,20,1,20,1,21,1,
-	21,1,21,3,21,337,8,21,5,21,339,8,21,10,21,12,21,342,9,21,1,21,1,21,3,21,
-	346,8,21,1,22,1,22,1,22,1,22,1,22,1,22,1,22,1,22,3,22,356,8,22,1,22,0,0,
-	23,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,0,5,
-	1,0,32,33,1,0,16,17,1,0,18,19,1,0,20,21,1,0,22,25,395,0,47,1,0,0,0,2,60,
-	1,0,0,0,4,89,1,0,0,0,6,119,1,0,0,0,8,134,1,0,0,0,10,136,1,0,0,0,12,150,
-	1,0,0,0,14,165,1,0,0,0,16,183,1,0,0,0,18,185,1,0,0,0,20,193,1,0,0,0,22,
-	195,1,0,0,0,24,203,1,0,0,0,26,217,1,0,0,0,28,219,1,0,0,0,30,227,1,0,0,0,
-	32,241,1,0,0,0,34,276,1,0,0,0,36,293,1,0,0,0,38,295,1,0,0,0,40,322,1,0,
-	0,0,42,345,1,0,0,0,44,347,1,0,0,0,46,48,3,2,1,0,47,46,1,0,0,0,48,49,1,0,
-	0,0,49,47,1,0,0,0,49,50,1,0,0,0,50,1,1,0,0,0,51,61,3,6,3,0,52,61,3,8,4,
-	0,53,61,3,34,17,0,54,61,3,38,19,0,55,61,3,40,20,0,56,57,5,1,0,0,57,58,3,
-	36,18,0,58,59,5,2,0,0,59,61,1,0,0,0,60,51,1,0,0,0,60,52,1,0,0,0,60,53,1,
-	0,0,0,60,54,1,0,0,0,60,55,1,0,0,0,60,56,1,0,0,0,61,3,1,0,0,0,62,90,5,30,
-	0,0,63,90,5,33,0,0,64,90,5,34,0,0,65,67,5,32,0,0,66,68,5,3,0,0,67,66,1,
-	0,0,0,67,68,1,0,0,0,68,90,1,0,0,0,69,70,5,32,0,0,70,71,5,3,0,0,71,90,5,
-	4,0,0,72,73,5,32,0,0,73,74,5,5,0,0,74,75,3,4,2,0,75,76,5,6,0,0,76,90,1,
-	0,0,0,77,78,5,32,0,0,78,85,5,7,0,0,79,81,3,36,18,0,80,82,5,8,0,0,81,80,
-	1,0,0,0,81,82,1,0,0,0,82,84,1,0,0,0,83,79,1,0,0,0,84,87,1,0,0,0,85,83,1,
-	0,0,0,85,86,1,0,0,0,86,88,1,0,0,0,87,85,1,0,0,0,88,90,5,9,0,0,89,62,1,0,
-	0,0,89,63,1,0,0,0,89,64,1,0,0,0,89,65,1,0,0,0,89,69,1,0,0,0,89,72,1,0,0,
-	0,89,77,1,0,0,0,90,5,1,0,0,0,91,92,5,31,0,0,92,93,5,32,0,0,93,94,5,10,0,
-	0,94,95,3,16,8,0,95,96,5,2,0,0,96,120,1,0,0,0,97,98,5,31,0,0,98,99,5,32,
-	0,0,99,100,5,3,0,0,100,101,5,10,0,0,101,108,5,5,0,0,102,104,3,42,21,0,103,
-	105,5,8,0,0,104,103,1,0,0,0,104,105,1,0,0,0,105,107,1,0,0,0,106,102,1,0,
-	0,0,107,110,1,0,0,0,108,106,1,0,0,0,108,109,1,0,0,0,109,111,1,0,0,0,110,
-	108,1,0,0,0,111,112,5,6,0,0,112,120,5,2,0,0,113,114,5,31,0,0,114,115,5,
-	32,0,0,115,116,5,3,0,0,116,117,5,10,0,0,117,118,5,3,0,0,118,120,5,2,0,0,
-	119,91,1,0,0,0,119,97,1,0,0,0,119,113,1,0,0,0,120,7,1,0,0,0,121,135,3,10,
-	5,0,122,123,5,11,0,0,123,124,3,28,14,0,124,128,5,12,0,0,125,127,3,2,1,0,
-	126,125,1,0,0,0,127,130,1,0,0,0,128,126,1,0,0,0,128,129,1,0,0,0,129,131,
-	1,0,0,0,130,128,1,0,0,0,131,132,5,13,0,0,132,135,1,0,0,0,133,135,3,44,22,
-	0,134,121,1,0,0,0,134,122,1,0,0,0,134,133,1,0,0,0,135,9,1,0,0,0,136,137,
-	5,14,0,0,137,138,3,28,14,0,138,142,5,12,0,0,139,141,3,2,1,0,140,139,1,0,
-	0,0,141,144,1,0,0,0,142,140,1,0,0,0,142,143,1,0,0,0,143,145,1,0,0,0,144,
-	142,1,0,0,0,145,148,5,13,0,0,146,149,3,12,6,0,147,149,3,14,7,0,148,146,
-	1,0,0,0,148,147,1,0,0,0,148,149,1,0,0,0,149,11,1,0,0,0,150,151,5,15,0,0,
-	151,152,5,14,0,0,152,153,3,28,14,0,153,157,5,12,0,0,154,156,3,2,1,0,155,
-	154,1,0,0,0,156,159,1,0,0,0,157,155,1,0,0,0,157,158,1,0,0,0,158,160,1,0,
-	0,0,159,157,1,0,0,0,160,163,5,13,0,0,161,164,3,12,6,0,162,164,3,14,7,0,
-	163,161,1,0,0,0,163,162,1,0,0,0,163,164,1,0,0,0,164,13,1,0,0,0,165,166,
-	5,15,0,0,166,170,5,12,0,0,167,169,3,2,1,0,168,167,1,0,0,0,169,172,1,0,0,
-	0,170,168,1,0,0,0,170,171,1,0,0,0,171,173,1,0,0,0,172,170,1,0,0,0,173,174,
-	5,13,0,0,174,15,1,0,0,0,175,184,3,22,11,0,176,184,3,18,9,0,177,184,3,4,
-	2,0,178,179,5,7,0,0,179,180,3,16,8,0,180,181,5,9,0,0,181,184,1,0,0,0,182,
-	184,3,28,14,0,183,175,1,0,0,0,183,176,1,0,0,0,183,177,1,0,0,0,183,178,1,
-	0,0,0,183,182,1,0,0,0,184,17,1,0,0,0,185,190,3,20,10,0,186,187,5,16,0,0,
-	187,189,3,20,10,0,188,186,1,0,0,0,189,192,1,0,0,0,190,188,1,0,0,0,190,191,
-	1,0,0,0,191,19,1,0,0,0,192,190,1,0,0,0,193,194,7,0,0,0,194,21,1,0,0,0,195,
-	200,3,24,12,0,196,197,7,1,0,0,197,199,3,24,12,0,198,196,1,0,0,0,199,202,
-	1,0,0,0,200,198,1,0,0,0,200,201,1,0,0,0,201,23,1,0,0,0,202,200,1,0,0,0,
-	203,208,3,26,13,0,204,205,7,2,0,0,205,207,3,26,13,0,206,204,1,0,0,0,207,
-	210,1,0,0,0,208,206,1,0,0,0,208,209,1,0,0,0,209,25,1,0,0,0,210,208,1,0,
-	0,0,211,218,5,34,0,0,212,218,5,32,0,0,213,214,5,7,0,0,214,215,3,22,11,0,
-	215,216,5,9,0,0,216,218,1,0,0,0,217,211,1,0,0,0,217,212,1,0,0,0,217,213,
-	1,0,0,0,218,27,1,0,0,0,219,224,3,30,15,0,220,221,7,3,0,0,221,223,3,30,15,
-	0,222,220,1,0,0,0,223,226,1,0,0,0,224,222,1,0,0,0,224,225,1,0,0,0,225,29,
-	1,0,0,0,226,224,1,0,0,0,227,232,3,32,16,0,228,229,7,4,0,0,229,231,3,32,
-	16,0,230,228,1,0,0,0,231,234,1,0,0,0,232,230,1,0,0,0,232,233,1,0,0,0,233,
-	31,1,0,0,0,234,232,1,0,0,0,235,242,3,22,11,0,236,242,3,4,2,0,237,238,5,
-	7,0,0,238,239,3,28,14,0,239,240,5,9,0,0,240,242,1,0,0,0,241,235,1,0,0,0,
-	241,236,1,0,0,0,241,237,1,0,0,0,242,33,1,0,0,0,243,244,5,32,0,0,244,245,
-	5,10,0,0,245,246,3,16,8,0,246,247,5,2,0,0,247,277,1,0,0,0,248,249,5,32,
-	0,0,249,250,5,5,0,0,250,251,3,4,2,0,251,252,5,6,0,0,252,253,5,10,0,0,253,
-	254,3,16,8,0,254,255,5,2,0,0,255,277,1,0,0,0,256,257,5,32,0,0,257,258,5,
-	3,0,0,258,259,5,10,0,0,259,266,5,5,0,0,260,262,3,42,21,0,261,263,5,8,0,
-	0,262,261,1,0,0,0,262,263,1,0,0,0,263,265,1,0,0,0,264,260,1,0,0,0,265,268,
-	1,0,0,0,266,264,1,0,0,0,266,267,1,0,0,0,267,269,1,0,0,0,268,266,1,0,0,0,
-	269,270,5,6,0,0,270,277,5,2,0,0,271,272,5,32,0,0,272,273,5,3,0,0,273,274,
-	5,10,0,0,274,275,5,3,0,0,275,277,5,2,0,0,276,243,1,0,0,0,276,248,1,0,0,
-	0,276,256,1,0,0,0,276,271,1,0,0,0,277,35,1,0,0,0,278,294,3,4,2,0,279,280,
-	5,32,0,0,280,294,5,3,0,0,281,294,3,22,11,0,282,287,5,5,0,0,283,285,3,42,
-	21,0,284,286,5,8,0,0,285,284,1,0,0,0,285,286,1,0,0,0,286,288,1,0,0,0,287,
-	283,1,0,0,0,288,289,1,0,0,0,289,287,1,0,0,0,289,290,1,0,0,0,290,291,1,0,
-	0,0,291,292,5,6,0,0,292,294,1,0,0,0,293,278,1,0,0,0,293,279,1,0,0,0,293,
-	281,1,0,0,0,293,282,1,0,0,0,294,37,1,0,0,0,295,296,5,31,0,0,296,297,5,26,
-	0,0,297,298,5,32,0,0,298,309,5,7,0,0,299,300,5,31,0,0,300,302,5,32,0,0,
-	301,303,5,3,0,0,302,301,1,0,0,0,302,303,1,0,0,0,303,305,1,0,0,0,304,306,
-	5,8,0,0,305,304,1,0,0,0,305,306,1,0,0,0,306,308,1,0,0,0,307,299,1,0,0,0,
-	308,311,1,0,0,0,309,307,1,0,0,0,309,310,1,0,0,0,310,312,1,0,0,0,311,309,
-	1,0,0,0,312,313,5,9,0,0,313,317,5,12,0,0,314,316,3,2,1,0,315,314,1,0,0,
-	0,316,319,1,0,0,0,317,315,1,0,0,0,317,318,1,0,0,0,318,320,1,0,0,0,319,317,
-	1,0,0,0,320,321,5,13,0,0,321,39,1,0,0,0,322,329,5,27,0,0,323,330,3,4,2,
-	0,324,325,5,32,0,0,325,326,5,5,0,0,326,327,3,4,2,0,327,328,5,6,0,0,328,
-	330,1,0,0,0,329,323,1,0,0,0,329,324,1,0,0,0,330,331,1,0,0,0,331,332,5,2,
-	0,0,332,41,1,0,0,0,333,340,5,5,0,0,334,336,3,4,2,0,335,337,5,8,0,0,336,
-	335,1,0,0,0,336,337,1,0,0,0,337,339,1,0,0,0,338,334,1,0,0,0,339,342,1,0,
-	0,0,340,338,1,0,0,0,340,341,1,0,0,0,341,343,1,0,0,0,342,340,1,0,0,0,343,
-	346,5,6,0,0,344,346,3,4,2,0,345,333,1,0,0,0,345,344,1,0,0,0,346,43,1,0,
-	0,0,347,348,5,32,0,0,348,355,5,3,0,0,349,350,5,28,0,0,350,351,3,4,2,0,351,
-	352,5,2,0,0,352,356,1,0,0,0,353,354,5,29,0,0,354,356,5,2,0,0,355,349,1,
-	0,0,0,355,353,1,0,0,0,356,45,1,0,0,0,39,49,60,67,81,85,89,104,108,119,128,
-	134,142,148,157,163,170,183,190,200,208,217,224,232,241,262,266,276,285,
-	289,293,302,305,309,317,329,336,340,345,355];
+	0,12,0,49,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1,60,8,1,5,1,62,8,1,10,1,12,
+	1,65,9,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1,74,8,1,1,2,1,2,1,2,1,2,1,2,3,2,
+	81,8,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,3,2,95,8,2,5,2,97,
+	8,2,10,2,12,2,100,9,2,1,2,3,2,103,8,2,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,
+	3,1,3,1,3,1,3,1,3,3,3,118,8,3,5,3,120,8,3,10,3,12,3,123,9,3,1,3,1,3,1,3,
+	1,3,1,3,1,3,1,3,1,3,3,3,133,8,3,1,4,1,4,1,4,1,4,1,4,5,4,140,8,4,10,4,12,
+	4,143,9,4,1,4,1,4,1,4,3,4,148,8,4,1,5,1,5,1,5,1,5,5,5,154,8,5,10,5,12,5,
+	157,9,5,1,5,1,5,1,5,3,5,162,8,5,1,6,1,6,1,6,1,6,1,6,5,6,169,8,6,10,6,12,
+	6,172,9,6,1,6,1,6,1,6,3,6,177,8,6,1,7,1,7,1,7,5,7,182,8,7,10,7,12,7,185,
+	9,7,1,7,1,7,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,3,8,197,8,8,1,9,1,9,1,9,5,9,
+	202,8,9,10,9,12,9,205,9,9,1,10,1,10,1,11,1,11,1,11,5,11,212,8,11,10,11,
+	12,11,215,9,11,1,12,1,12,1,12,5,12,220,8,12,10,12,12,12,223,9,12,1,13,1,
+	13,1,13,1,13,1,13,3,13,230,8,13,1,14,1,14,1,14,5,14,235,8,14,10,14,12,14,
+	238,9,14,1,15,1,15,1,15,5,15,243,8,15,10,15,12,15,246,9,15,1,16,1,16,1,
+	16,1,16,1,16,1,16,3,16,254,8,16,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,
+	1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,3,17,275,8,17,5,
+	17,277,8,17,10,17,12,17,280,9,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,3,17,
+	289,8,17,1,18,1,18,1,18,1,18,1,18,1,18,1,18,3,18,298,8,18,4,18,300,8,18,
+	11,18,12,18,301,1,18,1,18,3,18,306,8,18,1,19,1,19,1,19,1,19,1,19,1,19,1,
+	19,3,19,315,8,19,1,19,3,19,318,8,19,5,19,320,8,19,10,19,12,19,323,9,19,
+	1,19,1,19,1,19,5,19,328,8,19,10,19,12,19,331,9,19,1,19,1,19,1,20,1,20,1,
+	20,1,20,1,20,1,20,1,20,3,20,342,8,20,1,20,1,20,1,21,1,21,1,21,3,21,349,
+	8,21,5,21,351,8,21,10,21,12,21,354,9,21,1,21,1,21,3,21,358,8,21,1,22,1,
+	22,1,22,1,22,1,22,1,22,1,22,1,22,3,22,368,8,22,1,22,0,0,23,0,2,4,6,8,10,
+	12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,0,5,1,0,32,33,1,0,16,
+	17,1,0,18,19,1,0,20,21,1,0,22,25,409,0,47,1,0,0,0,2,73,1,0,0,0,4,102,1,
+	0,0,0,6,132,1,0,0,0,8,147,1,0,0,0,10,149,1,0,0,0,12,163,1,0,0,0,14,178,
+	1,0,0,0,16,196,1,0,0,0,18,198,1,0,0,0,20,206,1,0,0,0,22,208,1,0,0,0,24,
+	216,1,0,0,0,26,229,1,0,0,0,28,231,1,0,0,0,30,239,1,0,0,0,32,253,1,0,0,0,
+	34,288,1,0,0,0,36,305,1,0,0,0,38,307,1,0,0,0,40,334,1,0,0,0,42,357,1,0,
+	0,0,44,359,1,0,0,0,46,48,3,2,1,0,47,46,1,0,0,0,48,49,1,0,0,0,49,47,1,0,
+	0,0,49,50,1,0,0,0,50,1,1,0,0,0,51,74,3,6,3,0,52,74,3,8,4,0,53,74,3,34,17,
+	0,54,74,3,38,19,0,55,56,5,32,0,0,56,63,5,1,0,0,57,59,3,36,18,0,58,60,5,
+	2,0,0,59,58,1,0,0,0,59,60,1,0,0,0,60,62,1,0,0,0,61,57,1,0,0,0,62,65,1,0,
+	0,0,63,61,1,0,0,0,63,64,1,0,0,0,64,66,1,0,0,0,65,63,1,0,0,0,66,67,5,3,0,
+	0,67,74,5,4,0,0,68,74,3,40,20,0,69,70,5,5,0,0,70,71,3,36,18,0,71,72,5,4,
+	0,0,72,74,1,0,0,0,73,51,1,0,0,0,73,52,1,0,0,0,73,53,1,0,0,0,73,54,1,0,0,
+	0,73,55,1,0,0,0,73,68,1,0,0,0,73,69,1,0,0,0,74,3,1,0,0,0,75,103,5,30,0,
+	0,76,103,5,33,0,0,77,103,5,34,0,0,78,80,5,32,0,0,79,81,5,6,0,0,80,79,1,
+	0,0,0,80,81,1,0,0,0,81,103,1,0,0,0,82,83,5,32,0,0,83,84,5,6,0,0,84,103,
+	5,7,0,0,85,86,5,32,0,0,86,87,5,8,0,0,87,88,3,4,2,0,88,89,5,9,0,0,89,103,
+	1,0,0,0,90,91,5,32,0,0,91,98,5,1,0,0,92,94,3,36,18,0,93,95,5,2,0,0,94,93,
+	1,0,0,0,94,95,1,0,0,0,95,97,1,0,0,0,96,92,1,0,0,0,97,100,1,0,0,0,98,96,
+	1,0,0,0,98,99,1,0,0,0,99,101,1,0,0,0,100,98,1,0,0,0,101,103,5,3,0,0,102,
+	75,1,0,0,0,102,76,1,0,0,0,102,77,1,0,0,0,102,78,1,0,0,0,102,82,1,0,0,0,
+	102,85,1,0,0,0,102,90,1,0,0,0,103,5,1,0,0,0,104,105,5,31,0,0,105,106,5,
+	32,0,0,106,107,5,10,0,0,107,108,3,16,8,0,108,109,5,4,0,0,109,133,1,0,0,
+	0,110,111,5,31,0,0,111,112,5,32,0,0,112,113,5,6,0,0,113,114,5,10,0,0,114,
+	121,5,8,0,0,115,117,3,42,21,0,116,118,5,2,0,0,117,116,1,0,0,0,117,118,1,
+	0,0,0,118,120,1,0,0,0,119,115,1,0,0,0,120,123,1,0,0,0,121,119,1,0,0,0,121,
+	122,1,0,0,0,122,124,1,0,0,0,123,121,1,0,0,0,124,125,5,9,0,0,125,133,5,4,
+	0,0,126,127,5,31,0,0,127,128,5,32,0,0,128,129,5,6,0,0,129,130,5,10,0,0,
+	130,131,5,6,0,0,131,133,5,4,0,0,132,104,1,0,0,0,132,110,1,0,0,0,132,126,
+	1,0,0,0,133,7,1,0,0,0,134,148,3,10,5,0,135,136,5,11,0,0,136,137,3,28,14,
+	0,137,141,5,12,0,0,138,140,3,2,1,0,139,138,1,0,0,0,140,143,1,0,0,0,141,
+	139,1,0,0,0,141,142,1,0,0,0,142,144,1,0,0,0,143,141,1,0,0,0,144,145,5,13,
+	0,0,145,148,1,0,0,0,146,148,3,44,22,0,147,134,1,0,0,0,147,135,1,0,0,0,147,
+	146,1,0,0,0,148,9,1,0,0,0,149,150,5,14,0,0,150,151,3,28,14,0,151,155,5,
+	12,0,0,152,154,3,2,1,0,153,152,1,0,0,0,154,157,1,0,0,0,155,153,1,0,0,0,
+	155,156,1,0,0,0,156,158,1,0,0,0,157,155,1,0,0,0,158,161,5,13,0,0,159,162,
+	3,12,6,0,160,162,3,14,7,0,161,159,1,0,0,0,161,160,1,0,0,0,161,162,1,0,0,
+	0,162,11,1,0,0,0,163,164,5,15,0,0,164,165,5,14,0,0,165,166,3,28,14,0,166,
+	170,5,12,0,0,167,169,3,2,1,0,168,167,1,0,0,0,169,172,1,0,0,0,170,168,1,
+	0,0,0,170,171,1,0,0,0,171,173,1,0,0,0,172,170,1,0,0,0,173,176,5,13,0,0,
+	174,177,3,12,6,0,175,177,3,14,7,0,176,174,1,0,0,0,176,175,1,0,0,0,176,177,
+	1,0,0,0,177,13,1,0,0,0,178,179,5,15,0,0,179,183,5,12,0,0,180,182,3,2,1,
+	0,181,180,1,0,0,0,182,185,1,0,0,0,183,181,1,0,0,0,183,184,1,0,0,0,184,186,
+	1,0,0,0,185,183,1,0,0,0,186,187,5,13,0,0,187,15,1,0,0,0,188,197,3,22,11,
+	0,189,197,3,18,9,0,190,197,3,4,2,0,191,192,5,1,0,0,192,193,3,16,8,0,193,
+	194,5,3,0,0,194,197,1,0,0,0,195,197,3,28,14,0,196,188,1,0,0,0,196,189,1,
+	0,0,0,196,190,1,0,0,0,196,191,1,0,0,0,196,195,1,0,0,0,197,17,1,0,0,0,198,
+	203,3,20,10,0,199,200,5,16,0,0,200,202,3,20,10,0,201,199,1,0,0,0,202,205,
+	1,0,0,0,203,201,1,0,0,0,203,204,1,0,0,0,204,19,1,0,0,0,205,203,1,0,0,0,
+	206,207,7,0,0,0,207,21,1,0,0,0,208,213,3,24,12,0,209,210,7,1,0,0,210,212,
+	3,24,12,0,211,209,1,0,0,0,212,215,1,0,0,0,213,211,1,0,0,0,213,214,1,0,0,
+	0,214,23,1,0,0,0,215,213,1,0,0,0,216,221,3,26,13,0,217,218,7,2,0,0,218,
+	220,3,26,13,0,219,217,1,0,0,0,220,223,1,0,0,0,221,219,1,0,0,0,221,222,1,
+	0,0,0,222,25,1,0,0,0,223,221,1,0,0,0,224,230,3,4,2,0,225,226,5,1,0,0,226,
+	227,3,22,11,0,227,228,5,3,0,0,228,230,1,0,0,0,229,224,1,0,0,0,229,225,1,
+	0,0,0,230,27,1,0,0,0,231,236,3,30,15,0,232,233,7,3,0,0,233,235,3,30,15,
+	0,234,232,1,0,0,0,235,238,1,0,0,0,236,234,1,0,0,0,236,237,1,0,0,0,237,29,
+	1,0,0,0,238,236,1,0,0,0,239,244,3,32,16,0,240,241,7,4,0,0,241,243,3,32,
+	16,0,242,240,1,0,0,0,243,246,1,0,0,0,244,242,1,0,0,0,244,245,1,0,0,0,245,
+	31,1,0,0,0,246,244,1,0,0,0,247,254,3,22,11,0,248,254,3,4,2,0,249,250,5,
+	1,0,0,250,251,3,28,14,0,251,252,5,3,0,0,252,254,1,0,0,0,253,247,1,0,0,0,
+	253,248,1,0,0,0,253,249,1,0,0,0,254,33,1,0,0,0,255,256,5,32,0,0,256,257,
+	5,10,0,0,257,258,3,16,8,0,258,259,5,4,0,0,259,289,1,0,0,0,260,261,5,32,
+	0,0,261,262,5,8,0,0,262,263,3,4,2,0,263,264,5,9,0,0,264,265,5,10,0,0,265,
+	266,3,16,8,0,266,267,5,4,0,0,267,289,1,0,0,0,268,269,5,32,0,0,269,270,5,
+	6,0,0,270,271,5,10,0,0,271,278,5,8,0,0,272,274,3,42,21,0,273,275,5,2,0,
+	0,274,273,1,0,0,0,274,275,1,0,0,0,275,277,1,0,0,0,276,272,1,0,0,0,277,280,
+	1,0,0,0,278,276,1,0,0,0,278,279,1,0,0,0,279,281,1,0,0,0,280,278,1,0,0,0,
+	281,282,5,9,0,0,282,289,5,4,0,0,283,284,5,32,0,0,284,285,5,6,0,0,285,286,
+	5,10,0,0,286,287,5,6,0,0,287,289,5,4,0,0,288,255,1,0,0,0,288,260,1,0,0,
+	0,288,268,1,0,0,0,288,283,1,0,0,0,289,35,1,0,0,0,290,306,3,4,2,0,291,292,
+	5,32,0,0,292,306,5,6,0,0,293,306,3,22,11,0,294,299,5,8,0,0,295,297,3,42,
+	21,0,296,298,5,2,0,0,297,296,1,0,0,0,297,298,1,0,0,0,298,300,1,0,0,0,299,
+	295,1,0,0,0,300,301,1,0,0,0,301,299,1,0,0,0,301,302,1,0,0,0,302,303,1,0,
+	0,0,303,304,5,9,0,0,304,306,1,0,0,0,305,290,1,0,0,0,305,291,1,0,0,0,305,
+	293,1,0,0,0,305,294,1,0,0,0,306,37,1,0,0,0,307,308,5,31,0,0,308,309,5,26,
+	0,0,309,310,5,32,0,0,310,321,5,1,0,0,311,312,5,31,0,0,312,314,5,32,0,0,
+	313,315,5,6,0,0,314,313,1,0,0,0,314,315,1,0,0,0,315,317,1,0,0,0,316,318,
+	5,2,0,0,317,316,1,0,0,0,317,318,1,0,0,0,318,320,1,0,0,0,319,311,1,0,0,0,
+	320,323,1,0,0,0,321,319,1,0,0,0,321,322,1,0,0,0,322,324,1,0,0,0,323,321,
+	1,0,0,0,324,325,5,3,0,0,325,329,5,12,0,0,326,328,3,2,1,0,327,326,1,0,0,
+	0,328,331,1,0,0,0,329,327,1,0,0,0,329,330,1,0,0,0,330,332,1,0,0,0,331,329,
+	1,0,0,0,332,333,5,13,0,0,333,39,1,0,0,0,334,341,5,27,0,0,335,342,3,4,2,
+	0,336,337,5,32,0,0,337,338,5,8,0,0,338,339,3,4,2,0,339,340,5,9,0,0,340,
+	342,1,0,0,0,341,335,1,0,0,0,341,336,1,0,0,0,342,343,1,0,0,0,343,344,5,4,
+	0,0,344,41,1,0,0,0,345,352,5,8,0,0,346,348,3,4,2,0,347,349,5,2,0,0,348,
+	347,1,0,0,0,348,349,1,0,0,0,349,351,1,0,0,0,350,346,1,0,0,0,351,354,1,0,
+	0,0,352,350,1,0,0,0,352,353,1,0,0,0,353,355,1,0,0,0,354,352,1,0,0,0,355,
+	358,5,9,0,0,356,358,3,4,2,0,357,345,1,0,0,0,357,356,1,0,0,0,358,43,1,0,
+	0,0,359,360,5,32,0,0,360,367,5,6,0,0,361,362,5,28,0,0,362,363,3,4,2,0,363,
+	364,5,4,0,0,364,368,1,0,0,0,365,366,5,29,0,0,366,368,5,4,0,0,367,361,1,
+	0,0,0,367,365,1,0,0,0,368,45,1,0,0,0,41,49,59,63,73,80,94,98,102,117,121,
+	132,141,147,155,161,170,176,183,196,203,213,221,229,236,244,253,274,278,
+	288,297,301,305,314,317,321,329,341,348,352,357,367];
 
 	private static __ATN: ATN;
 	public static get _ATN(): ATN {
@@ -1769,11 +1807,17 @@ export class LineContext extends ParserRuleContext {
 	public functions(): FunctionsContext {
 		return this.getTypedRuleContext(FunctionsContext, 0) as FunctionsContext;
 	}
+	public ID(): TerminalNode {
+		return this.getToken(SmartSyncParser.ID, 0);
+	}
+	public funcReturn_list(): FuncReturnContext[] {
+		return this.getTypedRuleContexts(FuncReturnContext) as FuncReturnContext[];
+	}
+	public funcReturn(i: number): FuncReturnContext {
+		return this.getTypedRuleContext(FuncReturnContext, i) as FuncReturnContext;
+	}
 	public output(): OutputContext {
 		return this.getTypedRuleContext(OutputContext, 0) as OutputContext;
-	}
-	public funcReturn(): FuncReturnContext {
-		return this.getTypedRuleContext(FuncReturnContext, 0) as FuncReturnContext;
 	}
     public get ruleIndex(): number {
     	return SmartSyncParser.RULE_line;
@@ -2129,11 +2173,8 @@ export class AtomContext extends ParserRuleContext {
 		super(parent, invokingState);
     	this.parser = parser;
 	}
-	public NUMBER(): TerminalNode {
-		return this.getToken(SmartSyncParser.NUMBER, 0);
-	}
-	public ID(): TerminalNode {
-		return this.getToken(SmartSyncParser.ID, 0);
+	public value(): ValueContext {
+		return this.getTypedRuleContext(ValueContext, 0) as ValueContext;
 	}
 	public arithmetic(): ArithmeticContext {
 		return this.getTypedRuleContext(ArithmeticContext, 0) as ArithmeticContext;

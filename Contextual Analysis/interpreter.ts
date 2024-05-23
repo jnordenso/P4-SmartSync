@@ -111,6 +111,11 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 		// if the symbol is found
 		if (symbol !== null) {
 			const arrayValue: FinalValue[] = [];
+			if (ctx.value.length === 0) {
+				this.environment.set(ctx.identifier.name, arrayValue);
+				return;
+			}
+			
 			for (let i = 0; i < ctx.value.length; i++) {
 				const value = this.visitExpression(ctx.value[i]);
 				arrayValue.push(value as FinalValue);

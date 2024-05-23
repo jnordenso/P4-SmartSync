@@ -299,6 +299,20 @@ export default class TypeChecker extends AstVisitor<void> {
 
 		if (symbol !== null) {
 			if (symbol.reference.kind !== "ArrayDeclaration") {
+
+				// case where the reference is from a function parameter
+				if (symbol.reference.kind === "Function") {
+					const func = symbol.reference as Function;
+					for (let i = 0; i < func.parameters.length; i++) {
+						if (
+							func.parameters[i].name === ctx.identifier.name &&
+							func.parameters[i].kind === "ArrayIdentifier"
+						) {
+							return;
+						}
+					}
+				}
+
 				throw new Error(
 					`Line: ${ctx.line}, Array features are not allowed on non array: ${ctx.identifier.name}.`
 				);
@@ -321,6 +335,20 @@ export default class TypeChecker extends AstVisitor<void> {
 
 		if (symbol !== null) {
 			if (symbol.reference.kind !== "ArrayDeclaration") {
+
+				// case where the reference is from a function parameter
+				if (symbol.reference.kind === "Function") {
+					const func = symbol.reference as Function;
+					for (let i = 0; i < func.parameters.length; i++) {
+						if (
+							func.parameters[i].name === ctx.identifier.name &&
+							func.parameters[i].kind === "ArrayIdentifier"
+						) {
+							return;
+						}
+					}
+				}
+
 				throw new Error(
 					`Line: ${ctx.line}, Array features are not allowed on non array: ${ctx.identifier.name}.`
 				);
@@ -513,6 +541,19 @@ export default class TypeChecker extends AstVisitor<void> {
 
 			if (symbol !== null) {
 				if (symbol.reference.kind !== "ArrayDeclaration") {
+					// case where the reference is from a function parameter
+					if (symbol.reference.kind === "Function") {
+						const func = symbol.reference as Function;
+						for (let i = 0; i < func.parameters.length; i++) {
+							if (
+								func.parameters[i].name === ctx.identifier.name &&
+								func.parameters[i].kind === "ArrayIdentifier"
+							) {
+								return "Number";
+							}
+						}
+					}
+
 					throw new Error(
 						`Line: ${ctx.line}, Array features are not allowed on non array: ${ctx.identifier.name}.`
 					);
@@ -551,6 +592,19 @@ export default class TypeChecker extends AstVisitor<void> {
 		// if the symbol is found
 		if (symbol !== null) {
 			if (symbol.reference.kind !== "ArrayDeclaration") {
+				// case where the reference is from a function parameter
+				if (symbol.reference.kind === "Function") {
+					const func = symbol.reference as Function;
+					for (let i = 0; i < func.parameters.length; i++) {
+						if (
+							func.parameters[i].name === ctx.identifier.name &&
+							func.parameters[i].kind === "ArrayIdentifier"
+						) {
+							return "Number";
+						}
+					}
+				}
+
 				throw new Error(
 					`Line: ${ctx.line}, Array features are not allowed on non array: ${ctx.identifier.name}.`
 				);
@@ -575,6 +629,19 @@ export default class TypeChecker extends AstVisitor<void> {
 		// if the symbol is found
 		if (symbol !== null) {
 			if (symbol.reference.kind !== "ArrayDeclaration") {
+				// case where the reference is from a function parameter
+				if (symbol.reference.kind === "Function") {
+					const func = symbol.reference as Function;
+					for (let i = 0; i < func.parameters.length; i++) {
+						if (
+							func.parameters[i].name === ctx.identifier.name &&
+							func.parameters[i].kind === "ArrayIdentifier"
+						) {
+							return "Number";
+						}
+					}
+				}
+
 				throw new Error(
 					`Line: ${ctx.line}, Array features are not allowed on non array: ${ctx.identifier.name}.`
 				);

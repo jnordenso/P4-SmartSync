@@ -1,6 +1,6 @@
 grammar SmartSync;
 program : line+;
-line : declaration | statements | assignments | functions | output | 'RETURN' funcReturn ';';
+line : declaration | statements | assignments | functions | ID'(' (funcReturn ','?)* ')' ';' | output | 'RETURN' funcReturn ';';
 
 BOOL : 'TRUE' | 'FALSE';
 TYPE : 'Number' | 'Text' | 'Boolean';
@@ -28,7 +28,7 @@ stringAtom : STRING | ID;
 
 arithmetic : multExpr (('+' | '-') multExpr)*;
 multExpr : atom (('*' | '/') atom)*;
-atom : NUMBER | ID | '(' arithmetic ')';
+atom : value | '(' arithmetic ')';
 
 condition : multConExpr (('AND' | 'OR') multConExpr)*;
 multConExpr : atomCon (('EQUAL' | 'NOT EQUAL' | 'GREATER' | 'LESS') atomCon)*;
