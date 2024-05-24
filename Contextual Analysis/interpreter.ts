@@ -115,7 +115,7 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 				this.environment.set(ctx.identifier.name, arrayValue);
 				return;
 			}
-			
+
 			for (let i = 0; i < ctx.value.length; i++) {
 				const value = this.visitExpression(ctx.value[i]);
 				arrayValue.push(value as FinalValue);
@@ -575,6 +575,11 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 		const right = this.visitExpression(ctx.right);
 
 		if (typeof left === "number" && typeof right === "number") {
+			if (left + right >= Number.MAX_SAFE_INTEGER) {
+				throw new Error(`Line: ${ctx.line}, result is too large. Maximum value is ${Number.MAX_SAFE_INTEGER}.`);
+			} else if (left + right <= Number.MIN_SAFE_INTEGER) {
+				throw new Error(`Line: ${ctx.line}, result is too small. Minimum value is ${Number.MIN_SAFE_INTEGER}.`);
+			}
 			return left + right;
 		} else {
 			throw new Error(`Line: ${ctx.line}, Cannot add ${left} and ${right}.`);
@@ -586,6 +591,11 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 		const right = this.visitExpression(ctx.right);
 
 		if (typeof left === "number" && typeof right === "number") {
+			if (left - right >= Number.MAX_SAFE_INTEGER) {
+				throw new Error(`Line: ${ctx.line}, result is too large. Maximum value is ${Number.MAX_SAFE_INTEGER}.`);
+			} else if (left - right <= Number.MIN_SAFE_INTEGER) {
+				throw new Error(`Line: ${ctx.line}, result is too small. Minimum value is ${Number.MIN_SAFE_INTEGER}.`);
+			}
 			return left - right;
 		} else {
 			throw new Error(`Line: ${ctx.line}, Cannot add ${left} and ${right}.`);
@@ -597,6 +607,11 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 		const right = this.visitExpression(ctx.right);
 
 		if (typeof left === "number" && typeof right === "number") {
+			if (left * right >= Number.MAX_SAFE_INTEGER) {
+				throw new Error(`Line: ${ctx.line}, result is too large. Maximum value is ${Number.MAX_SAFE_INTEGER}.`);
+			} else if (left * right <= Number.MIN_SAFE_INTEGER) {
+				throw new Error(`Line: ${ctx.line}, result is too small. Minimum value is ${Number.MIN_SAFE_INTEGER}.`);
+			}
 			// Get the decimal amount of the left and right values
 			const leftDecimalAmount = left.toString().split(".")[1]?.length || 0;
 			const rightDecimalAmount = right.toString().split(".")[1]?.length || 0;
@@ -617,8 +632,11 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 		if (typeof left === "number" && typeof right === "number") {
 			if (left === 0 || right === 0) {
 				throw new Error(`Line: ${ctx.line}, Division by zero is not allowed.`);
+			} else if (left / right >= Number.MAX_SAFE_INTEGER) {
+				throw new Error(`Line: ${ctx.line}, result is too large. Maximum value is ${Number.MAX_SAFE_INTEGER}.`);
+			} else if (left / right <= Number.MIN_SAFE_INTEGER) {
+				throw new Error(`Line: ${ctx.line}, result is too small. Minimum value is ${Number.MIN_SAFE_INTEGER}.`);
 			}
-
 			// Get the decimal amount of the left and right values
 			const leftDecimalAmount = left.toString().split(".")[1]?.length || 0;
 			const rightDecimalAmount = right.toString().split(".")[1]?.length || 0;
@@ -626,7 +644,7 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 			const decimalAmount = leftDecimalAmount + rightDecimalAmount + 1;
 			// Multiply the left and right values and round to the max decimal amount
 			// this is to prevent floating point errors
-            return Number((left / right).toFixed(decimalAmount));
+			return Number((left / right).toFixed(decimalAmount));
 			//return left / right;
 		} else {
 			throw new Error(`Line: ${ctx.line}, Cannot add ${left} and ${right}.`);

@@ -12,7 +12,7 @@ import {
 	Identifier,
 	Array,
 	Division,
-  Equal,
+	Equal,
 } from "../Syntax Analysis/AST.ts";
 import { assertSpyCalls, spy } from "https://deno.land/std@0.224.0/testing/mock.ts";
 import TypeChecker from "../Contextual Analysis/TypeChecker.ts";
@@ -1329,6 +1329,29 @@ Deno.test("Interpreter - Unit test - Addition", () => {
 
 	assertEquals(value, 2.5);
 
+	assertThrows(
+		() =>
+			interpreter.visitAddition({
+				kind: "BinaryOperation",
+				line: 1,
+				left: {
+					kind: "Value",
+					line: 1,
+					type: "Number",
+					value: Number.MAX_VALUE,
+				},
+				right: {
+					kind: "Value",
+					line: 1,
+					type: "Number",
+					value: 3000,
+				},
+				operator: "+",
+			} as Addition),
+		Error,
+		"result is too large. Maximum value is 9007199254740991."
+	);
+
 	const value2 = interpreter.visitAddition({
 		kind: "BinaryOperation",
 		line: 1,
@@ -1372,6 +1395,29 @@ Deno.test("Interpreter - Unit test - Addition", () => {
 	} as Subtraction);
 
 	assertEquals(value, -1);
+
+	assertThrows(
+		() =>
+			interpreter.visitSubtraction({
+				kind: "BinaryOperation",
+				line: 1,
+				left: {
+					kind: "Value",
+					line: 1,
+					type: "Number",
+					value: Number.MIN_SAFE_INTEGER,
+				},
+				right: {
+					kind: "Value",
+					line: 1,
+					type: "Number",
+					value: 3000,
+				},
+				operator: "-",
+			} as Subtraction),
+		Error,
+		"result is too small. Minimum value is -9007199254740991."
+	);
 
 	const value2 = interpreter.visitSubtraction({
 		kind: "BinaryOperation",
@@ -1457,6 +1503,30 @@ Deno.test("Interpreter - Unit test - Multiplication", () => {
 	} as Multiplication);
 
 	assertEquals(value, 2);
+
+	assertThrows(
+		() => {
+			interpreter.visitMultiplication({
+				kind: "BinaryOperation",
+				line: 1,
+				left: {
+					kind: "Value",
+					line: 1,
+					type: "Number",
+					value: Number.MAX_SAFE_INTEGER,
+				},
+				right: {
+					kind: "Value",
+					line: 1,
+					type: "Number",
+					value: 2,
+				},
+				operator: "*",
+			} as Multiplication);
+		},
+		Error,
+		"result is too large. Maximum value is 9007199254740991."
+	);
 
 	const value2 = interpreter.visitMultiplication({
 		kind: "BinaryOperation",
@@ -1632,6 +1702,30 @@ Deno.test("Interpreter - Unit test - Division", () => {
 		Error,
 		"Division by zero is not allowed."
 	);
+
+	assertThrows(
+		() => {
+			interpreter.visitDivision({
+				kind: "BinaryOperation",
+				line: 1,
+				left: {
+					kind: "Value",
+					line: 1,
+					type: "Number",
+					value: Number.MIN_SAFE_INTEGER,
+				},
+				right: {
+					kind: "Value",
+					line: 1,
+					type: "Number",
+					value: 0.5,
+				},
+				operator: "/",
+			} as Division);
+		},
+		Error,
+		"result is too small. Minimum value is -9007199254740991."
+	);
 });
 
 // Interpreter correctly interprets EQUAL
@@ -1655,7 +1749,6 @@ Deno.test("Interpreter - Unit test - EQUAL", () => {
 		},
 		operator: "EQUAL",
 	} as Equal);
-
 
 	const value2 = interpreter.visitEqual({
 		kind: "BinaryOperation",
@@ -1729,7 +1822,7 @@ Deno.test("Interpreter - Unit test - EQUAL", () => {
 		operator: "EQUAL",
 	} as Equal);
 
-    const value6 = interpreter.visitEqual({
+	const value6 = interpreter.visitEqual({
 		kind: "BinaryOperation",
 		line: 1,
 		left: {
@@ -1765,14 +1858,13 @@ Deno.test("Interpreter - Unit test - EQUAL", () => {
 		operator: "EQUAL",
 	} as Equal);
 
-
 	assertEquals(value, false);
 	assertEquals(value2, false);
 	assertEquals(value3, true);
-    assertEquals(value4, true);
-    assertEquals(value5, false);
-    assertEquals(value6, true);
-    assertEquals(value7, false);
+	assertEquals(value4, true);
+	assertEquals(value5, false);
+	assertEquals(value6, true);
+	assertEquals(value7, false);
 });
 
 // Interpreter correctly interprets EQUAL
@@ -1796,7 +1888,6 @@ Deno.test("Interpreter - Unit test - NOT EQUAL", () => {
 		},
 		operator: "NOT EQUAL",
 	} as NotEqual);
-
 
 	const value2 = interpreter.visitNotEqual({
 		kind: "BinaryOperation",
@@ -1870,7 +1961,7 @@ Deno.test("Interpreter - Unit test - NOT EQUAL", () => {
 		operator: "NOT EQUAL",
 	} as NotEqual);
 
-    const value6 = interpreter.visitNotEqual({
+	const value6 = interpreter.visitNotEqual({
 		kind: "BinaryOperation",
 		line: 1,
 		left: {
@@ -1906,302 +1997,301 @@ Deno.test("Interpreter - Unit test - NOT EQUAL", () => {
 		operator: "NOT EQUAL",
 	} as NotEqual);
 
-
 	assertEquals(value, true);
 	assertEquals(value2, true);
 	assertEquals(value3, false);
-    assertEquals(value4, false);
-    assertEquals(value5, true);
-    assertEquals(value6, false);
-    assertEquals(value7, true);
+	assertEquals(value4, false);
+	assertEquals(value5, true);
+	assertEquals(value6, false);
+	assertEquals(value7, true);
 });
 
 // Interpreter correctly interprets AND
 Deno.test("Interpreter - Unit test - AND", () => {
-    const interpreter = new Interpreter(new SymbolTable());
+	const interpreter = new Interpreter(new SymbolTable());
 
-    const value = interpreter.visitAnd({
-        kind: "BinaryOperation",
-        line: 1,
-        left: {
-            kind: "Value",
-            line: 1,
-            type: "Boolean",
-            value: "TRUE",
-        },
-        right: {
-            kind: "Value",
-            line: 1,
-            type: "Boolean",
-            value: "TRUE",
-        },
-        operator: "AND",
-    } as And);
+	const value = interpreter.visitAnd({
+		kind: "BinaryOperation",
+		line: 1,
+		left: {
+			kind: "Value",
+			line: 1,
+			type: "Boolean",
+			value: "TRUE",
+		},
+		right: {
+			kind: "Value",
+			line: 1,
+			type: "Boolean",
+			value: "TRUE",
+		},
+		operator: "AND",
+	} as And);
 
-    const value2 = interpreter.visitAnd({
-        kind: "BinaryOperation",
-        line: 1,
-        left: {
-            kind: "Value",
-            line: 1,
-            type: "Boolean",
-            value: "TRUE",
-        },
-        right: {
-            kind: "Value",
-            line: 1,
-            type: "Boolean",
-            value: "FALSE",
-        },
-        operator: "AND",
-    } as And);
+	const value2 = interpreter.visitAnd({
+		kind: "BinaryOperation",
+		line: 1,
+		left: {
+			kind: "Value",
+			line: 1,
+			type: "Boolean",
+			value: "TRUE",
+		},
+		right: {
+			kind: "Value",
+			line: 1,
+			type: "Boolean",
+			value: "FALSE",
+		},
+		operator: "AND",
+	} as And);
 
-    const value3 = interpreter.visitAnd({
-        kind: "BinaryOperation",
-        line: 1,
-        left: {
-            kind: "Value",
-            line: 1,
-            type: "Boolean",
-            value: "FALSE",
-        },
-        right: {
-            kind: "Value",
-            line: 1,
-            type: "Boolean",
-            value: "TRUE",
-        },
-        operator: "AND",
-    } as And);
+	const value3 = interpreter.visitAnd({
+		kind: "BinaryOperation",
+		line: 1,
+		left: {
+			kind: "Value",
+			line: 1,
+			type: "Boolean",
+			value: "FALSE",
+		},
+		right: {
+			kind: "Value",
+			line: 1,
+			type: "Boolean",
+			value: "TRUE",
+		},
+		operator: "AND",
+	} as And);
 
-    const value4 = interpreter.visitAnd({
-        kind: "BinaryOperation",
-        line: 1,
-        left: {
-            kind: "Value",
-            line: 1,
-            type: "Boolean",
-            value: "FALSE",
-        },
-        right: {
-            kind: "Value",
-            line: 1,
-            type: "Boolean",
-            value: "FALSE",
-        },
-        operator: "AND",
-    } as And);
+	const value4 = interpreter.visitAnd({
+		kind: "BinaryOperation",
+		line: 1,
+		left: {
+			kind: "Value",
+			line: 1,
+			type: "Boolean",
+			value: "FALSE",
+		},
+		right: {
+			kind: "Value",
+			line: 1,
+			type: "Boolean",
+			value: "FALSE",
+		},
+		operator: "AND",
+	} as And);
 
-    assertEquals(value, true);
-    assertEquals(value2, false);
-    assertEquals(value3, false);
-    assertEquals(value4, false);
+	assertEquals(value, true);
+	assertEquals(value2, false);
+	assertEquals(value3, false);
+	assertEquals(value4, false);
 });
 
 // Interpreter correctly interprets OR
 Deno.test("Interpreter - Unit test - OR", () => {
-    const interpreter = new Interpreter(new SymbolTable());
+	const interpreter = new Interpreter(new SymbolTable());
 
-    const value = interpreter.visitOr({
-        kind: "BinaryOperation",
-        line: 1,
-        left: {
-            kind: "Value",
-            line: 1,
-            type: "Boolean",
-            value: "TRUE",
-        },
-        right: {
-            kind: "Value",
-            line: 1,
-            type: "Boolean",
-            value: "TRUE",
-        },
-        operator: "OR",
-    } as Or);
+	const value = interpreter.visitOr({
+		kind: "BinaryOperation",
+		line: 1,
+		left: {
+			kind: "Value",
+			line: 1,
+			type: "Boolean",
+			value: "TRUE",
+		},
+		right: {
+			kind: "Value",
+			line: 1,
+			type: "Boolean",
+			value: "TRUE",
+		},
+		operator: "OR",
+	} as Or);
 
-    const value2 = interpreter.visitOr({
-        kind: "BinaryOperation",
-        line: 1,
-        left: {
-            kind: "Value",
-            line: 1,
-            type: "Boolean",
-            value: "TRUE",
-        },
-        right: {
-            kind: "Value",
-            line: 1,
-            type: "Boolean",
-            value: "FALSE",
-        },
-        operator: "OR",
-    } as Or);
+	const value2 = interpreter.visitOr({
+		kind: "BinaryOperation",
+		line: 1,
+		left: {
+			kind: "Value",
+			line: 1,
+			type: "Boolean",
+			value: "TRUE",
+		},
+		right: {
+			kind: "Value",
+			line: 1,
+			type: "Boolean",
+			value: "FALSE",
+		},
+		operator: "OR",
+	} as Or);
 
-    const value3 = interpreter.visitOr({
-        kind: "BinaryOperation",
-        line: 1,
-        left: {
-            kind: "Value",
-            line: 1,
-            type: "Boolean",
-            value: "FALSE",
-        },
-        right: {
-            kind: "Value",
-            line: 1,
-            type: "Boolean",
-            value: "TRUE",
-        },
-        operator: "OR",
-    } as Or);
+	const value3 = interpreter.visitOr({
+		kind: "BinaryOperation",
+		line: 1,
+		left: {
+			kind: "Value",
+			line: 1,
+			type: "Boolean",
+			value: "FALSE",
+		},
+		right: {
+			kind: "Value",
+			line: 1,
+			type: "Boolean",
+			value: "TRUE",
+		},
+		operator: "OR",
+	} as Or);
 
-    const value4 = interpreter.visitOr({
-        kind: "BinaryOperation",
-        line: 1,
-        left: {
-            kind: "Value",
-            line: 1,
-            type: "Boolean",
-            value: "FALSE",
-        },
-        right: {
-            kind: "Value",
-            line: 1,
-            type: "Boolean",
-            value: "FALSE",
-        },
-        operator: "OR",
-    } as Or);
+	const value4 = interpreter.visitOr({
+		kind: "BinaryOperation",
+		line: 1,
+		left: {
+			kind: "Value",
+			line: 1,
+			type: "Boolean",
+			value: "FALSE",
+		},
+		right: {
+			kind: "Value",
+			line: 1,
+			type: "Boolean",
+			value: "FALSE",
+		},
+		operator: "OR",
+	} as Or);
 
-    assertEquals(value, true);
-    assertEquals(value2, true);
-    assertEquals(value3, true);
-    assertEquals(value4, false);
+	assertEquals(value, true);
+	assertEquals(value2, true);
+	assertEquals(value3, true);
+	assertEquals(value4, false);
 });
 
 // Interpreter correctly interprets Greater
 Deno.test("Interpreter - Unit test - Greater", () => {
-    const interpreter = new Interpreter(new SymbolTable());
+	const interpreter = new Interpreter(new SymbolTable());
 
-    const value = interpreter.visitGreater({
-        kind: "BinaryOperation",
-        line: 1,
-        left: {
-            kind: "Value",
-            line: 1,
-            type: "Number",
-            value: 1,
-        },
-        right: {
-            kind: "Value",
-            line: 1,
-            type: "Number",
-            value: 2,
-        },
-        operator: "GREATER",
-    } as Greater);
+	const value = interpreter.visitGreater({
+		kind: "BinaryOperation",
+		line: 1,
+		left: {
+			kind: "Value",
+			line: 1,
+			type: "Number",
+			value: 1,
+		},
+		right: {
+			kind: "Value",
+			line: 1,
+			type: "Number",
+			value: 2,
+		},
+		operator: "GREATER",
+	} as Greater);
 
-    const value2 = interpreter.visitGreater({
-        kind: "BinaryOperation",
-        line: 1,
-        left: {
-            kind: "Value",
-            line: 1,
-            type: "Number",
-            value: 2,
-        },
-        right: {
-            kind: "Value",
-            line: 1,
-            type: "Number",
-            value: 1,
-        },
-        operator: "GREATER",
-    } as Greater);
+	const value2 = interpreter.visitGreater({
+		kind: "BinaryOperation",
+		line: 1,
+		left: {
+			kind: "Value",
+			line: 1,
+			type: "Number",
+			value: 2,
+		},
+		right: {
+			kind: "Value",
+			line: 1,
+			type: "Number",
+			value: 1,
+		},
+		operator: "GREATER",
+	} as Greater);
 
-    const value3 = interpreter.visitGreater({
-        kind: "BinaryOperation",
-        line: 1,
-        left: {
-            kind: "Value",
-            line: 1,
-            type: "Number",
-            value: 1,
-        },
-        right: {
-            kind: "Value",
-            line: 1,
-            type: "Number",
-            value: 1,
-        },
-        operator: "GREATER",
-    } as Greater);
+	const value3 = interpreter.visitGreater({
+		kind: "BinaryOperation",
+		line: 1,
+		left: {
+			kind: "Value",
+			line: 1,
+			type: "Number",
+			value: 1,
+		},
+		right: {
+			kind: "Value",
+			line: 1,
+			type: "Number",
+			value: 1,
+		},
+		operator: "GREATER",
+	} as Greater);
 
-    assertEquals(value, false);
-    assertEquals(value2, true);
-    assertEquals(value3, false);
+	assertEquals(value, false);
+	assertEquals(value2, true);
+	assertEquals(value3, false);
 });
 
 // Interpreter correctly interprets Less
 Deno.test("Interpreter - Unit test - Less", () => {
-    const interpreter = new Interpreter(new SymbolTable());
+	const interpreter = new Interpreter(new SymbolTable());
 
-    const value = interpreter.visitLess({
-        kind: "BinaryOperation",
-        line: 1,
-        left: {
-            kind: "Value",
-            line: 1,
-            type: "Number",
-            value: 1,
-        },
-        right: {
-            kind: "Value",
-            line: 1,
-            type: "Number",
-            value: 2,
-        },
-        operator: "LESS",
-    } as Less);
+	const value = interpreter.visitLess({
+		kind: "BinaryOperation",
+		line: 1,
+		left: {
+			kind: "Value",
+			line: 1,
+			type: "Number",
+			value: 1,
+		},
+		right: {
+			kind: "Value",
+			line: 1,
+			type: "Number",
+			value: 2,
+		},
+		operator: "LESS",
+	} as Less);
 
-    const value2 = interpreter.visitLess({
-        kind: "BinaryOperation",
-        line: 1,
-        left: {
-            kind: "Value",
-            line: 1,
-            type: "Number",
-            value: 2,
-        },
-        right: {
-            kind: "Value",
-            line: 1,
-            type: "Number",
-            value: 1,
-        },
-        operator: "LESS",
-    } as Less);
+	const value2 = interpreter.visitLess({
+		kind: "BinaryOperation",
+		line: 1,
+		left: {
+			kind: "Value",
+			line: 1,
+			type: "Number",
+			value: 2,
+		},
+		right: {
+			kind: "Value",
+			line: 1,
+			type: "Number",
+			value: 1,
+		},
+		operator: "LESS",
+	} as Less);
 
-    const value3 = interpreter.visitLess({
-        kind: "BinaryOperation",
-        line: 1,
-        left: {
-            kind: "Value",
-            line: 1,
-            type: "Number",
-            value: 1,
-        },
-        right: {
-            kind: "Value",
-            line: 1,
-            type: "Number",
-            value: 1,
-        },
-        operator: "LESS",
-    } as Less);
+	const value3 = interpreter.visitLess({
+		kind: "BinaryOperation",
+		line: 1,
+		left: {
+			kind: "Value",
+			line: 1,
+			type: "Number",
+			value: 1,
+		},
+		right: {
+			kind: "Value",
+			line: 1,
+			type: "Number",
+			value: 1,
+		},
+		operator: "LESS",
+	} as Less);
 
-    assertEquals(value, true);
-    assertEquals(value2, false);
-    assertEquals(value3, false);
+	assertEquals(value, true);
+	assertEquals(value2, false);
+	assertEquals(value3, false);
 });
