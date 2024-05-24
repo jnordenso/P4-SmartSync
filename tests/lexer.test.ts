@@ -14,11 +14,11 @@ Deno.test("SmartSyncLexer - Unit Test - Keywords", () => {
         { input: "ELSE", expectedToken: { type: SmartSyncLexer.T__14, text: "ELSE"} },
         { input: "WHILE", expectedToken: { type: SmartSyncLexer.T__10, text: "WHILE"} },
         { input: "FUNCTION", expectedToken: { type: SmartSyncLexer.T__25, text: "FUNCTION"} },
-        { input: "RETURN", expectedToken: { type: SmartSyncLexer.T__0, text: "RETURN"} },
+        { input: "RETURN", expectedToken: { type: SmartSyncLexer.T__4, text: "RETURN"} },
         { input: "OUTPUT", expectedToken: { type: SmartSyncLexer.T__26, text: "OUTPUT"} },
         { input: "PUSH", expectedToken: { type: SmartSyncLexer.T__27, text: "PUSH"} },
         { input: "PULL", expectedToken: { type: SmartSyncLexer.T__28, text: "PULL"} },
-        { input: "SIZE", expectedToken: { type: SmartSyncLexer.T__3, text: "SIZE"} },
+        { input: "SIZE", expectedToken: { type: SmartSyncLexer.T__6, text: "SIZE"} },
         { input: "EQUAL", expectedToken: { type: SmartSyncLexer.T__21, text: "EQUAL"} },
         { input: "NOT EQUAL", expectedToken: { type: SmartSyncLexer.T__22, text: "NOT EQUAL"} },
         { input: "AND", expectedToken: { type: SmartSyncLexer.T__19, text: "AND"} },
@@ -146,13 +146,13 @@ Deno.test("SmartSyncLexer - Unit Test - Operators", () => {
         { input: "*", expectedToken: { type: SmartSyncLexer.T__17, text: "*"} },
         { input: "/", expectedToken: { type: SmartSyncLexer.T__18, text: "/"} },
         { input: "=", expectedToken: { type: SmartSyncLexer.T__9, text: "="} },
-        { input: "[]", expectedToken: { type: SmartSyncLexer.T__2, text: "[]"} },
-        { input: "[", expectedToken: { type: SmartSyncLexer.T__4, text: "["} },
-        { input: "]", expectedToken: { type: SmartSyncLexer.T__5, text: "]"} },
-        { input: "(", expectedToken: { type: SmartSyncLexer.T__6, text: "("} },
-        { input: ")", expectedToken: { type: SmartSyncLexer.T__8, text: ")"} },
-        { input: ",", expectedToken: { type: SmartSyncLexer.T__7, text: ","} },
-        { input: ";", expectedToken: { type: SmartSyncLexer.T__1, text: ";"} }
+        { input: "[]", expectedToken: { type: SmartSyncLexer.T__5, text: "[]"} },
+        { input: "[", expectedToken: { type: SmartSyncLexer.T__7, text: "["} },
+        { input: "]", expectedToken: { type: SmartSyncLexer.T__8, text: "]"} },
+        { input: "(", expectedToken: { type: SmartSyncLexer.T__0, text: "("} },
+        { input: ")", expectedToken: { type: SmartSyncLexer.T__2, text: ")"} },
+        { input: ",", expectedToken: { type: SmartSyncLexer.T__1, text: ","} },
+        { input: ";", expectedToken: { type: SmartSyncLexer.T__3, text: ";"} }
     ]
 
     for (const testCase of testCases) {
@@ -167,15 +167,15 @@ Deno.test("SmartSyncLexer - Unit Test - Operators", () => {
 
 Deno.test("SmartSyncLexer - Unit Test - White Space and Comments", () => {
     const testCases = [
-        { input: "grade=10;", expectedToken: [{ type: SmartSyncLexer.ID, text: "grade"}, { type: SmartSyncLexer.T__9, text: "="}, { type: SmartSyncLexer.NUMBER, text: "10"}, { type: SmartSyncLexer.T__1, text: ";"}] },
+        { input: "grade=10;", expectedToken: [{ type: SmartSyncLexer.ID, text: "grade"}, { type: SmartSyncLexer.T__9, text: "="}, { type: SmartSyncLexer.NUMBER, text: "10"}, { type: SmartSyncLexer.T__3, text: ";"}] },
         // spaces, tabs, newlines
-        { input: "\t grade\t= \n10;\t\n", expectedToken: [{ type: SmartSyncLexer.ID, text: "grade"}, { type: SmartSyncLexer.T__9, text: "="}, { type: SmartSyncLexer.NUMBER, text: "10"}, { type: SmartSyncLexer.T__1, text: ";"}] },
-        { input: "grade = 10;", expectedToken: [{ type: SmartSyncLexer.ID, text: "grade"}, { type: SmartSyncLexer.T__9, text: "="}, { type: SmartSyncLexer.NUMBER, text: "10"}, { type: SmartSyncLexer.T__1, text: ";"}] },
-        { input: "IF 10+20{grade=10;}", expectedToken: [{ type: SmartSyncLexer.T__13, text: "IF"}, { type: SmartSyncLexer.NUMBER, text: "10"}, { type: SmartSyncLexer.T__15, text: "+"}, { type: SmartSyncLexer.NUMBER, text: "20"}, { type: SmartSyncLexer.T__11, text: "{"}, { type: SmartSyncLexer.ID, text: "grade"}, { type: SmartSyncLexer.T__9, text: "="}, { type: SmartSyncLexer.NUMBER, text: "10"}, { type: SmartSyncLexer.T__1, text: ";"}, { type: SmartSyncLexer.T__12, text: "}"}] },
+        { input: "\t grade\t= \n10;\t\n", expectedToken: [{ type: SmartSyncLexer.ID, text: "grade"}, { type: SmartSyncLexer.T__9, text: "="}, { type: SmartSyncLexer.NUMBER, text: "10"}, { type: SmartSyncLexer.T__3, text: ";"}] },
+        { input: "grade = 10;", expectedToken: [{ type: SmartSyncLexer.ID, text: "grade"}, { type: SmartSyncLexer.T__9, text: "="}, { type: SmartSyncLexer.NUMBER, text: "10"}, { type: SmartSyncLexer.T__3, text: ";"}] },
+        { input: "IF 10+20{grade=10;}", expectedToken: [{ type: SmartSyncLexer.T__13, text: "IF"}, { type: SmartSyncLexer.NUMBER, text: "10"}, { type: SmartSyncLexer.T__15, text: "+"}, { type: SmartSyncLexer.NUMBER, text: "20"}, { type: SmartSyncLexer.T__11, text: "{"}, { type: SmartSyncLexer.ID, text: "grade"}, { type: SmartSyncLexer.T__9, text: "="}, { type: SmartSyncLexer.NUMBER, text: "10"}, { type: SmartSyncLexer.T__3, text: ";"}, { type: SmartSyncLexer.T__12, text: "}"}] },
         // single line comments
-        { input: "grade = 10; # this is a comment #", expectedToken: [{ type: SmartSyncLexer.ID, text: "grade"}, { type: SmartSyncLexer.T__9, text: "="}, { type: SmartSyncLexer.NUMBER, text: "10"}, { type: SmartSyncLexer.T__1, text: ";"}] },
+        { input: "grade = 10; # this is a comment #", expectedToken: [{ type: SmartSyncLexer.ID, text: "grade"}, { type: SmartSyncLexer.T__9, text: "="}, { type: SmartSyncLexer.NUMBER, text: "10"}, { type: SmartSyncLexer.T__3, text: ";"}] },
         // multi line comments
-        { input: "# this \n is a \n multi line \n comment # grade = 10;", expectedToken: [{ type: SmartSyncLexer.ID, text: "grade"}, { type: SmartSyncLexer.T__9, text: "="}, { type: SmartSyncLexer.NUMBER, text: "10"}, { type: SmartSyncLexer.T__1, text: ";"}] },
+        { input: "# this \n is a \n multi line \n comment # grade = 10;", expectedToken: [{ type: SmartSyncLexer.ID, text: "grade"}, { type: SmartSyncLexer.T__9, text: "="}, { type: SmartSyncLexer.NUMBER, text: "10"}, { type: SmartSyncLexer.T__3, text: ";"}] },
     ]
 
     for (const testCase of testCases) {

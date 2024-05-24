@@ -84,7 +84,7 @@ Deno.test("SmartSyncLexer Integration Tests", () => {
           { type: SmartSyncLexer.ID, text: "b" },
           { type: SmartSyncLexer.T__2, text: ")" },
           { type: SmartSyncLexer.T__11, text: "{" },
-          { type: SmartSyncLexer.T__0, text: "RETURN" },
+          { type: SmartSyncLexer.T__4, text: "RETURN" },
           { type: SmartSyncLexer.ID, text: "grade" },
           { type: SmartSyncLexer.T__5, text: "[]" },
           { type: SmartSyncLexer.T__3, text: ";" },

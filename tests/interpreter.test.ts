@@ -1190,7 +1190,7 @@ Deno.test("Interpreter - Integration test - Output", () => {
 	interpreter.visitProgram(program);
 
 	assertSpyCalls(spyConsoleLog, 1);
-	assertEquals(spyConsoleLog.calls[0].args, ["Hello, World!"]);
+	assertEquals(spyConsoleLog.calls[0].args, [">", "Hello, World!"]);
 });
 
 // Interpreter correctly interprets values
