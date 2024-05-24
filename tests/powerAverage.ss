@@ -33,7 +33,7 @@ Number FUNCTION main(Text input, Number numToAdd) {
 		IF numbers[] SIZE EQUAL 0 {
 			OUTPUT "No numbers entered yet";
 		} ELSE {
-			Number avg = average(numbers);
+			Number avg = average(numbers[]);
 			OUTPUT "Average:";
 			OUTPUT avg;
 			historyText[] PUSH "Average:";

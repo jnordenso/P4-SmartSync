@@ -615,8 +615,8 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 			// Get the decimal amount of the left and right values
 			const leftDecimalAmount = left.toString().split(".")[1]?.length || 0;
 			const rightDecimalAmount = right.toString().split(".")[1]?.length || 0;
-			// Get the max decimal amount by adding the left and right decimal amounts and 1 for precision
-			const decimalAmount = leftDecimalAmount + rightDecimalAmount + 1;
+			// Get the max decimal amount by adding the left and right decimal amounts and 2 for extra precision
+			const decimalAmount = leftDecimalAmount + rightDecimalAmount + 2;
 			// Multiply the left and right values and round to the max decimal amount
 			// this is to prevent floating point errors
 			return Number((left * right).toFixed(decimalAmount));
@@ -640,8 +640,8 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 			// Get the decimal amount of the left and right values
 			const leftDecimalAmount = left.toString().split(".")[1]?.length || 0;
 			const rightDecimalAmount = right.toString().split(".")[1]?.length || 0;
-			// Get the max decimal amount by adding the left and right decimal amounts and 1 for precision
-			const decimalAmount = leftDecimalAmount + rightDecimalAmount + 1;
+			// Get the max decimal amount by adding the left and right decimal amounts and 2 for extra precision
+			const decimalAmount = leftDecimalAmount + rightDecimalAmount + 2;
 			// Multiply the left and right values and round to the max decimal amount
 			// this is to prevent floating point errors
 			return Number((left / right).toFixed(decimalAmount));

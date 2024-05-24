@@ -1651,7 +1651,7 @@ Deno.test("Interpreter - Unit test - Division", () => {
 		operator: "/",
 	} as Division);
 
-	assertEquals(value3, 5.8571429);
+	assertEquals(value3, 5.85714286);
 
 	// Division by zero
 	assertThrows(

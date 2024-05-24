@@ -97,7 +97,6 @@ export default class TypeChecker extends AstVisitor<void> {
 	visitDeclaration = (ctx: Declaration): void => {
 		// get the symbol from the symbol table
 		const symbol = this.symbolTable.LookupSymbol(ctx.identifier.name, this.currentBlock);
-
 		// if the symbol is found
 		if (symbol !== null) {
 			const expressionType = this.visitExpression(ctx.value);
@@ -431,11 +430,6 @@ export default class TypeChecker extends AstVisitor<void> {
 				ctx.type = symbol.type;
 				ctx.identifier.type = symbol.type;
 
-				// save the current block
-				const previousBlock = this.currentBlock;
-				// set the current block to the function body
-				this.currentBlock = symbol.body;
-
 				// visit the function parameters
 				for (let i = 0; i < symbol.parameters.length; i++) {
 					const parameter = symbol.parameters[i].type;
@@ -445,7 +439,6 @@ export default class TypeChecker extends AstVisitor<void> {
 							`Line: ${ctx.line}, Expected function ${symbol.name} to have ${symbol.parameters.length} parameter(s), but got ${ctx.parameters.length}.`
 						);
 					}
-
 					const argument = this.visitIdentifier(ctx.parameters[i]);
 					if (parameter !== argument) {
 						throw new Error(
@@ -453,6 +446,11 @@ export default class TypeChecker extends AstVisitor<void> {
 						);
 					}
 				}
+
+				// save the current block
+				const previousBlock = this.currentBlock;
+				// set the current block to the function body
+				this.currentBlock = symbol.body;
 
 				// visit the function body
 				ctx.body = symbol.body;

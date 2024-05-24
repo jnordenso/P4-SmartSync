@@ -757,14 +757,14 @@ export default class SmartSyncParser extends Parser {
 				this.enterOuterAlt(localctx, 1);
 				{
 				this.state = 188;
-				this.arithmetic();
+				this.stringArithmetic();
 				}
 				break;
 			case 2:
 				this.enterOuterAlt(localctx, 2);
 				{
 				this.state = 189;
-				this.stringArithmetic();
+				this.arithmetic();
 				}
 				break;
 			case 3:
@@ -1699,8 +1699,8 @@ export default class SmartSyncParser extends Parser {
 	174,177,3,12,6,0,175,177,3,14,7,0,176,174,1,0,0,0,176,175,1,0,0,0,176,177,
 	1,0,0,0,177,13,1,0,0,0,178,179,5,15,0,0,179,183,5,12,0,0,180,182,3,2,1,
 	0,181,180,1,0,0,0,182,185,1,0,0,0,183,181,1,0,0,0,183,184,1,0,0,0,184,186,
-	1,0,0,0,185,183,1,0,0,0,186,187,5,13,0,0,187,15,1,0,0,0,188,197,3,22,11,
-	0,189,197,3,18,9,0,190,197,3,4,2,0,191,192,5,1,0,0,192,193,3,16,8,0,193,
+	1,0,0,0,185,183,1,0,0,0,186,187,5,13,0,0,187,15,1,0,0,0,188,197,3,18,9,
+	0,189,197,3,22,11,0,190,197,3,4,2,0,191,192,5,1,0,0,192,193,3,16,8,0,193,
 	194,5,3,0,0,194,197,1,0,0,0,195,197,3,28,14,0,196,188,1,0,0,0,196,189,1,
 	0,0,0,196,190,1,0,0,0,196,191,1,0,0,0,196,195,1,0,0,0,197,17,1,0,0,0,198,
 	203,3,20,10,0,199,200,5,16,0,0,200,202,3,20,10,0,201,199,1,0,0,0,202,205,
@@ -2039,11 +2039,11 @@ export class ExpressionContext extends ParserRuleContext {
 		super(parent, invokingState);
     	this.parser = parser;
 	}
-	public arithmetic(): ArithmeticContext {
-		return this.getTypedRuleContext(ArithmeticContext, 0) as ArithmeticContext;
-	}
 	public stringArithmetic(): StringArithmeticContext {
 		return this.getTypedRuleContext(StringArithmeticContext, 0) as StringArithmeticContext;
+	}
+	public arithmetic(): ArithmeticContext {
+		return this.getTypedRuleContext(ArithmeticContext, 0) as ArithmeticContext;
 	}
 	public value(): ValueContext {
 		return this.getTypedRuleContext(ValueContext, 0) as ValueContext;

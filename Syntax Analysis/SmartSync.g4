@@ -21,7 +21,7 @@ ifStm : 'IF' condition '{' line* '}' (elses | else)?;
 elses : 'ELSE' 'IF' condition '{' line* '}' (elses | else)?;
 else : 'ELSE' '{' line* '}';
 
-expression : arithmetic | stringArithmetic | value | '(' expression ')' | condition;
+expression : stringArithmetic | arithmetic | value | '(' expression ')' | condition;
 
 stringArithmetic : stringAtom ('+' stringAtom)*;
 stringAtom : STRING | ID;
