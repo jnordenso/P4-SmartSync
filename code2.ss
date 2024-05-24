@@ -1,2 +1,4 @@
-Number grade = -100 - 200;
-OUTPUT grade;
+Boolean idk = TRUE;
+Boolean idk2= FALSE;
+
+OUTPUT idk2;

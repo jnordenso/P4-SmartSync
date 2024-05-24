@@ -104,7 +104,7 @@ export default class TypeChecker extends AstVisitor<void> {
 			// if the expression type is not the same as the symbol type
 			if (expressionType !== symbol.type) {
 				throw new Error(
-					`ERROR: Line: ${ctx.line}, Expected ${ctx.identifier.name} to be of type ${symbol.type}, but got ${expressionType}.`
+					`‼️  ERROR: Line: ${ctx.line}, Expected ${ctx.identifier.name} to be of type ${symbol.type}, but got ${expressionType}. ‼️`
 				);
 			}
 		} else {

@@ -465,7 +465,7 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 
 	visitOutput = (ctx: Output): void => {
 		const value = this.visitExpression(ctx.value);
-		console.log(value);
+		console.log(">", value);
 	};
 
 	visitExpression = (ctx: Expression): FinalValue | FinalValue[] => {
