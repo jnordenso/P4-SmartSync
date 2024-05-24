@@ -8,7 +8,7 @@ import { Program } from ".././Syntax Analysis/AST.ts";
 import TypeChecker from ".././Contextual Analysis/TypeChecker.ts";
 import Interpreter from ".././Contextual Analysis/Interpreter.ts";
 import { ThrowingErrorListener, CustomBailErrorStrategy } from ".././customError.ts";
-import { assertEquals, assertThrows, assert } from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { assert } from "https://deno.land/std@0.224.0/assert/mod.ts";
 
 Deno.test("Acceptance test - Power and Average", () => {
 	const filePath = "./tests/powerAverage.ss";

@@ -87,7 +87,7 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 			case "Return":
 				return this.visitReturnValue(ctx as ReturnValue);
 			default:
-				throw new Error(`Unknown line kind: ${ctx.kind}.`);
+				throw new Error(`ERROR: Line ${ctx.line}, Unknown line kind: ${ctx.kind}.`);
 		}
 	};
 
@@ -100,7 +100,7 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 			const value = this.visitExpression(ctx.value);
 			this.environment.set(ctx.identifier.name, value);
 		} else {
-			throw new Error(`Symbol ${ctx.identifier.name} not found.`);
+			throw new Error(`ERROR: Line ${ctx.line}, Symbol ${ctx.identifier.name} not found.`);
 		}
 	};
 
@@ -123,7 +123,7 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 				this.environment.set(ctx.identifier.name, arrayValue);
 			}
 		} else {
-			throw new Error(`Symbol ${ctx.identifier.name} not found.`);
+			throw new Error(`ERROR: Line ${ctx.line}, Symbol ${ctx.identifier.name} not found.`);
 		}
 	};
 
@@ -132,7 +132,7 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 		const condition = this.visitExpression(ctx.condition);
 
 		if (typeof condition !== "boolean") {
-			throw new Error(`Line: ${ctx.line}, Condition is not a boolean.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Condition is not a boolean.`);
 		}
 
 		// if the condition is true
@@ -212,7 +212,7 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 		let condition = this.visitExpression(ctx.condition);
 
 		if (typeof condition !== "boolean") {
-			throw new Error(`Line: ${ctx.line}, Condition is not a boolean.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Condition is not a boolean.`);
 		}
 
 		// while the condition is true
@@ -258,13 +258,13 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 
 			if (array) {
 				if (!Array.isArray(array)) {
-					throw new Error(`Line: ${ctx.line}, ${ctx.identifier.name} is not an array.`);
+					throw new Error(`ERROR: Line: ${ctx.line}, ${ctx.identifier.name} is not an array.`);
 				}
 
 				if (typeof index === "number") {
 					if (index < 0 || index >= array.length) {
 						throw new Error(
-							`Line: ${ctx.line}, Index out of bounds. Expected index to be between 0 and ${
+							`ERROR: Line: ${ctx.line}, Index out of bounds. Expected index to be between 0 and ${
 								array.length - 1
 							}, but got ${index}.`
 						);
@@ -272,13 +272,13 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 
 					return array[index];
 				} else {
-					throw new Error(`Line: ${ctx.line}, Index value is not a number.`);
+					throw new Error(`ERROR: Line: ${ctx.line}, Index value is not a number.`);
 				}
 			} else {
-				throw new Error(`Line: ${ctx.line}, Array ${ctx.identifier.name} not found.`);
+				throw new Error(`ERROR: Line: ${ctx.line}, Array ${ctx.identifier.name} not found.`);
 			}
 		} else {
-			throw new Error(`Symbol ${ctx.identifier.name} not found.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Symbol ${ctx.identifier.name} not found.`);
 		}
 	};
 
@@ -293,13 +293,13 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 
 			if (array) {
 				if (!Array.isArray(array)) {
-					throw new Error(`Line: ${ctx.line}, ${ctx.identifier.name} is not an array.`);
+					throw new Error(`ERROR: Line: ${ctx.line}, ${ctx.identifier.name} is not an array.`);
 				}
 
 				if (typeof index === "number") {
 					if (index < 0 || index >= array.length) {
 						throw new Error(
-							`Line: ${ctx.line}, Index out of bounds. Expected index to be between 0 and ${
+							`ERROR: Line: ${ctx.line}, Index out of bounds. Expected index to be between 0 and ${
 								array.length - 1
 							}, but got ${index}.`
 						);
@@ -309,13 +309,13 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 					array[index] = value;
 					this.environment.set(ctx.identifier.name, array);
 				} else {
-					throw new Error(`Line: ${ctx.line}, Index value is not a number.`);
+					throw new Error(`ERROR: Line: ${ctx.line}, Index value is not a number.`);
 				}
 			} else {
-				throw new Error(`Line: ${ctx.line}, Array ${ctx.identifier.name} not found.`);
+				throw new Error(`ERROR: Line: ${ctx.line}, Array ${ctx.identifier.name} not found.`);
 			}
 		} else {
-			throw new Error(`Symbol ${ctx.identifier.name} not found.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Symbol ${ctx.identifier.name} not found.`);
 		}
 	};
 
@@ -329,14 +329,14 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 		if (symbol !== null && variableValue) {
 			// check if the variable is an array
 			if (!Array.isArray(variableValue)) {
-				throw new Error(`Line: ${ctx.line}, ${ctx.identifier.name} is not an array.`);
+				throw new Error(`ERROR: Line: ${ctx.line}, ${ctx.identifier.name} is not an array.`);
 			}
 			// push the value to the array
 			variableValue.push(this.visitExpression(ctx.value));
 			// update the value in the environment
 			this.environment.set(ctx.identifier.name, variableValue);
 		} else {
-			throw new Error(`Symbol ${ctx.identifier.name} not found.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Symbol ${ctx.identifier.name} not found.`);
 		}
 	};
 
@@ -350,14 +350,14 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 		if (symbol !== null && variableValue) {
 			// check if the variable is an array
 			if (!Array.isArray(variableValue)) {
-				throw new Error(`Line: ${ctx.line}, ${ctx.identifier.name} is not an array.`);
+				throw new Error(`ERROR: Line: ${ctx.line}, ${ctx.identifier.name} is not an array.`);
 			}
 			// remove the last value from the array
 			variableValue.pop();
 			// update the value in the environment
 			this.environment.set(ctx.identifier.name, variableValue);
 		} else {
-			throw new Error(`Symbol ${ctx.identifier.name} not found.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Symbol ${ctx.identifier.name} not found.`);
 		}
 	};
 
@@ -371,12 +371,12 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 		if (symbol !== null && variableValue) {
 			// check if the variable is an array
 			if (!Array.isArray(variableValue)) {
-				throw new Error(`Line: ${ctx.line}, ${ctx.identifier.name} is not an array.`);
+				throw new Error(`ERROR: Line: ${ctx.line}, ${ctx.identifier.name} is not an array.`);
 			}
 			// return the size of the array
 			return variableValue.length;
 		} else {
-			throw new Error(`Symbol ${ctx.identifier.name} not found.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Symbol ${ctx.identifier.name} not found.`);
 		}
 	};
 
@@ -390,7 +390,7 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 
 			this.environment.set(ctx.identifier.name, value);
 		} else {
-			throw new Error(`Symbol ${ctx.identifier.name} not found.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Symbol ${ctx.identifier.name} not found.`);
 		}
 	};
 
@@ -416,7 +416,7 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 
 					return "Placeholder";
 				} else {
-					throw new Error(`Line: ${ctx.line}, Function ${ctx.identifier.name} missing body.`);
+					throw new Error(`ERROR: Line: ${ctx.line}, Function ${ctx.identifier.name} missing body.`);
 				}
 				// function call
 			} else {
@@ -447,14 +447,14 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 					if (returnValue !== undefined) {
 						return returnValue;
 					} else {
-						throw new Error(`Line: ${ctx.line}, Function ${ctx.identifier.name} missing return statement.`);
+						throw new Error(`ERROR: Line: ${ctx.line}, Function ${ctx.identifier.name} missing return statement.`);
 					}
 				} else {
-					throw new Error(`Line: ${ctx.line}, Function ${ctx.identifier.name} missing body.`);
+					throw new Error(`ERROR: Line: ${ctx.line}, Function ${ctx.identifier.name} missing body.`);
 				}
 			}
 		} else {
-			throw new Error(`Symbol ${ctx.identifier.name} not found.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Symbol ${ctx.identifier.name} not found.`);
 		}
 	};
 
@@ -489,7 +489,7 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 			case "IndexOf":
 				return this.visitIndexOf(ctx as IndexOf);
 			default:
-				throw new Error(`Unknown expression kind: ${ctx.kind}.`);
+				throw new Error(`ERROR: Line: ${ctx.line}, Unknown expression kind: ${ctx.kind}.`);
 		}
 	};
 
@@ -502,13 +502,13 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 			case "Boolean":
 				return ctx.value === "TRUE"; // Convert to boolean
 			default:
-				throw new Error(`Unknown value type: ${ctx.type}.`);
+				throw new Error(`ERROR: Line: ${ctx.line}, Unknown value type: ${ctx.type}.`);
 		}
 	};
 
 	visitArray = (ctx: IArray): FinalValue[] => {
 		if (ctx.value === undefined) {
-			throw new Error(`Line: ${ctx.line}, Array value is undefined.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Array value is undefined.`);
 		}
 
 		const array: (FinalValue[] | FinalValue)[] = [];
@@ -535,7 +535,7 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 		if (value !== undefined) {
 			return value;
 		} else {
-			throw new Error(`Line: ${ctx.line}, Identifier ${ctx.name} not found.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Identifier ${ctx.name} not found.`);
 		}
 	};
 
@@ -563,10 +563,10 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 				case "LESS":
 					return this.visitLess(ctx as Less);
 				default:
-					throw new Error(`Line: ${ctx.line}, Unknown operator: ${ctx.operator}.`);
+					throw new Error(`ERROR: Line: ${ctx.line}, Unknown operator: ${ctx.operator}.`);
 			}
 		} else {
-			throw new Error(`Line: ${ctx.line}, BinaryOperation missing operator.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, BinaryOperation missing operator.`);
 		}
 	};
 
@@ -576,13 +576,13 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 
 		if (typeof left === "number" && typeof right === "number") {
 			if (left + right >= Number.MAX_SAFE_INTEGER) {
-				throw new Error(`Line: ${ctx.line}, result is too large. Maximum value is ${Number.MAX_SAFE_INTEGER}.`);
+				throw new Error(`ERROR: Line: ${ctx.line}, result is too large. Maximum value is ${Number.MAX_SAFE_INTEGER}.`);
 			} else if (left + right <= Number.MIN_SAFE_INTEGER) {
-				throw new Error(`Line: ${ctx.line}, result is too small. Minimum value is ${Number.MIN_SAFE_INTEGER}.`);
+				throw new Error(`ERROR: Line: ${ctx.line}, result is too small. Minimum value is ${Number.MIN_SAFE_INTEGER}.`);
 			}
 			return left + right;
 		} else {
-			throw new Error(`Line: ${ctx.line}, Cannot add ${left} and ${right}.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Cannot add ${left} and ${right}.`);
 		}
 	};
 
@@ -592,13 +592,13 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 
 		if (typeof left === "number" && typeof right === "number") {
 			if (left - right >= Number.MAX_SAFE_INTEGER) {
-				throw new Error(`Line: ${ctx.line}, result is too large. Maximum value is ${Number.MAX_SAFE_INTEGER}.`);
+				throw new Error(`ERROR: Line: ${ctx.line}, result is too large. Maximum value is ${Number.MAX_SAFE_INTEGER}.`);
 			} else if (left - right <= Number.MIN_SAFE_INTEGER) {
-				throw new Error(`Line: ${ctx.line}, result is too small. Minimum value is ${Number.MIN_SAFE_INTEGER}.`);
+				throw new Error(`ERROR: Line: ${ctx.line}, result is too small. Minimum value is ${Number.MIN_SAFE_INTEGER}.`);
 			}
 			return left - right;
 		} else {
-			throw new Error(`Line: ${ctx.line}, Cannot add ${left} and ${right}.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Cannot add ${left} and ${right}.`);
 		}
 	};
 
@@ -608,9 +608,9 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 
 		if (typeof left === "number" && typeof right === "number") {
 			if (left * right >= Number.MAX_SAFE_INTEGER) {
-				throw new Error(`Line: ${ctx.line}, result is too large. Maximum value is ${Number.MAX_SAFE_INTEGER}.`);
+				throw new Error(`ERROR: Line: ${ctx.line}, result is too large. Maximum value is ${Number.MAX_SAFE_INTEGER}.`);
 			} else if (left * right <= Number.MIN_SAFE_INTEGER) {
-				throw new Error(`Line: ${ctx.line}, result is too small. Minimum value is ${Number.MIN_SAFE_INTEGER}.`);
+				throw new Error(`ERROR: Line: ${ctx.line}, result is too small. Minimum value is ${Number.MIN_SAFE_INTEGER}.`);
 			}
 			// Get the decimal amount of the left and right values
 			const leftDecimalAmount = left.toString().split(".")[1]?.length || 0;
@@ -621,7 +621,7 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 			// this is to prevent floating point errors
 			return Number((left * right).toFixed(decimalAmount));
 		} else {
-			throw new Error(`Line: ${ctx.line}, Cannot add ${left} and ${right}.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Cannot add ${left} and ${right}.`);
 		}
 	};
 
@@ -631,11 +631,11 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 
 		if (typeof left === "number" && typeof right === "number") {
 			if (left === 0 || right === 0) {
-				throw new Error(`Line: ${ctx.line}, Division by zero is not allowed.`);
+				throw new Error(`ERROR: Line: ${ctx.line}, Division by zero is not allowed.`);
 			} else if (left / right >= Number.MAX_SAFE_INTEGER) {
-				throw new Error(`Line: ${ctx.line}, result is too large. Maximum value is ${Number.MAX_SAFE_INTEGER}.`);
+				throw new Error(`ERROR: Line: ${ctx.line}, result is too large. Maximum value is ${Number.MAX_SAFE_INTEGER}.`);
 			} else if (left / right <= Number.MIN_SAFE_INTEGER) {
-				throw new Error(`Line: ${ctx.line}, result is too small. Minimum value is ${Number.MIN_SAFE_INTEGER}.`);
+				throw new Error(`ERROR: Line: ${ctx.line}, result is too small. Minimum value is ${Number.MIN_SAFE_INTEGER}.`);
 			}
 			// Get the decimal amount of the left and right values
 			const leftDecimalAmount = left.toString().split(".")[1]?.length || 0;
@@ -647,7 +647,7 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 			return Number((left / right).toFixed(decimalAmount));
 			//return left / right;
 		} else {
-			throw new Error(`Line: ${ctx.line}, Cannot add ${left} and ${right}.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Cannot add ${left} and ${right}.`);
 		}
 	};
 
@@ -658,7 +658,7 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 		if (typeof left === typeof right) {
 			return left === right;
 		} else {
-			throw new Error(`Line: ${ctx.line}, Cannot compare ${left} and ${right}.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Cannot compare ${left} and ${right}.`);
 		}
 	};
 
@@ -669,7 +669,7 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 		if (typeof left === typeof right) {
 			return left !== right;
 		} else {
-			throw new Error(`Line: ${ctx.line}, Cannot compare ${left} and ${right}.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Cannot compare ${left} and ${right}.`);
 		}
 	};
 
@@ -680,7 +680,7 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 		if (typeof left === "boolean" && typeof right === "boolean") {
 			return left && right;
 		} else {
-			throw new Error(`Line: ${ctx.line}, Cannot compare ${left} and ${right}.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Cannot compare ${left} and ${right}.`);
 		}
 	};
 
@@ -691,7 +691,7 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 		if (typeof left === "boolean" && typeof right === "boolean") {
 			return left || right;
 		} else {
-			throw new Error(`Line: ${ctx.line}, Cannot compare ${left} and ${right}.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Cannot compare ${left} and ${right}.`);
 		}
 	};
 
@@ -702,7 +702,7 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 		if (typeof left === "number" && typeof right === "number") {
 			return left > right;
 		} else {
-			throw new Error(`Line: ${ctx.line}, Cannot compare ${left} and ${right}.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Cannot compare ${left} and ${right}.`);
 		}
 	};
 
@@ -713,7 +713,7 @@ export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | 
 		if (typeof left === "number" && typeof right === "number") {
 			return left < right;
 		} else {
-			throw new Error(`Line: ${ctx.line}, Cannot compare ${left} and ${right}.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Cannot compare ${left} and ${right}.`);
 		}
 	};
 }

@@ -90,7 +90,7 @@ export default class TypeChecker extends AstVisitor<void> {
 			case "Return":
 				return this.visitReturnValue(ctx as ReturnValue);
 			default:
-				throw new Error(`Unknown line kind: ${ctx.kind}.`);
+				throw new Error(`ERROR: Line: ${ctx.line}, Unknown line kind: ${ctx.kind}.`);
 		}
 	};
 
@@ -104,11 +104,11 @@ export default class TypeChecker extends AstVisitor<void> {
 			// if the expression type is not the same as the symbol type
 			if (expressionType !== symbol.type) {
 				throw new Error(
-					`Line: ${ctx.line}, Expected ${ctx.identifier.name} to be of type ${symbol.type}, but got ${expressionType}.`
-				); // TODO: Write 'TypeChecker Error:' in front of each error message also in the other files
+					`ERROR: Line: ${ctx.line}, Expected ${ctx.identifier.name} to be of type ${symbol.type}, but got ${expressionType}.`
+				);
 			}
 		} else {
-			throw new Error(`Line: ${ctx.line}, Undeclared variable: ${ctx.identifier.name}.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Undeclared variable: ${ctx.identifier.name}.`);
 		}
 	};
 
@@ -124,12 +124,12 @@ export default class TypeChecker extends AstVisitor<void> {
 				// if the expression type is not the same as the symbol type
 				if (expressionType !== symbol.type) {
 					throw new Error(
-						`Line: ${ctx.line}, Expected all elements in ${ctx.identifier.name}[] to be of type ${symbol.type}, but got type ${expressionType} for element ${i}.`
+						`ERROR: Line: ${ctx.line}, Expected all elements in ${ctx.identifier.name}[] to be of type ${symbol.type}, but got type ${expressionType} for element ${i}.`
 					);
 				}
 			}
 		} else {
-			throw new Error(`Line: ${ctx.line}, Undeclared variable: ${ctx.identifier.name}.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Undeclared variable: ${ctx.identifier.name}.`);
 		}
 	};
 
@@ -137,7 +137,7 @@ export default class TypeChecker extends AstVisitor<void> {
 		const conditionType = this.visitExpression(ctx.condition);
 		if (conditionType !== "Boolean") {
 			throw new Error(
-				`Line: ${ctx.line}, Expected IF condition to be of type Boolean, but got ${conditionType}.`
+				`ERROR: Line: ${ctx.line}, Expected IF condition to be of type Boolean, but got ${conditionType}.`
 			);
 		}
 
@@ -181,7 +181,7 @@ export default class TypeChecker extends AstVisitor<void> {
 		// check if all return statements are of the same type
 		returnTypes.forEach((type) => {
 			if (type !== returnTypes[0]) {
-				throw new Error(`Line: ${ctx.line}, Expected all return statements to be of the same type.`);
+				throw new Error(`ERROR: Line: ${ctx.line}, Expected all return statements to be of the same type.`);
 			}
 		});
 		// return the type of the return statement
@@ -215,7 +215,7 @@ export default class TypeChecker extends AstVisitor<void> {
 		// check if all return statements are of the same type
 		returnTypes.forEach((type) => {
 			if (type !== returnTypes[0]) {
-				throw new Error(`Line: ${ctx.line}, Expected all return statements to be of the same type.`);
+				throw new Error(`ERROR: Line: ${ctx.line}, Expected all return statements to be of the same type.`);
 			}
 		});
 		// return the type of the return statement
@@ -226,7 +226,7 @@ export default class TypeChecker extends AstVisitor<void> {
 		const conditionType = this.visitExpression(ctx.condition);
 		if (conditionType !== "Boolean") {
 			throw new Error(
-				`Line: ${ctx.line}, Expected WHILE condition to be of type Boolean, but got ${conditionType}.`
+				`ERROR: Line: ${ctx.line}, Expected WHILE condition to be of type Boolean, but got ${conditionType}.`
 			);
 		}
 
@@ -258,7 +258,7 @@ export default class TypeChecker extends AstVisitor<void> {
 		// check if all return statements are of the same type
 		returnTypes.forEach((type) => {
 			if (type !== returnTypes[0]) {
-				throw new Error(`Line: ${ctx.line}, Expected all return statements to be of the same type.`);
+				throw new Error(`ERROR: Line: ${ctx.line}, Expected all return statements to be of the same type.`);
 			}
 		});
 		// return the type of the return statement
@@ -271,25 +271,25 @@ export default class TypeChecker extends AstVisitor<void> {
 		if (symbol !== null) {
 			if (symbol.reference.kind !== "ArrayDeclaration") {
 				throw new Error(
-					`Line: ${ctx.line}, Array features are not allowed on non array: ${ctx.identifier.name}.`
+					`ERROR: Line: ${ctx.line}, Array features are not allowed on non array: ${ctx.identifier.name}.`
 				);
 			}
 
 			const indexType = this.visitExpression(ctx.index);
 			if (indexType !== symbol.type) {
 				throw new Error(
-					`Line: ${ctx.line}, Expected index of ${ctx.identifier.name}[] to be of type Number, but got type ${indexType}.`
+					`ERROR: Line: ${ctx.line}, Expected index of ${ctx.identifier.name}[] to be of type Number, but got type ${indexType}.`
 				);
 			}
 
 			const expressionType = this.visitExpression(ctx.value);
 			if (expressionType !== symbol.type) {
 				throw new Error(
-					`Line: ${ctx.line}, Expected to assign an expression of type ${symbol.type} to ${ctx.identifier.name}[] but got type ${expressionType}.`
+					`ERROR: Line: ${ctx.line}, Expected to assign an expression of type ${symbol.type} to ${ctx.identifier.name}[] but got type ${expressionType}.`
 				);
 			}
 		} else {
-			throw new Error(`Line: ${ctx.line}, Undeclared variable: ${ctx.identifier.name}.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Undeclared variable: ${ctx.identifier.name}.`);
 		}
 	};
 
@@ -313,7 +313,7 @@ export default class TypeChecker extends AstVisitor<void> {
 				}
 
 				throw new Error(
-					`Line: ${ctx.line}, Array features are not allowed on non array: ${ctx.identifier.name}.`
+					`ERROR: Line: ${ctx.line}, Array features are not allowed on non array: ${ctx.identifier.name}.`
 				);
 			}
 
@@ -321,11 +321,11 @@ export default class TypeChecker extends AstVisitor<void> {
 
 			if (expressionType !== symbol.type) {
 				throw new Error(
-					`Line: ${ctx.line}, Expected to push an expression of type ${symbol.type} to ${ctx.identifier.name}[] but got type ${expressionType}.`
+					`ERROR: Line: ${ctx.line}, Expected to push an expression of type ${symbol.type} to ${ctx.identifier.name}[] but got type ${expressionType}.`
 				);
 			}
 		} else {
-			throw new Error(`Line: ${ctx.line}, Undeclared variable: ${ctx.identifier.name}.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Undeclared variable: ${ctx.identifier.name}.`);
 		}
 	};
 
@@ -349,11 +349,11 @@ export default class TypeChecker extends AstVisitor<void> {
 				}
 
 				throw new Error(
-					`Line: ${ctx.line}, Array features are not allowed on non array: ${ctx.identifier.name}.`
+					`ERROR: Line: ${ctx.line}, Array features are not allowed on non array: ${ctx.identifier.name}.`
 				);
 			}
 		} else {
-			throw new Error(`Line: ${ctx.line}, Undeclared variable: ${ctx.identifier.name}.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Undeclared variable: ${ctx.identifier.name}.`);
 		}
 	};
 
@@ -363,14 +363,14 @@ export default class TypeChecker extends AstVisitor<void> {
 			if (symbol !== null && symbol.type !== undefined) {
 				ctx.identifier.type = symbol.type;
 			} else {
-				throw new Error(`Line: ${ctx.line}, Undeclared variable: ${ctx.identifier.name}.`);
+				throw new Error(`ERROR: Line: ${ctx.line}, Undeclared variable: ${ctx.identifier.name}.`);
 			}
 
 			const expressionType = this.visitExpression(ctx.value);
 
 			if (expressionType !== ctx.identifier.type) {
 				throw new Error(
-					`Line: ${ctx.line}, Expected ${ctx.identifier.name} to be of type ${ctx.identifier.type}, but got type ${expressionType}.`
+					`ERROR: Line: ${ctx.line}, Expected ${ctx.identifier.name} to be of type ${ctx.identifier.type}, but got type ${expressionType}.`
 				);
 			}
 		}
@@ -381,12 +381,12 @@ export default class TypeChecker extends AstVisitor<void> {
 		if (ctx.type !== undefined) {
 			if (ctx.type !== ctx.identifier.type) {
 				throw new Error(
-					`Line: ${ctx.line}, Expected function ${ctx.identifier.name} to be of type ${ctx.type}, but got type ${ctx.identifier.type}.`
+					`ERROR: Line: ${ctx.line}, Expected function ${ctx.identifier.name} to be of type ${ctx.type}, but got type ${ctx.identifier.type}.`
 				);
 			}
 			if (ctx.body === undefined) {
 				throw new Error(
-					`Line: ${ctx.line}, Expected function ${ctx.identifier.name} to have a body, but got none.`
+					`ERROR: Line: ${ctx.line}, Expected function ${ctx.identifier.name} to have a body, but got none.`
 				);
 			}
 			// save the current block
@@ -405,7 +405,7 @@ export default class TypeChecker extends AstVisitor<void> {
 			// if return type is undefined throw an error
 			if (returnType.length === 0) {
 				throw new Error(
-					`Line: ${ctx.line}, Expected function ${ctx.identifier.name} to have a return statement.`
+					`ERROR: Line: ${ctx.line}, Expected function ${ctx.identifier.name} to have a return statement.`
 				);
 			}
 
@@ -413,7 +413,7 @@ export default class TypeChecker extends AstVisitor<void> {
 			returnType.forEach((type) => {
 				if (type !== ctx.type) {
 					throw new Error(
-						`Line: ${ctx.line}, Expected function ${ctx.identifier.name} to return type ${ctx.type}, but got type ${type}.`
+						`ERROR: Line: ${ctx.line}, Expected function ${ctx.identifier.name} to return type ${ctx.type}, but got type ${type}.`
 					);
 				}
 			});
@@ -436,13 +436,13 @@ export default class TypeChecker extends AstVisitor<void> {
 					// check if the function has the same amount of parameters as the function call
 					if (ctx.parameters[i] === undefined) {
 						throw new Error(
-							`Line: ${ctx.line}, Expected function ${symbol.name} to have ${symbol.parameters.length} parameter(s), but got ${ctx.parameters.length}.`
+							`ERROR: Line: ${ctx.line}, Expected function ${symbol.name} to have ${symbol.parameters.length} parameter(s), but got ${ctx.parameters.length}.`
 						);
 					}
 					const argument = this.visitIdentifier(ctx.parameters[i]);
 					if (parameter !== argument) {
 						throw new Error(
-							`Line: ${ctx.line}, Expected parameter ${symbol.parameters[i].name} to be of type ${parameter}, but got type ${argument}.`
+							`ERROR: Line: ${ctx.line}, Expected parameter ${symbol.parameters[i].name} to be of type ${parameter}, but got type ${argument}.`
 						);
 					}
 				}
@@ -464,7 +464,7 @@ export default class TypeChecker extends AstVisitor<void> {
 				// check if the return type of the function is the same as the function type
 				return ctx.type;
 			} else {
-				throw new Error(`Line: ${ctx.line}, Undeclared function: ${ctx.identifier.name}.`);
+				throw new Error(`ERROR: Line: ${ctx.line}, Undeclared function: ${ctx.identifier.name}.`);
 			}
 		}
 	};
@@ -494,7 +494,7 @@ export default class TypeChecker extends AstVisitor<void> {
 			case "IndexOf":
 				return this.visitIndexOf(ctx as IndexOf);
 			default:
-				throw new Error(`Unknown expression kind: ${ctx.kind}.`);
+				throw new Error(`ERROR: Unknown expression kind: ${ctx.kind}.`);
 		}
 	};
 
@@ -523,16 +523,16 @@ export default class TypeChecker extends AstVisitor<void> {
 					for (let i = 1; i < expressionTypes.length; i++) {
 						if (expressionTypes[i] !== firstType) {
 							throw new Error(
-								`Line: ${ctx.line}, Expected all elements in array to be of the same type, but got type ${firstType} and ${expressionTypes[i]}.`
+								`ERROR: Line: ${ctx.line}, Expected all elements in array to be of the same type, but got type ${firstType} and ${expressionTypes[i]}.`
 							);
 						}
 					}
 					return firstType;
 				} else {
-					throw new Error(`Line: ${ctx.line}, Expected array to have at least one element.`);
+					throw new Error(`ERROR: Line: ${ctx.line}, Expected array to have at least one element.`);
 				}
 			} else {
-				throw new Error(`Line: ${ctx.line}, Expected array to have at least one element.`);
+				throw new Error(`ERROR: Line: ${ctx.line}, Expected array to have at least one element.`);
 			}
 		} else {
 			const symbol = this.symbolTable.LookupSymbol(ctx.identifier.name, this.currentBlock);
@@ -553,7 +553,7 @@ export default class TypeChecker extends AstVisitor<void> {
 					}
 
 					throw new Error(
-						`Line: ${ctx.line}, Array features are not allowed on non array: ${ctx.identifier.name}.`
+						`ERROR: Line: ${ctx.line}, Array features are not allowed on non array: ${ctx.identifier.name}.`
 					);
 				}
 
@@ -571,14 +571,14 @@ export default class TypeChecker extends AstVisitor<void> {
 						const expressionType = this.visitExpression(ctx.value[i]);
 						if (expressionType !== symbol.type) {
 							throw new Error(
-								`Line: ${ctx.line}, Expected all elements in ${ctx.identifier.name}[] to be of type ${symbol.type}, but got type ${expressionType} for element ${i}.`
+								`ERROR: Line: ${ctx.line}, Expected all elements in ${ctx.identifier.name}[] to be of type ${symbol.type}, but got type ${expressionType} for element ${i}.`
 							);
 						}
 					}
 				}
 				return symbol.type;
 			} else {
-				throw new Error(`Line: ${ctx.line}, Undeclared variable: ${ctx.identifier.name}.`);
+				throw new Error(`ERROR: Line: ${ctx.line}, Undeclared variable: ${ctx.identifier.name}.`);
 			}
 		}
 	};
@@ -604,19 +604,19 @@ export default class TypeChecker extends AstVisitor<void> {
 				}
 
 				throw new Error(
-					`Line: ${ctx.line}, Array features are not allowed on non array: ${ctx.identifier.name}.`
+					`ERROR: Line: ${ctx.line}, Array features are not allowed on non array: ${ctx.identifier.name}.`
 				);
 			}
 
 			const expressionType = this.visitExpression(ctx.index);
 			if (expressionType !== "Number") {
 				throw new Error(
-					`Line: ${ctx.line}, Expected index of ${ctx.identifier.name}[] to be of type Number, but got type ${expressionType}.`
+					`ERROR: Line: ${ctx.line}, Expected index of ${ctx.identifier.name}[] to be of type Number, but got type ${expressionType}.`
 				);
 			}
 			return symbol.type;
 		} else {
-			throw new Error(`Line: ${ctx.line}, Undeclared variable: ${ctx.identifier.name}.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Undeclared variable: ${ctx.identifier.name}.`);
 		}
 	};
 
@@ -641,12 +641,12 @@ export default class TypeChecker extends AstVisitor<void> {
 				}
 
 				throw new Error(
-					`Line: ${ctx.line}, Array features are not allowed on non array: ${ctx.identifier.name}.`
+					`ERROR: Line: ${ctx.line}, Array features are not allowed on non array: ${ctx.identifier.name}.`
 				);
 			}
 			return "Number";
 		} else {
-			throw new Error(`Line: ${ctx.line}, Undeclared variable: ${ctx.identifier.name}.`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Undeclared variable: ${ctx.identifier.name}.`);
 		}
 	};
 
@@ -661,12 +661,12 @@ export default class TypeChecker extends AstVisitor<void> {
 				ctx.type = symbol.type;
 
 				if (symbol.reference.kind === "ArrayDeclaration" && ctx.kind !== "ArrayIdentifier") {
-					throw new Error(`Line: ${ctx.line}, ${ctx.name} is an Array and has to be called: ${ctx.name}[].`);
+					throw new Error(`ERROR: Line: ${ctx.line}, ${ctx.name} is an Array and has to be called: ${ctx.name}[].`);
 				}
 
 				return symbol.type;
 			} else {
-				throw new Error(`Line: ${ctx.line}, Undeclared variable: ${ctx.name}.`);
+				throw new Error(`ERROR: Line: ${ctx.line}, Undeclared variable: ${ctx.name}.`);
 			}
 		}
 		return ctx.type;
@@ -699,13 +699,13 @@ export default class TypeChecker extends AstVisitor<void> {
 				case "LESS":
 					return this.visitLess(ctx as Less);
 				default:
-					throw new Error(`Line: ${ctx.line}, Unknown operator: ${ctx.operator}.`);
+					throw new Error(`ERROR: Line: ${ctx.line}, Unknown operator: ${ctx.operator}.`);
 			}
 		}
 
 		if (left !== right) {
 			throw new Error(
-				`Line: ${ctx.line}, Expected both sides of the binary operation to be of the same type, but got type ${left} and ${right}.`
+				`ERROR: Line: ${ctx.line}, Expected both sides of the binary operation to be of the same type, but got type ${left} and ${right}.`
 			);
 		} else {
 			return left;
@@ -720,7 +720,7 @@ export default class TypeChecker extends AstVisitor<void> {
 			return "Number";
 		} else {
 			throw new Error(
-				`Line: ${ctx.line}, Expected both sides of the ADDITION operator to be of type Number, but got type ${left} and ${right}.`
+				`ERROR: Line: ${ctx.line}, Expected both sides of the ADDITION operator to be of type Number, but got type ${left} and ${right}.`
 			);
 		}
 	};
@@ -733,7 +733,7 @@ export default class TypeChecker extends AstVisitor<void> {
 			return "Number";
 		} else {
 			throw new Error(
-				`Line: ${ctx.line}, Expected both sides of the SUBTRACTION operator to be of type Number, but got type ${left} and ${right}.`
+				`ERROR: Line: ${ctx.line}, Expected both sides of the SUBTRACTION operator to be of type Number, but got type ${left} and ${right}.`
 			);
 		}
 	};
@@ -746,7 +746,7 @@ export default class TypeChecker extends AstVisitor<void> {
 			return "Number";
 		} else {
 			throw new Error(
-				`Line: ${ctx.line}, Expected both sides of the MULTIPLICATION operator to be of type Number, but got type ${left} and ${right}.`
+				`ERROR: Line: ${ctx.line}, Expected both sides of the MULTIPLICATION operator to be of type Number, but got type ${left} and ${right}.`
 			);
 		}
 	};
@@ -759,7 +759,7 @@ export default class TypeChecker extends AstVisitor<void> {
 			return "Number";
 		} else {
 			throw new Error(
-				`Line: ${ctx.line}, Expected both sides of the DIVISION operator to be of type Number, but got type ${left} and ${right}.`
+				`ERROR: Line: ${ctx.line}, Expected both sides of the DIVISION operator to be of type Number, but got type ${left} and ${right}.`
 			);
 		}
 	};
@@ -772,7 +772,7 @@ export default class TypeChecker extends AstVisitor<void> {
 			return "Boolean";
 		} else {
 			throw new Error(
-				`Line: ${ctx.line}, Expected both sides of the EQUAL operator to be of the same type, but got type ${left} and ${right}.`
+				`ERROR: Line: ${ctx.line}, Expected both sides of the EQUAL operator to be of the same type, but got type ${left} and ${right}.`
 			);
 		}
 	};
@@ -785,7 +785,7 @@ export default class TypeChecker extends AstVisitor<void> {
 			return "Boolean";
 		} else {
 			throw new Error(
-				`Line: ${ctx.line}, Expected both sides of the NOT EQUAL operator to be of the same type, but got type ${left} and ${right}.`
+				`ERROR: Line: ${ctx.line}, Expected both sides of the NOT EQUAL operator to be of the same type, but got type ${left} and ${right}.`
 			);
 		}
 	};
@@ -798,7 +798,7 @@ export default class TypeChecker extends AstVisitor<void> {
 			return "Boolean";
 		} else {
 			throw new Error(
-				`Line: ${ctx.line}, Expected both sides of the AND operator to be of type Boolean, but got type ${left} and ${right}.`
+				`ERROR: Line: ${ctx.line}, Expected both sides of the AND operator to be of type Boolean, but got type ${left} and ${right}.`
 			);
 		}
 	};
@@ -811,7 +811,7 @@ export default class TypeChecker extends AstVisitor<void> {
 			return "Boolean";
 		} else {
 			throw new Error(
-				`Line: ${ctx.line}, Expected both sides of the OR operator to be of type Boolean, but got type ${left} and ${right}.`
+				`ERROR: Line: ${ctx.line}, Expected both sides of the OR operator to be of type Boolean, but got type ${left} and ${right}.`
 			);
 		}
 	};
@@ -824,7 +824,7 @@ export default class TypeChecker extends AstVisitor<void> {
 			return "Boolean";
 		} else {
 			throw new Error(
-				`Line: ${ctx.line}, Expected both sides of the binary operation to be of type Number, but got type ${left} and ${right}.`
+				`ERROR: Line: ${ctx.line}, Expected both sides of the binary operation to be of type Number, but got type ${left} and ${right}.`
 			);
 		}
 	};
@@ -837,7 +837,7 @@ export default class TypeChecker extends AstVisitor<void> {
 			return "Boolean";
 		} else {
 			throw new Error(
-				`Line: ${ctx.line}, Expected both sides of the binary operation to be of type Number, but got type ${left} and ${right}.`
+				`ERROR: Line: ${ctx.line}, Expected both sides of the binary operation to be of type Number, but got type ${left} and ${right}.`
 			);
 		}
 	};

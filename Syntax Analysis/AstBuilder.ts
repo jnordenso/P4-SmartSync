@@ -83,7 +83,7 @@ export default class AstBuilder extends SmartSyncVisitor<Result> {
 		const startLine = ctx.start.line;
 		// Check if the CST has children
 		if (!ctx.children) {
-			throw new Error("No children found");
+			throw new Error("ERROR: The program is empty");
 		}
 
 		// Visit each child node in the CST
@@ -110,7 +110,7 @@ export default class AstBuilder extends SmartSyncVisitor<Result> {
 		if (ctx.getChildCount() === 1) {
 			return this.visit(ctx.getChild(0));
 		} else if (ctx.getChildCount() === 0) {
-			throw new Error(`Line: ${ctx.start.line}, Invalid variable name`);
+			throw new Error(`ERROR: Line: ${ctx.start.line}, Invalid variable name`);
 		} else {
 			if (ctx.getChildCount() === 3 && ctx.getChild(0).getText() === "RETURN") {
 				const returnValue = this.visitFuncReturn(ctx.funcReturn(0));
@@ -149,7 +149,7 @@ export default class AstBuilder extends SmartSyncVisitor<Result> {
 
 				return func;
 			} else {
-				throw new Error("SHOULD NOT HAPPEN"); // This should not happen as the CST should have only one child node
+				throw new Error(`ERROR: Unknown Line at ${ctx.start.line}`); // This should not happen as all CST nodes are covered
 			}
 		}
 	};
@@ -159,7 +159,7 @@ export default class AstBuilder extends SmartSyncVisitor<Result> {
 		let result: Value | Identifier | IndexOf | Size | Function;
 
 		if (ctx === null) {
-			throw new Error("No value found");
+			throw new Error("ERROR: No value found"); // This should not happen since the parser should have caught this
 		}
 
 		// Check if the value is a boolean, string, number or identifier
@@ -288,7 +288,7 @@ export default class AstBuilder extends SmartSyncVisitor<Result> {
 				break;
 			}
 			default:
-				throw new Error("Unknown value");
+				throw new Error(`ERROR: Line: ${ctx.start.line}, Unknown value`);
 		}
 		return result;
 	};
@@ -343,7 +343,7 @@ export default class AstBuilder extends SmartSyncVisitor<Result> {
 				return declaration;
 			}
 			default:
-				throw new Error("Unknown declaration");
+				throw new Error(`ERROR: Line: ${ctx.start.line}, Unknown declaration`);
 		}
 	};
 
@@ -385,7 +385,7 @@ export default class AstBuilder extends SmartSyncVisitor<Result> {
 				return this.visitArrayStm(ctx.arrayStm());
 			}
 			default:
-				throw new Error("Unknown statement");
+				throw new Error(`ERROR: Line: ${ctx.start.line}, Unknown statement`);
 		}
 	};
 
@@ -540,7 +540,7 @@ export default class AstBuilder extends SmartSyncVisitor<Result> {
 			case !!ctx.condition():
 				return this.visitCondition(ctx.condition());
 			default:
-				throw new Error("Unknown expression");
+				throw new Error(`ERROR: Line: ${ctx.start.line}, Unknown expression`);
 		}
 	};
 
@@ -550,7 +550,7 @@ export default class AstBuilder extends SmartSyncVisitor<Result> {
 
 		// Check if the CST has children nodes to visit
 		if (!ctx.children) {
-			throw new Error("No children found");
+			throw new Error(`ERROR: Line: ${ctx.start.line}, Empty string arithmetic`);
 		}
 
 		for (const stringAtom of ctx.stringAtom_list()) {
@@ -596,7 +596,7 @@ export default class AstBuilder extends SmartSyncVisitor<Result> {
 				return identifier;
 			}
 			default:
-				throw new Error("Unknown string atom");
+				throw new Error(`ERROR: Line: ${ctx.start.line}, Unknown string value`);
 		}
 	};
 
@@ -638,7 +638,7 @@ export default class AstBuilder extends SmartSyncVisitor<Result> {
 					break;
 				}
 				default:
-					throw new Error("Unknown operator: " + operator);
+					throw new Error(`ERROR: Line: ${ctx.start.line} Unknown operator: ${operator}`);
 			}
 		}
 		return left;
@@ -682,7 +682,7 @@ export default class AstBuilder extends SmartSyncVisitor<Result> {
 					break;
 				}
 				default:
-					throw new Error("Unknown operator: " + operator);
+					throw new Error(`ERROR: Line: ${ctx.start.line}, Unknown operator: ${operator}`);
 			}
 		}
 		return left;
@@ -700,7 +700,7 @@ export default class AstBuilder extends SmartSyncVisitor<Result> {
 				return this.visitValue(ctx.value());
 			}
 			default:
-				throw new Error("Unknown atom");
+				throw new Error(`ERROR: Line: ${ctx.start.line}, Unknown atom`);
 		}
 	};
 
@@ -742,7 +742,7 @@ export default class AstBuilder extends SmartSyncVisitor<Result> {
 					break;
 				}
 				default:
-					throw new Error("Unknown Logical operator: " + operator);
+					throw new Error(`ERROR: Line: ${ctx.start.line}, Unknown logical operator: ${operator}`);
 			}
 		}
 		return left;
@@ -808,7 +808,7 @@ export default class AstBuilder extends SmartSyncVisitor<Result> {
 					break;
 				}
 				default:
-					throw new Error("Unknown operator: " + operator);
+					throw new Error(`ERROR: Line: ${ctx.start.line}, Unknown operator: ${operator}`);
 			}
 		}
 		return left;
@@ -830,7 +830,7 @@ export default class AstBuilder extends SmartSyncVisitor<Result> {
 				return this.visitValue(ctx.value());
 			}
 			default:
-				throw new Error("Unknown atom");
+				throw new Error(`ERROR: Line: ${ctx.start.line}, Unknown atom`);
 		}
 	};
 
@@ -909,7 +909,7 @@ export default class AstBuilder extends SmartSyncVisitor<Result> {
 				return array;
 			}
 			default:
-				throw new Error("Unknown assignment");
+				throw new Error(`ERROR: Line: ${ctx.start.line}, Unknown assignment`);
 		}
 	};
 
@@ -974,7 +974,7 @@ export default class AstBuilder extends SmartSyncVisitor<Result> {
 				}
 			}
 			default:
-				throw new Error("Unknown return value");
+				throw new Error(`ERROR: Line: ${ctx.start.line}, Unknown function return`);
 		}
 	};
 
@@ -1129,7 +1129,7 @@ export default class AstBuilder extends SmartSyncVisitor<Result> {
 				return push;
 			}
 			default:
-				throw new Error("Unknown array statement");
+				throw new Error(`Line: ${ctx.start.line}, Unknown array statement`);
 		}
 	};
 }

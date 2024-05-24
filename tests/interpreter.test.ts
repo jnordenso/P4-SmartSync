@@ -2,14 +2,7 @@ import { assertEquals, assertThrows, assert } from "https://deno.land/std@0.224.
 import SymbolTable from "../Contextual Analysis/SymbolTable.ts";
 import {
 	Program,
-	Declaration,
-	Expression,
 	Line,
-	Function,
-	BinaryOperation,
-	ArrayDeclaration,
-	Assignment,
-	Identifier,
 	Array,
 	Division,
 	Equal,

@@ -142,11 +142,11 @@ export default class SymbolTable extends AstVisitor<void> {
 	 */
 	AddSymbol = (name: string, type: types, reference: Line): void => {
 		if (this.stackScopes[this.stackScopes.length - 1].symbols.has(name)) {
-			throw new Error(`Variable '${name}' has already been declared in this scope`);
+			throw new Error(`ERROR: Line: ${reference.line}, Variable '${name}' has already been declared in this scope`);
 		}
 
 		if (this.stackScopes[this.stackScopes.length - 1].functionSymbols.has(name)) {
-			throw new Error(`Function '${name}' has already been declared in this scope`);
+			throw new Error(`ERROR: Line: ${reference.line}, Function '${name}' has already been declared in this scope`);
 		}
 
 		const symbol: Symbol = { name, type, reference }; // Creates a new symbol
@@ -157,11 +157,11 @@ export default class SymbolTable extends AstVisitor<void> {
 
 	AddFunctionSymbol = (name: string, type: types, reference: Line, parameters: Symbol[], body: Line[]): void => {
 		if (this.stackScopes[this.stackScopes.length - 1].symbols.has(name)) {
-			throw new Error(`Variable '${name}' has already been declared in this scope`);
+			throw new Error(`ERROR:Line: ${reference.line}, Variable '${name}' has already been declared in this scope`);
 		}
 
 		if (this.stackScopes[this.stackScopes.length - 1].functionSymbols.has(name)) {
-			throw new Error(`Function '${name}' has already been declared in this scope`);
+			throw new Error(`ERROR: Line: ${reference.line}, Function '${name}' has already been declared in this scope`);
 		}
 
 		// Creates a new function symbol
@@ -279,19 +279,19 @@ export default class SymbolTable extends AstVisitor<void> {
 				this.visitReturnValue(ctx as ReturnValue);
 				break;
 			default:
-				throw new Error(`Unknown line kind: ${ctx.kind}`);
+				throw new Error(`ERROR: Line ${ctx.line}, Unknown line kind: ${ctx.kind}`);
 		}
 	};
 
 	visitDeclaration = (ctx: Declaration): void => {
 		// Checks if the variable name is a reserved keyword
 		if (this.reserverdWords.includes(ctx.identifier.name)) {
-			throw new Error(`Line: ${ctx.line}, Variable name '${ctx.identifier.name}' is a reserved keyword`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Variable name '${ctx.identifier.name}' is a reserved keyword`);
 		}
 		// Checks if the variable has already been declared in this scope
 		if (this.LookupSymbol(ctx.identifier.name, this.currentBlock)) {
 			throw new Error(
-				`Line: ${ctx.line}, Variable '${ctx.identifier.name}' has already been declared in this scope`
+				`ERROR: Line: ${ctx.line}, Variable '${ctx.identifier.name}' has already been declared in this scope`
 			);
 		}
 		// Adds the symbol to the Symbol Table
@@ -305,13 +305,13 @@ export default class SymbolTable extends AstVisitor<void> {
     visitArrayDeclaration = (ctx: ArrayDeclaration): void => {
         // Checks if the variable name is a reserved keyword
         if (this.reserverdWords.includes(ctx.identifier.name)) {
-            throw new Error(`Line: ${ctx.line}, Variable name '${ctx.identifier.name}' is a reserved keyword`);
+            throw new Error(`ERROR: Line: ${ctx.line}, Variable name '${ctx.identifier.name}' is a reserved keyword`);
         }
 
         // Checks if the variable has already been declared in this scope
         if (this.LookupSymbol(ctx.identifier.name, this.currentBlock)) {
             throw new Error(
-                `Line: ${ctx.line}, Variable '${ctx.identifier.name}' has already been declared in this scope`
+                `ERROR: Line: ${ctx.line}, Variable '${ctx.identifier.name}' has already been declared in this scope`
             );
         }
 
@@ -417,11 +417,11 @@ export default class SymbolTable extends AstVisitor<void> {
         } else {
 			const functionSymbol = this.LookupFunctionSymbol(ctx.identifier.name, this.currentBlock);
 			if (functionSymbol === null) {
-				throw new Error(`Line: ${ctx.line}, Function '${ctx.identifier.name}' has not been declared`);
+				throw new Error(`ERROR: Line: ${ctx.line}, Function '${ctx.identifier.name}' has not been declared`);
 			} else {
 				// check if the called function has the same number of parameters as the declared function
 				if (ctx.parameters.length !== functionSymbol.parameters.length) {
-					throw new Error(`Line: ${ctx.line}, Function '${ctx.identifier.name}' has the wrong number of parameters, expected ${functionSymbol.parameters.length} but got ${ctx.parameters.length}`);
+					throw new Error(`ERROR: Line: ${ctx.line}, Function '${ctx.identifier.name}' has the wrong number of parameters, expected ${functionSymbol.parameters.length} but got ${ctx.parameters.length}`);
 				}
 			}
 		}
@@ -445,7 +445,7 @@ export default class SymbolTable extends AstVisitor<void> {
 			this.visitExpression(ctx.value);
 		// else throw an error
 		} else {
-			throw new Error(`Line: ${ctx.line}, Return statement is not allowed outside of a function`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Return statement is not allowed outside of a function`);
 		}
 	};
 
@@ -472,7 +472,7 @@ export default class SymbolTable extends AstVisitor<void> {
 	visitArray = (ctx: Array): void => {
 		if (ctx.identifier) {
 			if (!this.LookupSymbol(ctx.identifier.name, this.currentBlock)) {
-				throw new Error(`Line: ${ctx.line}, Variable '${ctx.identifier.name}' has not been declared`);
+				throw new Error(`ERROR: Line: ${ctx.line}, Variable '${ctx.identifier.name}' has not been declared`);
 			}
 		}
 		if (ctx.value) {
@@ -484,7 +484,7 @@ export default class SymbolTable extends AstVisitor<void> {
 
 	visitIdentifier = (ctx: Identifier): void => {
 		if (!this.LookupSymbol(ctx.name, this.currentBlock)) {
-			throw new Error(`Line: ${ctx.line}, Variable '${ctx.name}' has not been declared`);
+			throw new Error(`ERROR: Line: ${ctx.line}, Variable '${ctx.name}' has not been declared`);
 		}
 	};
 
