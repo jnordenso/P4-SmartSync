@@ -1366,7 +1366,7 @@ Deno.test("Interpreter - Unit test - Addition", () => {
 	assertEquals(value2, 1002.000005);
 });
 
-Deno.test("Interpreter - Unit test - Addition", () => {
+Deno.test("Interpreter - Unit test - Subtraction", () => {
 	const interpreter = new Interpreter(new SymbolTable());
 
 	const value = interpreter.visitSubtraction({
