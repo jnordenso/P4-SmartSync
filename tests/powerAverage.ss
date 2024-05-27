@@ -10,7 +10,6 @@ Number FUNCTION power(Number base, Number exponent) {
     RETURN result;
 }
 
-
 # Function to calculate average of a Number array #
 Number FUNCTION average(Number numbers[]) {
     Number sum = 0;
@@ -22,7 +21,6 @@ Number FUNCTION average(Number numbers[]) {
 
   RETURN sum / numbers[] SIZE;
 }
-
 
 Text historyText[] = []; # Calculation history #
 Number historyNum[] = []; # Calculation history #
@@ -53,7 +51,6 @@ Number FUNCTION main(Text input, Number numToAdd) {
 	} ELSE {
 		OUTPUT "Invalid input";
 	}
-
     RETURN 0;
 }
 
@@ -63,7 +60,6 @@ main("add", 15);
 main("avg", 0);
 main("add", 20);
 main("avg", 0);
-
 
 OUTPUT "";
 OUTPUT "Power of 2 to the power of 3:";
