@@ -6,7 +6,7 @@ import AstBuilder from './Syntax Analysis/AstBuilder.ts';
 import SymbolTable from './Contextual Analysis/SymbolTable.ts';
 import { Program } from './Syntax Analysis/AST.ts';
 import TypeChecker from './Contextual Analysis/TypeChecker.ts';
-import Interpreter from './Contextual Analysis/Interpreter.ts';
+import Interpreter from './Interpreter.ts';
 import { ThrowingErrorListener, CustomBailErrorStrategy } from './customError.ts';
 
 const filePath = './code2.ss';

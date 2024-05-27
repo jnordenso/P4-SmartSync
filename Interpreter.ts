@@ -1,4 +1,4 @@
-import AstVisitor from "./AstVisitor.ts";
+import AstVisitor from "./Contextual Analysis/AstVisitor.ts";
 import {
 	Array as IArray,
 	ArrayDeclaration,
@@ -32,8 +32,8 @@ import {
 	Greater,
 	Less,
 	ReturnValue,
-} from "../Syntax Analysis/AST.ts";
-import SymbolTable from "./SymbolTable.ts";
+} from "./Syntax Analysis/AST.ts";
+import SymbolTable from "./Contextual Analysis/SymbolTable.ts";
 
 type FinalValue = number | string | boolean | FinalValue[];
 export default class Interpreter extends AstVisitor<FinalValue | FinalValue[] | void> {

@@ -9,7 +9,7 @@ import {
 } from "../Syntax Analysis/AST.ts";
 import { assertSpyCalls, spy } from "https://deno.land/std@0.224.0/testing/mock.ts";
 import TypeChecker from "../Contextual Analysis/TypeChecker.ts";
-import Interpreter from "../Contextual Analysis/Interpreter.ts";
+import Interpreter from "../Interpreter.ts";
 import { Value } from "../Syntax Analysis/AST.ts";
 import { Addition } from "../Syntax Analysis/AST.ts";
 import { Subtraction } from "../Syntax Analysis/AST.ts";

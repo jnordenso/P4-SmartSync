@@ -70,3 +70,5 @@ OUTPUT "";
 OUTPUT "Print Average history:";
 OUTPUT "";
 main("hist", 0);
+
+

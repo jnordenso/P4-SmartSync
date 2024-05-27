@@ -6,10 +6,10 @@ import AstBuilder from ".././Syntax Analysis/AstBuilder.ts";
 import SymbolTable from ".././Contextual Analysis/SymbolTable.ts";
 import { Program } from ".././Syntax Analysis/AST.ts";
 import TypeChecker from ".././Contextual Analysis/TypeChecker.ts";
-import Interpreter from ".././Contextual Analysis/Interpreter.ts";
+import Interpreter from "../Interpreter.ts";
 import { ThrowingErrorListener, CustomBailErrorStrategy } from ".././customError.ts";
 import { assert, assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
-import { assertSpyCalls, spy } from "https://deno.land/std@0.224.0/testing/mock.ts";
+import { spy } from "https://deno.land/std@0.224.0/testing/mock.ts";
 
 Deno.test("Acceptance test - Power and Average", () => {
 	const filePath = "./tests/powerAverage.ss";
