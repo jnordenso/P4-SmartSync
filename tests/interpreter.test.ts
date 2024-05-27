@@ -1331,7 +1331,7 @@ Deno.test("Interpreter - Unit test - Addition", () => {
 					kind: "Value",
 					line: 1,
 					type: "Number",
-					value: Number.MAX_VALUE,
+					value: Number.MAX_SAFE_INTEGER,
 				},
 				right: {
 					kind: "Value",
